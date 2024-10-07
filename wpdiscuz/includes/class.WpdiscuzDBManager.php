@@ -1361,8 +1361,12 @@ class WpdiscuzDBManager implements WpDiscuzConstants {
 		return $this->db->get_var( $sql );
 	}
 
-	public function addRate( $post_id, $user_id, $user_ip, $rating, $date ) {
-		$sql = $this->db->prepare( "INSERT INTO `{$this->usersRated}` (`post_id`, `user_id`, `user_ip`, `rating`, `date`) VALUES (%d,%d,%s,%d,%d);", $post_id, $user_id, $user_ip, $rating, $date );
+	public function addRate( $post_id, $user_id, $user_ip, $rating, $date, $rateId = 0 ) {
+        if ($rateId) {
+            $sql = $this->db->prepare( "UPDATE `{$this->usersRated}` SET `rating` = %d WHERE `id` = %d;", (int)$rating, (int)$rateId );
+        } else {
+            $sql = $this->db->prepare( "INSERT INTO `{$this->usersRated}` (`post_id`, `user_id`, `user_ip`, `rating`, `date`) VALUES (%d,%d,%s,%d,%d);", $post_id, $user_id, $user_ip, $rating, $date );
+        }
 
 		return $this->db->query( $sql );
 	}

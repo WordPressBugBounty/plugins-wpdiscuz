@@ -293,6 +293,13 @@ if (!defined("ABSPATH")) {
             <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_not_allowed_to_rate"]); ?>"
                                    name="wc_not_allowed_to_rate" id="wc_not_allowed_to_rate"/></td>
         </tr>
+        <tr valign="top">
+            <th scope="row"><label
+                        for="wc_confirm_rate_edit"><?php esc_html_e("Rate edit confirmation", "wpdiscuz"); ?></label>
+            </th>
+            <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_confirm_rate_edit"]); ?>"
+                                   name="wc_confirm_rate_edit" id="wc_confirm_rate_edit"/></td>
+        </tr>
         </tbody>
     </table>
 </div>

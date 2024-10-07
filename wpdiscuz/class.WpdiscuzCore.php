@@ -2,7 +2,7 @@
 /*
  * Plugin Name: wpDiscuz
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.24
+ * Version: 7.6.25
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Plugin URI: https://wpdiscuz.com/
@@ -16,6 +16,7 @@ if ( ! defined( "ABSPATH" ) ) {
 
 define( "WPDISCUZ_DIR_PATH", dirname( __FILE__ ) );
 define( "WPDISCUZ_DIR_NAME", basename( WPDISCUZ_DIR_PATH ) );
+define( "WPDISCUZ_DIR_URL", rtrim(plugin_dir_url(__FILE__), '/\\') );
 
 include_once WPDISCUZ_DIR_PATH . "/includes/interface.WpDiscuzConstants.php";
 include_once WPDISCUZ_DIR_PATH . "/utils/functions.php";
@@ -46,7 +47,13 @@ class WpdiscuzCore implements WpDiscuzConstants {
 	public $options;
 	public $commentsArgs;
 	private $version;
+    /**
+     * @var wpDiscuzForm
+     */
 	public $wpdiscuzForm;
+    /**
+     * @var \wpdFormAttr\Form
+     */
 	public $form;
 	private $cache;
 	public $subscriptionData;
@@ -94,6 +101,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
 		add_action( "admin_enqueue_scripts", [ &$this, "backendFiles" ], 100 );
 		add_action( "wp_enqueue_scripts", [ &$this, "frontendFiles" ] );
 		add_action( "admin_menu", [ &$this, "addPluginOptionsPage" ], 1 );
+		add_action( "admin_head", [ &$this, "addInlineStyle" ], 1 );
 		add_shortcode( "wpdiscuz_comments", [ &$this, "wpdiscuzShortcode" ] );
 
 		add_action( "wp_ajax_wpdLoadMoreComments", [ &$this, "loadMoreComments" ] );
@@ -1116,7 +1124,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
 	 * register options page for plugin
 	 */
 	public function addPluginOptionsPage() {
-		add_menu_page( "wpDiscuz", "wpDiscuz", "manage_options", self::PAGE_WPDISCUZ, "", "dashicons-admin-comments", 26 );
+		add_menu_page( "wpDiscuz", "wpDiscuz", "manage_options", self::PAGE_WPDISCUZ, "", WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg", 26 );
 		add_submenu_page( self::PAGE_WPDISCUZ, "&raquo; " . esc_html__( "Dashboard", "wpdiscuz" ), "&raquo; " . esc_html__( "Dashboard", "wpdiscuz" ), "manage_options", self::PAGE_WPDISCUZ, [
 			&$this->options,
 			"dashboard"
@@ -1138,6 +1146,10 @@ class WpdiscuzCore implements WpDiscuzConstants {
 
 		do_action( "wpdiscuz_submenu_page" );
 	}
+
+    public function addInlineStyle() {
+        echo "<style>#toplevel_page_wpdiscuz .wp-menu-image img{width:24px;height:24px;}</style>";
+    }
 
 	/**
 	 * Scripts and styles registration on administration pages
@@ -1288,6 +1300,8 @@ class WpdiscuzCore implements WpDiscuzConstants {
 			$this->wpdiscuzOptionsJs["customAjaxUrl"]       = plugins_url( WPDISCUZ_DIR_NAME . "/utils/ajax/wpdiscuz-ajax.php" );
 			$this->wpdiscuzOptionsJs["bubbleUpdateUrl"]     = rest_url( "wpdiscuz/v1/update" );
 			$this->wpdiscuzOptionsJs["restNonce"]           = wp_create_nonce( "wp_rest" );
+			$this->wpdiscuzOptionsJs["is_rate_editable"]    = $this->form->getGeneralOptions()["is_rate_editable"];
+			$this->wpdiscuzOptionsJs["menu_icon"]           = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg";
 			$loadQuill                                      = $this->options->form["richEditor"] === "both" || ( ! wp_is_mobile() && $this->options->form["richEditor"] === "desktop" );
 			$customCSSSlug                                  = "wpdiscuz-frontend-custom-css";
 			$customFileName                                 = "style-custom";
@@ -2517,6 +2531,10 @@ class WpdiscuzCore implements WpDiscuzConstants {
 		return $commentdata;
 	}
 
+    /**
+     * @param $admin_bar WP_Admin_Bar
+     * @return void
+     */
 	public function addToolbarItems( $admin_bar ) {
 		if ( $this->isWpdiscuzLoaded && current_user_can( "manage_options" ) ) {
 			$admin_bar->add_menu( [

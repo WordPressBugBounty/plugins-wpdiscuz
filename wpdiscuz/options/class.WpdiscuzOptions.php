@@ -40,6 +40,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
 
     /**
      * helper class for database operations
+     * @var WpdiscuzDBManager
      */
     public $dbManager;
 
@@ -457,6 +458,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             "wc_vote_counted"                                   => esc_html__("Vote Counted", "wpdiscuz"),
             "wc_vote_only_one_time"                             => esc_html__("You've already voted for this comment", "wpdiscuz"),
             "wc_voting_error"                                   => esc_html__("Voting Error", "wpdiscuz"),
+            "wc_banned_user"                                    => esc_html__("You are banned", "wpdiscuz"),
             "wc_login_to_vote"                                  => esc_html__("You Must Be Logged In To Vote", "wpdiscuz"),
             "wc_self_vote"                                      => esc_html__("You cannot vote for your comment", "wpdiscuz"),
             "wc_deny_voting_from_same_ip"                       => esc_html__("You are not allowed to vote for this comment", "wpdiscuz"),
@@ -576,6 +578,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             "wc_spoiler_title"                                  => esc_html__("Spoiler Title", "wpdiscuz"),
             "wc_cannot_rate_again"                              => esc_html__("You cannot rate again", "wpdiscuz"),
             "wc_not_allowed_to_rate"                            => esc_html__("You're not allowed to rate here", "wpdiscuz"),
+            "wc_confirm_rate_edit"                              => esc_html__("Are you sure you want to edit your rate?", "wpdiscuz"),
             // Media Upload
             "wmuPhraseConfirmDelete"                            => esc_html__("Are you sure you want to delete this attachment?", "wpdiscuz"),
             "wmuPhraseNotAllowedFile"                           => esc_html__("Not allowed file type", "wpdiscuz"),
@@ -1167,6 +1170,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
     }
 
     public function getOptionsForJs() {
+        global $post;
         $jsArgs                                 = [];
         $jsArgs["wc_hide_replies_text"]         = esc_html($this->phrases["wc_hide_replies_text"]);
         $jsArgs["wc_show_replies_text"]         = esc_html($this->phrases["wc_show_replies_text"]);
@@ -1181,6 +1185,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $jsArgs["wc_self_vote"]                 = esc_html($this->phrases["wc_self_vote"]);
         $jsArgs["wc_vote_only_one_time"]        = esc_html($this->phrases["wc_vote_only_one_time"]);
         $jsArgs["wc_voting_error"]              = esc_html($this->phrases["wc_voting_error"]);
+        $jsArgs["wc_banned_user"]               = isset($this->phrases["wc_banned_user"]) ? esc_html($this->phrases["wc_banned_user"]) : esc_html__("You are banned", "wpdiscuz");
         $jsArgs["wc_comment_edit_not_possible"] = esc_html($this->phrases["wc_comment_edit_not_possible"]);
         $jsArgs["wc_comment_not_updated"]       = esc_html($this->phrases["wc_comment_not_updated"]);
         $jsArgs["wc_comment_not_edited"]        = esc_html($this->phrases["wc_comment_not_edited"]);
@@ -1189,6 +1194,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $jsArgs["wc_spoiler_title"]             = esc_html($this->phrases["wc_spoiler_title"]);
         $jsArgs["wc_cannot_rate_again"]         = esc_html($this->phrases["wc_cannot_rate_again"]);
         $jsArgs["wc_not_allowed_to_rate"]       = esc_html($this->phrases["wc_not_allowed_to_rate"]);
+        $jsArgs["wc_confirm_rate_edit"]         = esc_html($this->phrases["wc_confirm_rate_edit"]);
         //<!-- follow phrases
         $jsArgs["wc_follow_user"]               = esc_html($this->phrases["wc_follow_user"]);
         $jsArgs["wc_unfollow_user"]             = esc_html($this->phrases["wc_unfollow_user"]);
@@ -1277,6 +1283,13 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $jsArgs["wmuKeyImages"]            = self::KEY_IMAGES;
         $jsArgs["wmuSingleImageWidth"]     = $this->content["wmuSingleImageWidth"];
         $jsArgs["wmuSingleImageHeight"]    = $this->content["wmuSingleImageHeight"];
+
+        if ($currentUserId = get_current_user_id()) {
+            $jsArgs["isUserRated"] = $this->dbManager->isUserRated($currentUserId, "", $post->ID);
+        } else {
+            $jsArgs["isUserRated"] = $this->dbManager->isUserRated(0, md5(wpDiscuz()->helper->getRealIPAddr()), $post->ID);
+        }
+
         return $jsArgs;
     }
 
@@ -1724,6 +1737,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             $this->phrases["wc_awaiting_for_approval"]                          = sanitize_text_field($_POST["wc_awaiting_for_approval"]);
             $this->phrases["wc_vote_only_one_time"]                             = sanitize_text_field($_POST["wc_vote_only_one_time"]);
             $this->phrases["wc_voting_error"]                                   = sanitize_text_field($_POST["wc_voting_error"]);
+            $this->phrases["wc_banned_user"]                                    = sanitize_text_field($_POST["wc_banned_user"]);
             $this->phrases["wc_self_vote"]                                      = sanitize_text_field($_POST["wc_self_vote"]);
             $this->phrases["wc_deny_voting_from_same_ip"]                       = sanitize_text_field($_POST["wc_deny_voting_from_same_ip"]);
             $this->phrases["wc_login_to_vote"]                                  = sanitize_text_field($_POST["wc_login_to_vote"]);
@@ -1841,6 +1855,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             $this->phrases["wc_spoiler_title"]                                  = sanitize_text_field($_POST["wc_spoiler_title"]);
             $this->phrases["wc_cannot_rate_again"]                              = sanitize_text_field($_POST["wc_cannot_rate_again"]);
             $this->phrases["wc_not_allowed_to_rate"]                            = sanitize_text_field($_POST["wc_not_allowed_to_rate"]);
+            $this->phrases["wc_confirm_rate_edit"]                              = sanitize_text_field($_POST["wc_confirm_rate_edit"]);
             // Media Upload //
             $this->phrases["wmuPhraseConfirmDelete"]  = sanitize_text_field($_POST["wmuPhraseConfirmDelete"]);
             $this->phrases["wmuPhraseNotAllowedFile"] = sanitize_text_field($_POST["wmuPhraseNotAllowedFile"]);

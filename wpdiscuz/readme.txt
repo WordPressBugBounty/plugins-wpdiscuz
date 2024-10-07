@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comment, comments, ajax comments, comment form, comment fields
 Requires at least: 5.0
 Tested up to: 6.6
-Stable tag: 7.6.24
+Stable tag: 7.6.25
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -188,6 +188,15 @@ Nothing will be lost!  **Comments - wpDiscuz** will show all old comments.
 **IMPORTANT!**
 
 Please don't forget delete all caches and purge CDN after the update.
+
+= Comments - wpDiscuz v7.6.25 - 07.10.2024 =
+
+* Added: New function. isBanned() and checking if voter is banned or not
+* Added: New option to enable/disable rates editing
+* Added: New phrase for rate edit confirmation popup
+* Added: Rate edit functionality
+* Added: wpDiscuz icon on the backend and the admin bar menu items
+* Fixed: Vulnerability with WordPress social login
 
 = Comments - wpDiscuz v7.6.24 - 31.08.2024 =
 

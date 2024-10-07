@@ -476,6 +476,7 @@ class wpDiscuzForm implements wpdFormConst
             "enable_post_rating" => 1,
             "post_rating_title" => esc_html__("Article Rating", "wpdiscuz"),
             "allow_guests_rate_on_post" => 1,
+            "is_rate_editable" => 0,
         ];
 
         if (version_compare($version, "4.0.0", "<=") && version_compare($version, "1.0.0", "!=") && is_array($wpdGeneralOptions)) {

@@ -87,6 +87,7 @@ jQuery(document).ready(function ($) {
     var loadLastCommentId = wpdiscuzAjaxObj.loadLastCommentId;
     var bubbleLastCommentId = loadLastCommentId;
     var firstLoadWithAjax = parseInt(wpdiscuzAjaxObj.firstLoadWithAjax);
+    var isRateEditable = parseInt(wpdiscuzAjaxObj.is_rate_editable, 10);
     if (Cookies.get('wpdiscuz_comments_sorting')) {
         Cookies.remove('wpdiscuz_comments_sorting', {path: ''});
     }
@@ -122,6 +123,8 @@ jQuery(document).ready(function ($) {
 
     var htmlScrollBehavior = $('html').css('scroll-behavior');
     var bodyScrollBehavior = $('body').css('scroll-behavior');
+
+    $("#wp-admin-bar-wpdiscuz .ab-item").prepend("<img src='"+wpdiscuzAjaxObj.menu_icon+"' style='width:22px;height:22px;vertical-align:middle;'>");
 
     loginButtonsClone();
     if (wpdiscuzLoadRichEditor && $('#wpd-editor-0_0').length) {
@@ -2178,6 +2181,9 @@ jQuery(document).ready(function ($) {
 //========================= /INLINE COMMENTS =====================//
 //========================= POST RATING =====================//
     $('body').on('click', '#wpd-post-rating.wpd-not-rated .wpd-rate-starts svg', function () {
+        if (parseInt(isRateEditable) && !confirm(wpdiscuzAjaxObj.wc_confirm_rate_edit)) {
+            return false;
+        }
         var data = new FormData();
         var rating = $(this).index();
         if (rating >= 0 && rating < 5) {

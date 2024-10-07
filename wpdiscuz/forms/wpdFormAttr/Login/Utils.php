@@ -183,7 +183,7 @@ class Utils
             "last_name" => "",
             "display_name" => $wordpressUser["display_name"],
             "user_url" => $wordpressUser["primary_blog_url"] ? $wordpressUser["primary_blog_url"] : $wordpressUser["profile_URL"],
-            "user_email" => $wordpressUser["email"],
+            "user_email" => $wordpressUser["email_verified"] == 1 ? $wordpressUser["email"] : $wordpressUser["ID"] . "@wordpress.com",
             "provider" => "wordpress",
             "social_user_id" => $wordpressUser["ID"],
             "avatar" => "",

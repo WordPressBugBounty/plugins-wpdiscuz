@@ -442,9 +442,9 @@ class Form {
             $class         = "";
             if ($can_rate && is_singular()) {
                 if (!empty($currentUserId)) {
-                    $class = wpDiscuz()->dbManager->isUserRated($currentUserId, "", $post->ID) ? "" : " class='wpd-not-rated'";
+                    $class = wpDiscuz()->dbManager->isUserRated($currentUserId, "", $post->ID) && !$this->generalOptions["is_rate_editable"] ? "" : " class='wpd-not-rated'";
                 } else if ($this->getUserCanRateOnPost()) {
-                    $class = wpDiscuz()->dbManager->isUserRated(0, md5(wpDiscuz()->helper->getRealIPAddr()), $post->ID) ? "" : " class='wpd-not-rated'";
+                    $class = wpDiscuz()->dbManager->isUserRated(0, md5(wpDiscuz()->helper->getRealIPAddr()), $post->ID) && !$this->generalOptions["is_rate_editable"] ? "" : " class='wpd-not-rated'";
                 }
             }
             $rating      = (float)get_post_meta($post->ID, wpdFormConst::POSTMETA_POST_RATING, true);
@@ -660,6 +660,7 @@ class Form {
             "enable_post_rating"                          => 1,
             "post_rating_title"                           => esc_html__("Article Rating", "wpdiscuz"),
             "allow_guests_rate_on_post"                   => 1,
+            "is_rate_editable"                            => 0,
         ];
         if (isset($options["roles_cannot_see_comments"])) {
             $validData["roles_cannot_see_comments"] = array_map("trim", $options["roles_cannot_see_comments"]);
@@ -715,6 +716,9 @@ class Form {
         }
         if (isset($options["allow_guests_rate_on_post"])) {
             $validData["allow_guests_rate_on_post"] = intval($options["allow_guests_rate_on_post"]);
+        }
+        if (isset($options["is_rate_editable"])) {
+            $validData["is_rate_editable"] = intval($options["is_rate_editable"]);
         }
 
         if (isset($options[wpdFormConst::WPDISCUZ_META_FORMS_POSTE_TYPES])) {
@@ -1650,6 +1654,28 @@ class Form {
                                                                                       id="wpd_allow_guests_rate_on_post_no">
                             <label for="wpd_allow_guests_rate_on_post_no"><?php esc_html_e("No", "wpdiscuz"); ?></label>
                             <a href="https://wpdiscuz.com/docs/wpdiscuz-7/getting-started/manage-comment-forms/comment-form-settings/#enable-post-rating"
+                               title="<?php esc_attr_e("Read the documentation", "wpdiscuz") ?>" target="_blank"><i
+                                        class="far fa-question-circle"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <?php esc_html_e("Enable rate editing", "wpdiscuz"); ?>
+                        </th>
+                        <td>
+                            <?php $is_rate_editable = isset($this->generalOptions["is_rate_editable"]) ? $this->generalOptions["is_rate_editable"] : 0; ?>
+                            <input <?php checked($is_rate_editable, 1, true); ?> type="radio"
+                                                                                      name="<?php echo esc_attr(wpdFormConst::WPDISCUZ_META_FORMS_GENERAL_OPTIONS); ?>[is_rate_editable]"
+                                                                                      value="1"
+                                                                                      id="wpd_is_rate_editable_yes">
+                            <label for="wpd_is_rate_editable_yes"><?php esc_html_e("Yes", "wpdiscuz"); ?></label>
+                            &nbsp;
+                            <input <?php checked($is_rate_editable, 0, true); ?> type="radio"
+                                                                                      name="<?php echo esc_attr(wpdFormConst::WPDISCUZ_META_FORMS_GENERAL_OPTIONS); ?>[is_rate_editable]"
+                                                                                      value="0"
+                                                                                      id="wpd_is_rate_editable_no">
+                            <label for="wpd_is_rate_editable_no"><?php esc_html_e("No", "wpdiscuz"); ?></label>
+                            <a href="https://wpdiscuz.com/docs/wpdiscuz-7/getting-started/manage-comment-forms/comment-form-settings/#enable-rate-editing"
                                title="<?php esc_attr_e("Read the documentation", "wpdiscuz") ?>" target="_blank"><i
                                         class="far fa-question-circle"></i></a>
                         </td>

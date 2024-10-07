@@ -41,6 +41,12 @@ if (!defined("ABSPATH")) {
                                    name="wc_voting_error" id="wc_voting_error"/></td>
         </tr>
         <tr valign="top">
+            <th scope="row"><label for="wc_banned_user"><?php esc_html_e("You are banned", "wpdiscuz"); ?></label></th>
+            <?php $bannedPhrase = isset($this->phrases["wc_banned_user"]) ? $this->phrases["wc_banned_user"] : __("You are banned", "wpdiscuz"); ?>
+            <td colspan="3"><input type="text" value="<?php echo esc_attr($bannedPhrase); ?>"
+                                   name="wc_banned_user" id="wc_banned_user"/></td>
+        </tr>
+        <tr valign="top">
             <th scope="row"><label
                         for="wc_self_vote"><?php esc_html_e("You Cannot Vote On Your Comment", "wpdiscuz"); ?></label>
             </th>

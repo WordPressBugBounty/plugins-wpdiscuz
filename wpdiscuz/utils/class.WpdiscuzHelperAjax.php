@@ -14,6 +14,9 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants
     private $dbManager;
     private $helper;
     private $helperEmail;
+    /**
+     * @var $wpdiscuzForm wpDiscuzForm
+     */
     private $wpdiscuzForm;
 
     public function __construct($options, $dbManager, $helper, $helperEmail, $wpdiscuzForm)
@@ -640,6 +643,9 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants
     public function voteOnComment()
     {
         $this->helper->validateNonce();
+        if($this->helper->isBanned()){
+            wp_send_json_error("wc_banned_user");
+        }
         $isUserLoggedIn = is_user_logged_in();
         if (!$this->options->thread_layouts["isGuestCanVote"] && !$isUserLoggedIn) {
             wp_send_json_error("wc_login_to_vote");
@@ -852,11 +858,18 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants
         $this->helper->validateNonce();
         $rating = WpdiscuzHelper::sanitize(INPUT_POST, "rating", FILTER_SANITIZE_NUMBER_INT, 0);
         $post_id = WpdiscuzHelper::sanitize(INPUT_POST, "postId", FILTER_SANITIZE_NUMBER_INT, 0);
-        if ($rating && $post_id && ($form = $this->wpdiscuzForm->getForm($post_id))) {
+        /**
+         * @var $form \wpdFormAttr\Form
+         */
+        $form = $this->wpdiscuzForm->getForm($post_id);
+        $form->initFormMeta();
+        $formOptions = $form->getGeneralOptions();
+        if ($rating && $post_id && $form) {
             $currentUser = $this->helper->getCurrentUser();
             if (!empty($currentUser->ID)) {
-                if (!$this->dbManager->isUserRated($currentUser->ID, "", $post_id)) {
-                    $this->dbManager->addRate($post_id, $currentUser->ID, "", $rating, current_time("timestamp"));
+                $rateId = $this->dbManager->isUserRated($currentUser->ID, "", $post_id);
+                if (!$rateId || ($rateId && $formOptions["is_rate_editable"])) {
+                    $this->dbManager->addRate($post_id, $currentUser->ID, "", $rating, current_time("timestamp"), $rateId);
                     $data = $this->dbManager->getPostRatingData($post_id);
                     $votes = 0;
                     foreach ($data as $value) {
@@ -875,8 +888,9 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants
                 }
             } else if ($form->getUserCanRateOnPost()) {
                 $userIp = md5($this->helper->getRealIPAddr());
-                if (!$this->dbManager->isUserRated(0, $userIp, $post_id)) {
-                    $this->dbManager->addRate($post_id, 0, $userIp, $rating, current_time("timestamp"));
+                $rateId = $this->dbManager->isUserRated(0, $userIp, $post_id);
+                if (!$rateId || ($rateId && $formOptions["is_rate_editable"])) {
+                    $this->dbManager->addRate($post_id, 0, $userIp, $rating, current_time("timestamp"), $rateId);
                     $data = $this->dbManager->getPostRatingData($post_id);
                     $votes = 0;
                     foreach ($data as $value) {

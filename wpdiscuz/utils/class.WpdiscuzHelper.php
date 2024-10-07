@@ -869,6 +869,49 @@ class WpdiscuzHelper implements WpDiscuzConstants
         wp_die($html);
     }
 
+    public static function getIP()
+    {
+        $ip = "";
+        if (!empty($_SERVER["HTTP_CLIENT_IP"])) {
+            $ip = $_SERVER["HTTP_CLIENT_IP"];
+        } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        } else {
+            $ip = $_SERVER["REMOTE_ADDR"];
+        }
+        return $ip;
+    }
+
+    public static function isBanned()
+    {
+        $mod_keys = trim( get_option( 'disallowed_keys' ) );
+        if ( '' === $mod_keys ) {
+            return false;
+        }
+
+        $currentUser = wp_get_current_user();
+        $email = '';
+        $ip = self::getIP();
+        if($currentUser->exists()){
+            $email = $currentUser->user_email;
+        }
+
+        $words = explode( "\n", $mod_keys );
+
+        foreach ( (array) $words as $word ) {
+            $word = trim( $word );
+            if ( empty( $word ) ) {
+                continue;
+            }
+            $word = preg_quote( $word, '#' );
+            $pattern = "#$word#iu";
+            if ( preg_match( $pattern, $ip ) || preg_match( $pattern, $email )) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function fixEmailFrom($domain)
     {
         $domain = strtolower($domain);
@@ -1541,7 +1584,7 @@ class WpdiscuzHelper implements WpDiscuzConstants
 
     public function addRatingResetButton($postType, $post)
     {
-        if (!$post) {
+        if (!$post || empty($post->ID)) {
             return;
         }
         $form = $this->wpdiscuzForm->getForm($post->ID);
