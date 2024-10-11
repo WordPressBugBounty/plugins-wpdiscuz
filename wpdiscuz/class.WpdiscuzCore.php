@@ -2,7 +2,7 @@
 /*
  * Plugin Name: wpDiscuz
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.25
+ * Version: 7.6.26
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Plugin URI: https://wpdiscuz.com/
@@ -1124,7 +1124,8 @@ class WpdiscuzCore implements WpDiscuzConstants {
 	 * register options page for plugin
 	 */
 	public function addPluginOptionsPage() {
-		add_menu_page( "wpDiscuz", "wpDiscuz", "manage_options", self::PAGE_WPDISCUZ, "", WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg", 26 );
+        $menuIcon = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyMDQ4IDIwNDgiIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCB0cmFuc2Zvcm09InRyYW5zbGF0ZSg5OTQsMzIwKSIgZD0ibTAgMGg1OGwzNCAyIDQzIDUgMzkgNyAzOCA5IDM0IDEwIDI5IDEwIDMwIDEyIDI2IDEyIDE5IDkgMjIgMTIgMTYgOSAyMSAxMyAyNCAxNiAyOCAyMSAxNyAxNCAxMSA5IDE0IDEzIDggNyA4IDggOCA3IDQgNHYyaDJsNyA4IDEwIDEwIDcgOCAxMiAxNCAxMCAxMiA5IDExIDE0IDE5IDE0IDIwIDEyIDE5IDE5IDMyIDE4IDM1IDEzIDI4IDEzIDMzIDEyIDM2IDcgMjQgOCAzMiA3IDM3IDQgMjcgMyAyOCAyIDQwdjQxbC0yIDQwLTUgNDItNyAzOS03IDMxLTkgMzItMTIgMzYtMTMgMzMtMTUgMzMtMTEgMjItMTMgMjMtMTUgMjUtOCAxMi0xMSAxNi0xNCAxOS0xMSAxNC0xMyAxNi0xMCAxMS03IDgtOSAxMC0zNiAzNi04IDctMTQgMTItMTcgMTQtMTcgMTMtMTEgOC0xNiAxMS0xNSAxMC0xOCAxMS0xNyAxMC0zMiAxNy0yOCAxMy0zMiAxMy0yOCAxMC0yOSA5LTMwIDgtMzggOC0zMyA1LTM3IDQtMzYgMmgtNDJsLTQ5LTMtMzItNC0yNC00LTIzLTUtMzAtNy0zNy0xMS0yOS0xMC0zMC0xMi0yNC0xMS0yMS0xMC05IDItMzAgNy02NyAxNy0yMDEgNTAtNyAxaC0xM2wtMTYtNC0xMS02LTEwLTgtOS0xMS04LTE2LTMtMTkgMy0yMCAzMi0xMjggMTktNzUgMTUtNjAgNS0xOSAyLTExIDItMy0xLTUtMTUtMzEtMTMtMzEtMTMtMzYtMTEtMzctOC0zMi03LTM2LTQtMjctMy0yNi0yLTMydi02M2wzLTQzIDQtMzAgNC0yNCA3LTM0IDgtMzAgOC0yNiA4LTIzIDExLTI4IDEyLTI3IDktMTkgMTAtMTkgMTMtMjMgMTMtMjEgMTItMTggMTItMTcgOS0xMiA4LTEwIDE4LTIyIDEyLTEzIDctOCAxMi0xMyAyMC0yMCA4LTcgMTMtMTIgMTQtMTIgMjUtMjAgMTctMTIgMTQtMTAgMTctMTEgMjgtMTcgMjYtMTQgMjItMTEgMjQtMTEgMjgtMTEgMTktNyAzOS0xMiAzMi04IDE4LTQgMjItNCAyNi00IDI3LTN6bTAgMTI4LTM3IDMtMzQgNS0zNCA3LTM2IDEwLTMyIDExLTI5IDEyLTI5IDE0LTIxIDExLTIyIDEzLTIxIDE0LTE0IDEwLTE2IDEyLTE3IDE0LTIwIDE4LTE1IDE0LTkgOS03IDgtMTQgMTUtOSAxMS0xMyAxNi0xMiAxNy0xOCAyNy05IDE1LTE0IDI1LTE1IDMxLTEzIDMyLTEyIDM1LTEwIDM4LTcgMzUtNCAyOC0zIDQwdjUxbDMgMzggNSAzNiA2IDI5IDggMzEgOCAyNSAxMCAyOCAxMyAzMCA4IDE3IDEwIDE5IDYgMTIgNCAxNXYxNGwtNiAyNi0zMiAxMjgtMTggNzMtMSA2IDIyNS01NiA3LTFoMTdsMTQgNCA0NSAyMyAyOCAxMiAyNCA5IDMwIDEwIDMwIDggMzUgNyAzNyA1IDI0IDIgMjIgMWgzMGwzNC0yIDI3LTMgMjYtNCAzMy03IDI5LTggMzYtMTIgMjctMTEgMjYtMTIgMjUtMTMgMjItMTMgMTktMTIgMTgtMTMgMTYtMTIgMTQtMTEgMTEtMTAgOC03IDEwLTkgMjctMjcgNy04IDktMTAgMTEtMTQgMTItMTUgMTItMTcgOC0xMiAxMy0yMSAxMy0yMyA4LTE2IDExLTIzIDExLTI3IDctMTkgMTAtMzMgOC0zMyA3LTQxIDMtMjcgMi0zNHYtMzVsLTItMzQtNS00MC03LTM2LTctMjgtOS0yOS0xMC0yNy0xMi0yOC0xMC0yMS0xMi0yMi0xMy0yMi0xNi0yNC0xMC0xNC0xMC0xMy05LTExLTExLTEzLTExLTEyLTE0LTE1LTEyLTEyLTgtNy0xMi0xMS0xMS05LTE1LTEyLTE4LTEzLTI3LTE4LTE1LTktMjUtMTQtMzEtMTUtMTktOC0yNC05LTI3LTktMzQtOS0zNS03LTI5LTQtNDAtM3oiIGZpbGw9IiNBQUFEQUUiLz4KPHBhdGggdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzA4LDgwNCkiIGQ9Im0wIDBoMTIxbDIgMiAxNiA4OCAxNyA5MiA5IDUwIDE0IDc1IDMgOSA0LTIzIDE1LTY4IDI3LTEyMyAxOS04NyA0LTE1aDEwNWw2IDI1IDQwIDE4MCAxNyA3NiA2IDI5IDEgNmgxbDE0LTc0IDI0LTEzMiAxOC05OCAzLTEyaDEyMmwtMSA4LTEyIDU3LTI2IDEyMy0yOCAxMzItMjAgOTQtMTkgOTAtMiA3LTIgMWgtMTI2bC0zLTktMTItNTAtMzItMTM2LTE4LTc3LTQtMTUtMS0xLTUgMjUtMjAgODctMTQgNjEtMjAgODctNiAyNi0zIDJoLTEyNWwtMi0zLTIyLTEwMy0xNi03NS0yNy0xMjctMTMtNjEtMjAtOTQtOS00MnoiIGZpbGw9IiNBQUFEQUUiLz4KPC9zdmc+Cg==";
+		add_menu_page( "wpDiscuz", "wpDiscuz", "manage_options", self::PAGE_WPDISCUZ, "", $menuIcon, 26 );
 		add_submenu_page( self::PAGE_WPDISCUZ, "&raquo; " . esc_html__( "Dashboard", "wpdiscuz" ), "&raquo; " . esc_html__( "Dashboard", "wpdiscuz" ), "manage_options", self::PAGE_WPDISCUZ, [
 			&$this->options,
 			"dashboard"
@@ -1148,7 +1149,10 @@ class WpdiscuzCore implements WpDiscuzConstants {
 	}
 
     public function addInlineStyle() {
-        echo "<style>#toplevel_page_wpdiscuz .wp-menu-image img{width:24px;height:24px;}</style>";
+        echo "<style>
+                #toplevel_page_wpdiscuz .wp-menu-image img{width:24px;height:24px;padding:0;}
+                #toplevel_page_wpdiscuz .wp-menu-image.dashicons-before{display:flex;justify-content:center;align-items:center;}
+              </style>";
     }
 
 	/**
@@ -1281,6 +1285,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
 		}
 		if ( $this->isWpdiscuzLoaded ) {
 			$this->form = $this->wpdiscuzForm->getForm( $post->ID );
+            $formGeneralOptions = $this->form->getGeneralOptions();
 			$this->form->initFormMeta();
 			$this->wpdiscuzOptionsJs                      = $this->options->getOptionsForJs();
 			$this->wpdiscuzOptionsJs["version"]           = $this->version;
@@ -1300,8 +1305,9 @@ class WpdiscuzCore implements WpDiscuzConstants {
 			$this->wpdiscuzOptionsJs["customAjaxUrl"]       = plugins_url( WPDISCUZ_DIR_NAME . "/utils/ajax/wpdiscuz-ajax.php" );
 			$this->wpdiscuzOptionsJs["bubbleUpdateUrl"]     = rest_url( "wpdiscuz/v1/update" );
 			$this->wpdiscuzOptionsJs["restNonce"]           = wp_create_nonce( "wp_rest" );
-			$this->wpdiscuzOptionsJs["is_rate_editable"]    = $this->form->getGeneralOptions()["is_rate_editable"];
+			$this->wpdiscuzOptionsJs["is_rate_editable"]    = isset($formGeneralOptions["is_rate_editable"]) ? $formGeneralOptions["is_rate_editable"] : 0;
 			$this->wpdiscuzOptionsJs["menu_icon"]           = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg";
+			$this->wpdiscuzOptionsJs["menu_icon_hover"]     = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg_hover.svg";
 			$loadQuill                                      = $this->options->form["richEditor"] === "both" || ( ! wp_is_mobile() && $this->options->form["richEditor"] === "desktop" );
 			$customCSSSlug                                  = "wpdiscuz-frontend-custom-css";
 			$customFileName                                 = "style-custom";
