@@ -2174,7 +2174,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
     }
 
     public function isShowLoginButtons() {
-        return $this->social["enableFbLogin"] || $this->social["enableTwitterLogin"] || $this->social["enableGoogleLogin"] || $this->social["enableTelegramLogin"] || $this->social["enableDisqusLogin"] || $this->social["enableWordpressLogin"] || $this->social["enableVkLogin"] || $this->social["enableOkLogin"] || $this->social["enableInstagramLogin"] || $this->social["enableLinkedinLogin"] || $this->social["enableYandexLogin"] || $this->social["enableMailruLogin"] || $this->social["enableWeiboLogin"] || $this->social["enableWechatLogin"] || $this->social["enableQQLogin"] || $this->social["enableBaiduLogin"];
+        return get_option('users_can_register') && ($this->social["enableFbLogin"] || $this->social["enableTwitterLogin"] || $this->social["enableGoogleLogin"] || $this->social["enableTelegramLogin"] || $this->social["enableDisqusLogin"] || $this->social["enableWordpressLogin"] || $this->social["enableVkLogin"] || $this->social["enableOkLogin"] || $this->social["enableInstagramLogin"] || $this->social["enableLinkedinLogin"] || $this->social["enableYandexLogin"] || $this->social["enableMailruLogin"] || $this->social["enableWeiboLogin"] || $this->social["enableWechatLogin"] || $this->social["enableQQLogin"] || $this->social["enableBaiduLogin"]);
     }
 
     public function showEditorToolbar() {

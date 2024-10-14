@@ -18,6 +18,16 @@ if (!defined("ABSPATH")) {
     </div>
 </div>
 <!-- Option end -->
+<?php if(!get_option( 'users_can_register' )){?>
+<!-- Option start -->
+<div class="wpd-opt-row" data-wpd-opt="socialLoginAgreementCheckbox">
+    <div>
+        <p class="wpd-desc" style="color: red"><?php _e("To use social login, you must enable the 'Anyone can register' option. Please navigate to Settings -> General in your dashboard. Scroll down until you see the option that reads Membership. Tick the Anyone can register box.", "wpdiscuz");?></p>
+    </div>
+</div>
+<!-- Option end -->
+<?php }?>
+
 
 <!-- Option start -->
 <div class="wpd-opt-row" data-wpd-opt="socialLoginAgreementCheckbox">

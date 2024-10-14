@@ -440,11 +440,12 @@ class Form {
             global $post;
             $currentUserId = get_current_user_id();
             $class         = "";
+            $isRateEditable = empty($this->generalOptions["is_rate_editable"]) ? 0 : (int)$this->generalOptions["is_rate_editable"];
             if ($can_rate && is_singular()) {
                 if (!empty($currentUserId)) {
-                    $class = wpDiscuz()->dbManager->isUserRated($currentUserId, "", $post->ID) && !$this->generalOptions["is_rate_editable"] ? "" : " class='wpd-not-rated'";
+                    $class = wpDiscuz()->dbManager->isUserRated($currentUserId, "", $post->ID) && !$isRateEditable ? "" : " class='wpd-not-rated'";
                 } else if ($this->getUserCanRateOnPost()) {
-                    $class = wpDiscuz()->dbManager->isUserRated(0, md5(wpDiscuz()->helper->getRealIPAddr()), $post->ID) && !$this->generalOptions["is_rate_editable"] ? "" : " class='wpd-not-rated'";
+                    $class = wpDiscuz()->dbManager->isUserRated(0, md5(wpDiscuz()->helper->getRealIPAddr()), $post->ID) && !$isRateEditable ? "" : " class='wpd-not-rated'";
                 }
             }
             $rating      = (float)get_post_meta($post->ID, wpdFormConst::POSTMETA_POST_RATING, true);

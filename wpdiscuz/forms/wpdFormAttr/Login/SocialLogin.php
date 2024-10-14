@@ -42,6 +42,9 @@ class SocialLogin
 
     public function login()
     {
+        if(!get_option( 'users_can_register' )){
+            return;
+        }
         $postID = Sanitizer::sanitize(INPUT_POST, "postID", FILTER_SANITIZE_NUMBER_INT);
         $provider = Sanitizer::sanitize(INPUT_POST, "provider", "FILTER_SANITIZE_STRING");
         $token = Sanitizer::sanitize(INPUT_POST, "token", "FILTER_SANITIZE_STRING");
@@ -92,6 +95,9 @@ class SocialLogin
 
     public function loginCallBack()
     {
+        if(!get_option( 'users_can_register' )){
+            return;
+        }
         $this->deleteCookie();
         $provider = Sanitizer::sanitize(INPUT_GET, "provider", "FILTER_SANITIZE_STRING") ? Sanitizer::sanitize(INPUT_GET, "provider", "FILTER_SANITIZE_STRING") : Sanitizer::sanitize(INPUT_POST, "provider", "FILTER_SANITIZE_STRING");
         if ($provider === "facebook") {
