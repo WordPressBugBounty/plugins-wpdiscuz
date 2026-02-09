@@ -2,7 +2,7 @@
 /*
  * Plugin Name: wpDiscuz
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.45
+ * Version: 7.6.46
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Plugin URI: https://wpdiscuz.com/
@@ -1345,7 +1345,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
             $this->wpdiscuzOptionsJs["is_rate_editable"]      = isset($formGeneralOptions["is_rate_editable"]) ? $formGeneralOptions["is_rate_editable"] : 0;
             $this->wpdiscuzOptionsJs["menu_icon"]             = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg";
             $this->wpdiscuzOptionsJs["menu_icon_hover"]       = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg_hover.svg";
-            $this->wpdiscuzOptionsJs["validateNonceForGuest"] = apply_filters('wpdiscuz_validate_nonce_for_guests', true);
+            $this->wpdiscuzOptionsJs["isUpdateNonceWithAjax"] = apply_filters("wpdiscuz_is_update_nonce_with_ajax", false, WpdiscuzHelper::getCurrentUser());
             $this->wpdiscuzOptionsJs                          = apply_filters("wpdiscuz_js_options", $this->wpdiscuzOptionsJs, $this->options);
             $loadQuill                                        = $this->options->form["richEditor"] === "both" || (!wp_is_mobile() && $this->options->form["richEditor"] === "desktop");
             $customCSSSlug                                    = "wpdiscuz-frontend-custom-css";
