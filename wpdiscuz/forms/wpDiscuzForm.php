@@ -351,7 +351,7 @@ class wpDiscuzForm implements wpdFormConst {
         global $post;
         $cssMeta = get_post_meta($post->ID, self::WPDISCUZ_META_FORMS_CSS, true);
         $css     = $cssMeta ? $cssMeta : "";
-        echo "<textarea style='width:100%;' name='" . esc_attr(self::WPDISCUZ_META_FORMS_CSS) . "' class='" . esc_attr(self::WPDISCUZ_META_FORMS_CSS) . "'>" . wp_kses_post($css) . "</textarea>";
+        echo "<textarea style='width:100%;' name='" . esc_attr(self::WPDISCUZ_META_FORMS_CSS) . "' class='" . esc_attr(self::WPDISCUZ_META_FORMS_CSS) . "'>" . wp_strip_all_tags($css) . "</textarea>";
     }
 
     public function transferJSData($data) {

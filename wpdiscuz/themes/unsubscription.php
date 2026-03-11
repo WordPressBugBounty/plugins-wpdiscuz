@@ -23,13 +23,26 @@ if (wp_is_block_theme()) {
     do_action("wpdiscuz_subscription_template_before");
     ?>
     <div style="margin: 0 auto; padding: 50px 0; max-width:800px" class="wpdc-unsubscription-main">
-        <h2 class="wpdc-unsubscription-message">
-            <?php
-            global $wpDiscuzSubscriptionMessage;
-            $wpdiscuz = wpDiscuz();
-            esc_html_e($wpDiscuzSubscriptionMessage);
+        <?php
+        global $wpDiscuzSubscriptionMessage, $wpDiscuzSubscriptionKey, $wpDiscuzSubscriptionAction;
+        $wpdiscuz = wpDiscuz();
+        add_filter("is_load_wpdiscuz", '__return_true');
+        $wpdiscuz->helper->setNonceInCookies(2, false);
+        if ($wpDiscuzSubscriptionKey) {
+            echo '<h2 class="wpdc-unsubscription-message">' . esc_html__('Do you want to delete', 'wpdiscuz') . ' ' . esc_html($wpDiscuzSubscriptionMessage) . '?</h2>';
             ?>
-        </h2><br>
+            <div class="wpdc-unsubscription-actions" style="text-align: center; padding: 20px;">
+                <button type="button" id="wpdc-unsubscription-delete-button" class="wpdc-unsubscription-delete" data-action="<?php esc_attr_e($wpDiscuzSubscriptionAction, 'wpdiscuz'); ?>"
+                        data-key="<?php esc_attr_e($wpDiscuzSubscriptionKey, 'wpdiscuz'); ?>">
+                    <?php esc_html_e('Delete', 'wpdiscuz'); ?>
+                </button>
+            </div>
+            <?php
+        } else {
+            echo '<h2 class="wpdc-unsubscription-message">' . esc_html($wpDiscuzSubscriptionMessage) . '</h2>';
+        }
+        ?>
+        <br>
         <?php
         $currentUser = WpdiscuzHelper::getCurrentUser();
         $userEmail   = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : "";
@@ -50,6 +63,33 @@ if (wp_is_block_theme()) {
             </div>
         <?php } ?>
     </div>
+    <script>
+        document.getElementById("wpdc-unsubscription-delete-button").addEventListener("click", async function () {
+            try {
+                const wpdcUnsubscriptionAction = this.getAttribute("data-action");
+                const wpdcUnsubscriptionKey = this.getAttribute("data-key");
+                const wpdcUnsubscriptionDeleteUrl = '<?php echo admin_url('admin-ajax.php'); ?>';
+
+                const wpdcUnsubscriptionData = new FormData();
+                wpdcUnsubscriptionData.append('action', 'wpdiscuzDeleteDataWithEmail');
+                wpdcUnsubscriptionData.append('unsubscription_action', wpdcUnsubscriptionAction);
+                wpdcUnsubscriptionData.append('unsubscription_key', wpdcUnsubscriptionKey);
+
+                const wpdcUnsubscriptionDeleteResponse = await fetch(wpdcUnsubscriptionDeleteUrl, {
+                    method: 'POST',
+                    body: wpdcUnsubscriptionData,
+                });
+                const wpdcUnsubscriptionResponseData = await wpdcUnsubscriptionDeleteResponse.json();
+                console.log(wpdcUnsubscriptionResponseData);
+                if (wpdcUnsubscriptionResponseData.success) {
+                    this.style.display = 'none';
+                }
+                document.querySelector('.wpdc-unsubscription-message').innerHTML = wpdcUnsubscriptionResponseData.data.message;
+            } catch (e) {
+                console.error(e);
+            }
+        })
+    </script>
     <?php
     do_action("wpdiscuz_subscription_template_after");
     if (wp_is_block_theme()) {

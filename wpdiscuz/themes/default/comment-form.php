@@ -45,7 +45,7 @@ if (!post_password_required($post->ID) && $load) {
     $wpdiscuz->helper->superSocializerFix();
     if ($commentsOpen) {
         if ($formCustomCss = $form->getCustomCSS()) {
-            echo "<style type='text/css'>" . $formCustomCss . "</style>";
+            echo "<style>" . wp_strip_all_tags($formCustomCss) . "</style>";
         }
     } else {
         do_action("comment_form_closed");

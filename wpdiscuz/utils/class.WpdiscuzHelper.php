@@ -65,7 +65,9 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         add_action("add_meta_boxes", [&$this, "addRatingResetButton"], 10, 2);
 
         add_filter("nonce_life", [&$this, "setNonceLife"], 15, 2);
-        add_action("wpdiscuz_init", [&$this, "setNonceInCookies"]);
+        add_action("wpdiscuz_init", function () {
+            add_action("wp", [&$this, "setNonceInCookies"]);
+        });
 
         add_action("save_post", [$this, "updatePostAuthorsTrs"]);
 
@@ -197,6 +199,11 @@ class WpdiscuzHelper implements WpDiscuzConstants {
 
     public function setNonceInCookies($timeDependent = 2, $checkNonce = true) {
         if (headers_sent()) {
+            return;
+        }
+
+        global $post;
+        if (!$this->isLoadWpdiscuz($post)) {
             return;
         }
 
@@ -587,17 +594,41 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         return $html;
     }
 
+
+    /**
+     * @param $comment WP_Comment
+     * @param $currentUser WP_User
+     * @param $commentListArgs array
+     * @return bool
+     */
     public function canUserEditComment($comment, $currentUser, $commentListArgs = []) {
         if (!($comment instanceof WP_Comment)) {
             return false;
         }
+
+        $isThreadEditable = $this->options->moderation["enableEditingWhenHaveReplies"];
+        $hasReplies       = (bool)get_comments([
+            'parent'  => $comment->comment_ID,
+            'post_id' => $comment->comment_post_ID,
+            'count'   => true,
+            'number'  => 1,
+        ]);
+
+        if (!$isThreadEditable && $hasReplies) {
+            return false;
+        }
+
+        if (!empty($currentUser->ID)) {
+            return $currentUser->ID === (int)$comment->user_id;
+        }
+
         if (isset($commentListArgs["comment_author_email"])) {
             $storedCookieEmail = $commentListArgs["comment_author_email"];
         } else {
             $storedCookieEmail = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? sanitize_email($_COOKIE["comment_author_email_" . COOKIEHASH]) : "";
         }
 
-        return !(!$this->options->moderation["enableEditingWhenHaveReplies"] && $comment->get_children(["post_id" => $comment->comment_post_ID])) && (($storedCookieEmail === $comment->comment_author_email && $_SERVER["REMOTE_ADDR"] === $comment->comment_author_IP) || ($currentUser && $currentUser->ID && $currentUser->ID == $comment->user_id));
+        return ($storedCookieEmail === $comment->comment_author_email && self::getIP() === $comment->comment_author_IP);
     }
 
     public function addCommentTypes($args) {
@@ -880,6 +911,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     }
 
     public function getFollowsPage() {
+        $this->validateNonce();
         ob_start();
         include_once WPDISCUZ_DIR_PATH . "/utils/layouts/follows/follows-page.php";
         $html = ob_get_clean();
@@ -887,15 +919,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     }
 
     public static function getIP() {
-        $ip = "";
-        if (!empty($_SERVER["HTTP_CLIENT_IP"])) {
-            $ip = $_SERVER["HTTP_CLIENT_IP"];
-        } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-            $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-        } else {
-            $ip = $_SERVER["REMOTE_ADDR"];
-        }
-        return $ip;
+        return $_SERVER["REMOTE_ADDR"] ?? "0.0.0.0";
     }
 
     public static function isBanned() {
@@ -1949,7 +1973,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         <?php
         do_action("wpdiscuz_dynamic_css", $this->options);
         if ($this->options->thread_styles["theme"] !== "wpd-minimal") {
-            echo stripslashes($this->options->thread_styles["customCss"]);
+            echo stripslashes(wp_strip_all_tags($this->options->thread_styles["customCss"]));
         }
         $css = ob_get_clean();
         /* xMinfy Star ********************************************************* */

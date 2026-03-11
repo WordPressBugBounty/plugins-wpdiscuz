@@ -20,7 +20,7 @@ if (!defined("ABSPATH")) {
         </div>
         <div class="wpd-dash-head-right">
             <img src="<?php echo plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/wpdiscuz-7-logo.png"); ?>"/>
-            <span class="wpd-version"><?php echo "7.0.0" ?></span>
+            <span class="wpd-version"><?php echo WpdiscuzCore::getVersion(); ?></span>
         </div>
     </div>
     <?php do_action("wpdiscuz_option_page"); ?>

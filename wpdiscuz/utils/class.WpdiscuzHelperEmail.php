@@ -30,6 +30,8 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         add_action("wp_ajax_nopriv_wpdAddSubscription", [&$this, "addSubscription"]);
         add_action("wp_ajax_wpdCheckNotificationType", [&$this, "checkNotificationType"]);
         add_action("wp_ajax_nopriv_wpdCheckNotificationType", [&$this, "checkNotificationType"]);
+        add_action("wp_ajax_wpdiscuzDeleteDataWithEmail", [&$this, "deleteDataWithEmail"]);
+        add_action("wp_ajax_nopriv_wpdiscuzDeleteDataWithEmail", [&$this, "deleteDataWithEmail"]);
         add_action("comment_post", [&$this, "notificationFromDashboard"], 10, 2);
         add_filter("template_include", [&$this, "subscriptionRequestsActions"]);
         add_filter("query_vars", [&$this, "addQueryVars"]);
@@ -56,47 +58,46 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
     }
 
     public function subscriptionRequestsActions($template) {
-        global $wpDiscuzSubscriptionMessage;
+        global $wpDiscuzSubscriptionMessage, $wpDiscuzSubscriptionKey, $wpDiscuzSubscriptionAction;
+        $allowedActions              = [
+            "confirm",
+            "unsubscribe",
+            "follow",
+            "bulkmanagement"
+        ];
+        $allowedDeleteActions        = ["deletecomments", "deletesubscriptions", "deletefollows"];
         $wpDiscuzSubscriptionMessage = "";
-        $action                      = get_query_var("wpdiscuzsubscription");
-        if (!$action) {
+        $wpDiscuzSubscriptionKey     = "";
+        $wpDiscuzSubscriptionAction  = "";
+        $wpDiscuzSubscriptionAction  = get_query_var("wpdiscuzsubscription");
+
+        if (!(in_array($wpDiscuzSubscriptionAction, $allowedActions) || in_array($wpDiscuzSubscriptionAction, $allowedDeleteActions))) {
             return $template;
         }
 
-        if ($action === "confirm" && isset($_GET["wpdiscuzConfirmID"]) && isset($_GET["wpdiscuzConfirmKey"]) && isset($_GET["wpDiscuzComfirm"])) {
+        if (isset($_GET["key"]) && in_array($wpDiscuzSubscriptionAction, $allowedDeleteActions)) {
+            $wpDiscuzSubscriptionKey = sanitize_text_field(trim($_GET["key"]));
+        }
+
+
+        $rateLimitResult = $this->helper->checkRateLimit('subscription_requests', 20, MINUTE_IN_SECONDS);
+        if (is_wp_error($rateLimitResult)) {
+            wp_send_json_error($rateLimitResult->get_error_code());
+        }
+
+        if ($wpDiscuzSubscriptionAction === "confirm" && isset($_GET["wpdiscuzConfirmID"]) && isset($_GET["wpdiscuzConfirmKey"]) && isset($_GET["wpDiscuzComfirm"])) {
             $this->dbManager->notificationConfirm(sanitize_text_field($_GET["wpdiscuzConfirmID"]), sanitize_text_field($_GET["wpdiscuzConfirmKey"]));
             $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_comfirm_success_message");
-        } else if ($action === "unsubscribe" && isset($_GET["wpdiscuzSubscribeID"]) && isset($_GET["key"])) {
+        } else if ($wpDiscuzSubscriptionAction === "unsubscribe" && isset($_GET["wpdiscuzSubscribeID"]) && isset($_GET["key"])) {
             $this->dbManager->unsubscribe(sanitize_text_field($_GET["wpdiscuzSubscribeID"]), sanitize_text_field($_GET["key"]));
             $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_unsubscribe_message");
-        } else if ($action === "deletecomments" && isset($_GET["key"])) {
-            $decodedEmail = get_transient(self::TRS_USER_HASH . trim(sanitize_text_field($_GET["key"])));
-            if ($decodedEmail) {
-                $comments = get_comments(["author_email" => $decodedEmail, "status" => "all", "fields" => "ids"]);
-                if ($comments) {
-                    foreach ($comments as $k => $cid) {
-                        wp_delete_comment($cid, true);
-                    }
-                }
-                $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_comments_are_deleted");
-            }
-        } else if ($action === "deletesubscriptions" && isset($_GET["key"])) {
-
-            $decodedEmail = get_transient(self::TRS_USER_HASH . trim(sanitize_text_field($_GET["key"])));
-            if ($decodedEmail) {
-                $this->dbManager->unsubscribeByEmail($decodedEmail);
-            }
-
-            $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_cancel_subs_success");
-        } else if ($action === "deletefollows" && isset($_GET["key"])) {
-
-            $decodedEmail = get_transient(self::TRS_USER_HASH . trim(sanitize_text_field($_GET["key"])));
-            if ($decodedEmail) {
-                $this->dbManager->unfollowByEmail($decodedEmail);
-            }
-
-            $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_cancel_follows_success");
-        } else if ($action === "follow") {
+        } else if ($wpDiscuzSubscriptionAction === "deletecomments" && $wpDiscuzSubscriptionKey) {
+            $wpDiscuzSubscriptionMessage = __("comments", "wpdiscuz");
+        } else if ($wpDiscuzSubscriptionAction === "deletesubscriptions" && $wpDiscuzSubscriptionKey) {
+            $wpDiscuzSubscriptionMessage = __("subscriptions", "wpdiscuz");
+        } else if ($wpDiscuzSubscriptionAction === "deletefollows" && $wpDiscuzSubscriptionKey) {
+            $wpDiscuzSubscriptionMessage = __("follows", "wpdiscuz");
+        } else if ($wpDiscuzSubscriptionAction === "follow") {
             if (isset($_GET["wpdiscuzFollowID"]) && isset($_GET["wpdiscuzFollowKey"]) && isset($_GET["wpDiscuzComfirm"])) {
                 if ($_GET["wpDiscuzComfirm"]) {
                     $this->dbManager->confirmFollow(sanitize_text_field($_GET["wpdiscuzFollowID"]), sanitize_text_field($_GET["wpdiscuzFollowKey"]));
@@ -106,7 +107,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
                     $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_follow_cancel_success");
                 }
             }
-        } else if ($action === "bulkmanagement") {
+        } else if ($wpDiscuzSubscriptionAction === "bulkmanagement") {
             $wpDiscuzSubscriptionMessage = esc_html__("Something is wrong.", "wpdiscuz");
             if ($this->emailDeleteLinks()) {
                 $wpDiscuzSubscriptionMessage = esc_html__("Email sent successfully.", "wpdiscuz");
@@ -115,7 +116,37 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
             return $template;
         }
 
-        return apply_filters("wpdiscuz_subscription_template_path", WPDISCUZ_DIR_PATH . "/themes/unsubscription.php", $wpDiscuzSubscriptionMessage);
+        return apply_filters("wpdiscuz_subscription_template_path", WPDISCUZ_DIR_PATH . "/themes/unsubscription.php", $wpDiscuzSubscriptionMessage, $wpDiscuzSubscriptionKey, $wpDiscuzSubscriptionAction);
+    }
+
+    public function deleteDataWithEmail() {
+        $this->helper->validateNonce();
+        $action  = WpdiscuzHelper::sanitize(INPUT_POST, "unsubscription_action", "FILTER_SANITIZE_STRING");
+        $key     = WpdiscuzHelper::sanitize(INPUT_POST, "unsubscription_key", "FILTER_SANITIZE_STRING");
+        $message = __("Invalid Key or Action.", "wpdiscuz");
+        if (!$key || !$action) {
+            wp_send_json_error(['message' => $message]);
+        }
+        $decodedEmail = get_transient(self::TRS_USER_HASH . trim($key));
+        if (!$decodedEmail || filter_var($decodedEmail, FILTER_VALIDATE_EMAIL) === false) {
+            wp_send_json_error(['message' => $message]);
+        }
+        if ($action === "deletecomments") {
+            $comments = get_comments(["author_email" => $decodedEmail, "status" => "all", "fields" => "ids"]);
+            if ($comments) {
+                foreach ($comments as $cid) {
+                    wp_delete_comment($cid);
+                }
+            }
+            $message = $this->options->getPhrase("wc_comments_are_deleted");
+        } else if ($action === "deletesubscriptions") {
+            $this->dbManager->unsubscribeByEmail($decodedEmail);
+            $message = $this->options->getPhrase("wc_cancel_subs_success");
+        } else if ($action === "deletefollows") {
+            $this->dbManager->unfollowByEmail($decodedEmail);
+            $message = $this->options->getPhrase("wc_cancel_follows_success");
+        }
+        wp_send_json_success(['message' => $message]);
     }
 
     private function sendBulkManagementEmail() {
@@ -172,7 +203,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
             $currentUserEmail = $currentUser->user_email;
             $isGuest          = false;
         } else {
-            $currentUserEmail = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : "";
+            $currentUserEmail = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? sanitize_email($_COOKIE["comment_author_email_" . COOKIEHASH]) : "";
         }
 
 
@@ -224,7 +255,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         $subject   = html_entity_decode($subject, ENT_QUOTES);
         $message   = html_entity_decode($message, ENT_QUOTES);
 
-        return wp_mail($email, $subject, do_shortcode($message), $headers);
+        return wp_mail($email, $subject, $message, $headers);
     }
 
     public function generateUserActionHash($email) {
@@ -357,7 +388,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         $subject   = html_entity_decode($subject, ENT_QUOTES);
         $message   = html_entity_decode($message, ENT_QUOTES);
 
-        return wp_mail($email, $subject, do_shortcode($message), $headers);
+        return wp_mail($email, $subject, $message, $headers);
     }
 
     /**
@@ -416,7 +447,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
             $subscriber,
             urldecode_deep(get_comment_link($commentId)),
             $commentAuthor,
-            wpautop($comment->comment_content)
+            wpautop(strip_shortcodes($comment->comment_content))
         ];
 
         $subject = str_replace(["[BLOG_TITLE]", "[POST_TITLE]", "[COMMENT_AUTHOR]"], [
@@ -446,40 +477,102 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         $headers[] = "From: " . $fromName . " <" . $fromEmail . "> \r\n";
         $subject   = html_entity_decode($subject, ENT_QUOTES);
         $message   = html_entity_decode($message, ENT_QUOTES);
-        wp_mail($email, $subject, do_shortcode($message), $headers, $attachments);
+        wp_mail($email, $subject, $message, $headers, $attachments);
     }
 
     /**
      * Check notification type and send email to post new comments subscribers
      */
     public function checkNotificationType() {
-        $postId = WpdiscuzHelper::sanitize(INPUT_POST, "postId", FILTER_SANITIZE_NUMBER_INT, 0);;
-        $commentId   = WpdiscuzHelper::sanitize(INPUT_POST, "comment_id", FILTER_SANITIZE_NUMBER_INT, 0);
+        $this->helper->validateNonce();
+        $postId = (int)WpdiscuzHelper::sanitize(INPUT_POST, "postId", FILTER_SANITIZE_NUMBER_INT, 0);;
+        $commentId   = (int)WpdiscuzHelper::sanitize(INPUT_POST, "comment_id", FILTER_SANITIZE_NUMBER_INT, 0);
         $email       = isset($_POST["email"]) ? sanitize_email(trim($_POST["email"])) : "";
         $isParent    = WpdiscuzHelper::sanitize(INPUT_POST, "isParent", "FILTER_SANITIZE_STRING");
         $currentUser = WpdiscuzHelper::getCurrentUser();
         if ($currentUser && $currentUser->user_email) {
             $email = $currentUser->user_email;
         }
-        if ($commentId && $postId && ($comment = get_comment($commentId))) {
-            $post = get_post($comment->comment_post_ID);
-            WpdiscuzHelper::validatePostAccess($post);
-            if (apply_filters("wpdiscuz_enable_user_mentioning", $this->options->subscription["enableUserMentioning"]) && $this->options->subscription["sendMailToMentionedUsers"] && ($mentionedUsers = $this->helper->getMentionedUsers($comment->comment_content))) {
-                $this->sendMailToMentionedUsers($mentionedUsers, $comment);
-            }
-            do_action("wpdiscuz_before_sending_emails", $commentId, $comment);
-            $this->notifyPostSubscribers($postId, $commentId, $email);
-            $this->notifyFollowers($postId, $commentId, $email);
-            if (!$isParent) {
-                $parentCommentId    = $comment->comment_parent;
-                $parentComment      = get_comment($parentCommentId);
-                $parentCommentEmail = $parentComment->comment_author_email;
-                $this->notifyAllCommentSubscribers($postId, $commentId, $email);
-                if ($parentCommentEmail !== $email) {
-                    $this->notifyCommentSubscribers($parentCommentId, $comment->comment_ID, $email);
-                }
+
+        // ----- POST VALIDATION -----
+        $post = get_post($postId);
+
+        if (!($post instanceof WP_Post)) {
+            wp_send_json([
+                "success" => false,
+                "message" => __("Post does not exist", "wpdiscuz"),
+                "code"    => "wc_msg_post_not_found",
+            ]);
+        }
+
+        if (!WpdiscuzHelper::canCurrentUserAccessPost($post)) {
+            wp_send_json([
+                "success" => false,
+                "message" => __("You do not have access to this post", "wpdiscuz"),
+                "code"    => "wc_msg_post_no_access"
+            ]);
+        }
+
+        // ----- COMMENT VALIDATION -----
+        $comment   = get_comment($commentId);
+        $commentIp = WpdiscuzHelper::getIp();
+
+        if (!($comment instanceof WP_Comment)) {
+            wp_send_json([
+                "success" => false,
+                "message" => __("The comment does not exist", "wpdiscuz"),
+                "code"    => "wc_msg_comment_not_found"
+            ]);
+        }
+
+        if ((int)$comment->comment_post_ID !== $postId) {
+            wp_send_json([
+                "success" => false,
+                "message" => __("The comment does not belong to this post", "wpdiscuz"),
+                "code"    => "wc_msg_comment_wrong_post"
+            ]);
+        }
+
+        if ($comment->comment_approved !== "1") {
+            wp_send_json([
+                "success" => false,
+                "message" => __("The comment is not publicly accessible", "wpdiscuz"),
+                "code"    => "wc_msg_comment_is_not_accessible"
+            ]);
+        }
+
+        if ($comment->comment_author_email !== $email) {
+            wp_send_json([
+                "success" => false,
+                "message" => __("Email does not match comment author", "wpdiscuz"),
+                "code"    => "wc_msg_email_mismatch"
+            ]);
+        }
+
+        if ($comment->comment_author_IP !== $commentIp) {
+            wp_send_json([
+                "success" => false,
+                "message" => __("IP does not match comment author", "wpdiscuz"),
+                "code"    => "wc_msg_ip_mismatch"
+            ]);
+        }
+
+        if (apply_filters("wpdiscuz_enable_user_mentioning", $this->options->subscription["enableUserMentioning"]) && $this->options->subscription["sendMailToMentionedUsers"] && ($mentionedUsers = $this->helper->getMentionedUsers($comment->comment_content))) {
+            $this->sendMailToMentionedUsers($mentionedUsers, $comment);
+        }
+        do_action("wpdiscuz_before_sending_emails", $commentId, $comment);
+        $this->notifyPostSubscribers($postId, $commentId, $email);
+        $this->notifyFollowers($postId, $commentId, $email);
+        if (!$isParent) {
+            $parentCommentId    = $comment->comment_parent;
+            $parentComment      = get_comment($parentCommentId);
+            $parentCommentEmail = $parentComment->comment_author_email;
+            $this->notifyAllCommentSubscribers($postId, $commentId, $email);
+            if ($parentCommentEmail !== $email) {
+                $this->notifyCommentSubscribers($parentCommentId, $comment->comment_ID, $email);
             }
         }
+
         wp_die();
     }
 
@@ -665,7 +758,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
                         $postTitle,
                         urldecode_deep(get_comment_link($comment->comment_ID)),
                         $comment->comment_author,
-                        wpautop($comment->comment_content)
+                        wpautop(strip_shortcodes($comment->comment_content))
                     ];
 
                     $subject = $this->options->subscription["emailSubjectCommentApproved"];
@@ -694,7 +787,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
                     $headers[] = "From: " . $fromName . " <" . $fromEmail . "> \r\n";
                     $subject   = html_entity_decode($subject, ENT_QUOTES);
                     $message   = html_entity_decode($message, ENT_QUOTES);
-                    wp_mail($email, $subject, do_shortcode($message), $headers, $attachments);
+                    wp_mail($email, $subject, $message, $headers, $attachments);
                 }
             }
         }
@@ -743,7 +836,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         $subject   = html_entity_decode($subject, ENT_QUOTES);
         $message   = html_entity_decode($message, ENT_QUOTES);
 
-        return wp_mail($email, $subject, do_shortcode($message), $headers);
+        return wp_mail($email, $subject, $message, $headers);
     }
 
     public function notifyFollowers($postId, $commentId, $email) {
@@ -820,7 +913,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         $headers[]       = "From: " . $data["from_name"] . " <" . $data["from_email"] . "> \r\n";
         $subject         = html_entity_decode($subject, ENT_QUOTES);
         $message         = html_entity_decode($message, ENT_QUOTES);
-        wp_mail($followerData["follower_email"], $subject, do_shortcode($message), $headers, $attachments);
+        wp_mail($followerData["follower_email"], $subject, $message, $headers, $attachments);
 
     }
 

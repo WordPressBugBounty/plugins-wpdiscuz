@@ -245,7 +245,7 @@ if (!defined("ABSPATH")) {
     <div class="wpd-opt-input" style="width: 69%; text-align: right;">
         <textarea class="regular-text" id="customCss"
                   name="<?php echo esc_attr(WpdiscuzCore::TAB_THREAD_STYLES); ?>[customCss]" placeholder=""
-                  style="width: 90%; height: 100px; color: #333333; font-family: 'Courier New', Courier, monospace; background: #f5f5f5;direction:ltr;text-align:left;"><?php echo stripslashes($this->thread_styles["customCss"]); ?></textarea>
+                  style="width: 90%; height: 100px; color: #333333; font-family: 'Courier New', Courier, monospace; background: #f5f5f5;direction:ltr;text-align:left;"><?php echo stripslashes(esc_textarea($this->thread_styles["customCss"])); ?></textarea>
     </div>
     <div class="wpd-opt-doc">
         <?php $this->printDocLink($setting["options"]["customCss"]["docurl"]) ?>

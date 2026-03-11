@@ -213,7 +213,6 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
                     $deleteHtml = $this->getDeleteHtml($currentUser, $attachment, "image");
                     $url        = $this->helper->fixURLScheme(wp_get_attachment_image_url($attachment->ID, "full"));
                     $srcData    = wp_get_attachment_image_src($attachment->ID, $size);
-                    $srcData    = wp_get_attachment_image_src($attachment->ID, $size);
                     $src        = $this->helper->fixURLScheme($srcData[0]);
 
                     if ($wmuLazyLoadImages && $lazyLoad) {
@@ -228,14 +227,23 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
 
                     $alt = get_post_meta($attachment->ID, "_wp_attachment_image_alt", true);
 
-                    $images .= "<div class='wmu-attachment wmu-attachment-$attachmentId'>";
+                    $images    .= "<div class='wmu-attachment wmu-attachment-$attachmentId'>";
+                    $imageHtml = "<img style='" . esc_attr($style) . "' 
+                                         alt='" . esc_attr($alt) . "' 
+                                         title='" . esc_attr($attachment->post_excerpt) . "'  
+                                         id='wmu-attachemnt-" . esc_attr($attachmentId) . "' 
+                                         class='attachment-" . esc_attr($size) . " size-" . esc_attr($size) . " wmu-attached-image'  
+                                         src='" . esc_url($srcValue) . "' 
+                                         wmu-data-src='" . esc_url($dataSrcValue) . "' 
+                                         $secondarySizeKey='" . esc_attr($secondarySize) . "' />";
+
                     if ($lightboxCls) {
-                        $images .= "<a href='$url' class='wmu-attached-image-link $lightboxCls'>";
-                        $images .= "<img style='$style' alt='" . esc_attr($alt) . "' title='" . esc_attr($attachment->post_excerpt) . "' id='wmu-attachemnt-$attachmentId' class='attachment-$size size-$size wmu-attached-image' src='$srcValue' wmu-data-src='$dataSrcValue' $secondarySizeKey='$secondarySize' />";
+                        $images .= "<a href='" . esc_attr($url) . "' class='wmu-attached-image-link " . esc_attr($lightboxCls) . "'>";
+                        $images .= $imageHtml;
                         $images .= "</a>";
                     } else {
-                        $images .= apply_filters("wpdiscuz_mu_attached_image_before", "<a href='$url' class='wmu-attached-image-link' target='_blank' rel='noreferrer ugc'>", $attachment->ID);
-                        $images .= "<img style='$style' alt='" . esc_attr($alt) . "' title='" . esc_attr($attachment->post_excerpt) . "' id='wmu-attachemnt-$attachmentId' class='attachment-$size size-$size wmu-attached-image' src='$srcValue' wmu-data-src='$dataSrcValue' $secondarySizeKey='$secondarySize' />";
+                        $images .= apply_filters("wpdiscuz_mu_attached_image_before", "<a href='" . esc_attr($url) . "' class='wmu-attached-image-link' target='_blank' rel='noreferrer ugc'>", $attachment->ID);
+                        $images .= $images .= $imageHtml;
                         $images .= apply_filters("wpdiscuz_mu_attached_image_after", "</a>", $attachment->ID);
                     }
                     $images .= $deleteHtml;
@@ -709,7 +717,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
 
     public function getDeleteHtml($currentUser, $attachment, $type) {
         $attachmentId = self::encrypt($attachment->ID);
-        $deleteHtml   = "<div class='wmu-attachment-delete wmu-delete-$type' title='" . esc_html__("Delete", "wpdiscuz") . "' data-wmu-attachment='$attachmentId'>&nbsp;</div>";
+        $deleteHtml   = "<div class='wmu-attachment-delete wmu-delete-" . esc_attr($type) . "' title='" . esc_html__("Delete", "wpdiscuz") . "' data-wmu-attachment='" . esc_attr($attachmentId) . "'>&nbsp;</div>";
         return $this->canEditAttachments($currentUser, $attachment) ? $deleteHtml : "<div class='wmu-separator'></div>";
     }
 

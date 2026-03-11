@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comment, comments, ajax comments, comment form, comment fields
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 7.6.46
+Stable tag: 7.6.47
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -186,6 +186,24 @@ Nothing will be lost!  **Comments - wpDiscuz** will show all old comments.
 **IMPORTANT!**
 
 Please don't forget delete all caches and purge CDN after the update.
+
+= Comments - wpDiscuz v7.6.47 - 11.03.2026 =
+
+* Security: Unauth Email Notification Flood via wpdCheckNotificationType
+* Security: Stored XSS in Inline Comment Preview
+* Security: Shortcode Injection via Email Notifications
+* Security: Stored XSS via Malicious Options Import
+* Security: SQL Injection in getAllSubscriptions()
+* Security: Vote Manipulation via Nonce Oracle and IP Rotation
+* Security: IP Spoofing in getIP()
+* Security: Destructive GET Action — Delete All Comments by Email
+* Security: Options Export Leaks OAuth Secrets in Plaintext
+* Security: Unsanitized Cookie Email Used as wp_mail() Recipient
+* Security: XSS via Unescaped Custom CSS in <style> Tag
+* Security: Unescaped Attachment URLs in HTML Output
+* Security: Missing Nonce on wpdGetFollowsPage
+* Security: No Rate Limiting on Subscription Endpoints + LIKE Wildcard Bypass
+
 
 = Comments - wpDiscuz v7.6.46 - 09.02.2026 =
 

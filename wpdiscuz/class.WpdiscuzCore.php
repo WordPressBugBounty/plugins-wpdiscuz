@@ -2,7 +2,7 @@
 /*
  * Plugin Name: wpDiscuz
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.46
+ * Version: 7.6.47
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Plugin URI: https://wpdiscuz.com/
@@ -1847,7 +1847,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
             $currentUserEmail = $currentUser->user_email;
             $isUserLoggedIn   = true;
         } else if (!empty($_COOKIE["comment_author_email_" . COOKIEHASH])) {
-            $currentUserEmail = urldecode(trim($_COOKIE["comment_author_email_" . COOKIEHASH]));
+            $currentUserEmail = urldecode(sanitize_email($_COOKIE["comment_author_email_" . COOKIEHASH]));
         }
         $this->form         = $this->wpdiscuzForm->getForm($postId);
         $high_level_user    = current_user_can("moderate_comments");
@@ -2778,6 +2778,11 @@ class WpdiscuzCore implements WpDiscuzConstants {
             WPDISCUZ_DIR_URL . '/gutenberg/build/index.js',
             ['wp-plugins', 'wp-edit-post', 'wp-data', 'wp-block-editor', 'wp-rich-text'],
         );
+    }
+
+    public static function getVersion() {
+        $pluginData = get_plugin_data(__FILE__);
+        return isset($pluginData['Version']) ? $pluginData['Version'] : '7.0.0';
     }
 
 }

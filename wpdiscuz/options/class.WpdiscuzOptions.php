@@ -1921,6 +1921,23 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                     check_admin_referer("wc_tools_form", "wpd-options-export");
                     $options = @maybe_unserialize(get_option(self::OPTION_SLUG_OPTIONS));
                     if ($options) {
+                        $sensitiveFields = [
+                            "recaptcha" => ["siteKey", "secretKey"],
+                            "social"    => [
+                                "fbAppID", "fbAppSecret", "twitterAppID", "twitterAppSecret", "googleClientID", "googleClientSecret",
+                                "telegramToken", "disqusPublicKey", "disqusSecretKey", "wordpressClientID", "wordpressClientSecret", "instagramAppID",
+                                "instagramAppSecret", "linkedinClientID", "linkedinClientSecret", "yandexID", "yandexPassword", "weiboKey",
+                                "weiboSecret", "wechatAppID", "wechatSecret", "qqAppID", "qqSecret", "baiduAppID",
+                                "baiduSecret", "vkAppID"
+                            ],
+                        ];
+
+                        foreach ($sensitiveFields as $sectionKey => $fields) {
+                            foreach ($fields as $field) {
+                                $options[$sectionKey][$field] = "___SENSITIVE_DATA___";
+                            }
+                        }
+
                         $file_name = "wpdiscuz-options-";
                         $data      = $options;
                     }
@@ -2143,7 +2160,12 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             foreach ($newOptions as $key => $value) {
                 foreach ($value as $k => $val) {
                     if (isset($oldOptions[$key][$k])) {
-                        $newOptions[$key][$k] = $oldOptions[$key][$k];
+                        if ($k === 'customCss') {
+                            $newOptions[$key][$k] = $oldOptions[$key][$k];
+                        } else {
+                            $newOptions[$key][$k] = $oldOptions[$key][$k];
+                        }
+
                     }
                 }
             }
@@ -2396,9 +2418,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             $newOptions[self::TAB_THREAD_STYLES]["enableFontAwesome"] = $oldOptions[self::TAB_THREAD_STYLES]["enableFontAwesome"];
         }
         if (isset($oldOptions["wc_custom_css"])) {
-            $newOptions[self::TAB_THREAD_STYLES]["customCss"] = $oldOptions["wc_custom_css"];
+            $newOptions[self::TAB_THREAD_STYLES]["customCss"] = wp_strip_all_tags($oldOptions["wc_custom_css"]);
         } else if (isset($oldOptions[self::TAB_THREAD_STYLES]["customCss"])) {
-            $newOptions[self::TAB_THREAD_STYLES]["customCss"] = $oldOptions[self::TAB_THREAD_STYLES]["customCss"];
+            $newOptions[self::TAB_THREAD_STYLES]["customCss"] = wp_strip_all_tags($oldOptions[self::TAB_THREAD_STYLES]["customCss"]);
         }
         if (isset($oldOptions["isNotifyOnCommentApprove"])) {
             $newOptions[self::TAB_SUBSCRIPTION]["isNotifyOnCommentApprove"] = $oldOptions["isNotifyOnCommentApprove"];

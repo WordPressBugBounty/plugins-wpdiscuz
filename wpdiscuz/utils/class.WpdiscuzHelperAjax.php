@@ -736,7 +736,7 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
             if (!$isUserLoggedIn && md5($comment->comment_author_IP) == $userIdOrIp) {
                 wp_send_json_error("wc_deny_voting_from_same_ip");
             }
-            if ($comment->user_id == $userIdOrIp) {
+            if ((int)$comment->user_id == (int)$userIdOrIp) {
                 wp_send_json_error("wc_self_vote");
             }
             $response = [];
@@ -853,52 +853,55 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
     }
 
     public function getLastInlineComments() {
-        $inline_form_id = WpdiscuzHelper::sanitize(INPUT_POST, "inline_form_id", FILTER_SANITIZE_NUMBER_INT, 0);
-        if ($inline_form_id && apply_filters("wpdiscuz_enable_feedback_shortcode_button", true) && ($inline_form = $this->dbManager->getFeedbackForm($inline_form_id))) {
-            $post = get_post($inline_form->post_id);
-            WpdiscuzHelper::validatePostAccess($post);
-            $args     = [
-                "orderby"    => $this->options->thread_display["orderCommentsBy"],
-                "order"      => "DESC",
-                "number"     => 3,
-                "status"     => !$this->options->wp["isPaginate"] && current_user_can("moderate_comments") ? "all" : "approve",
-                "meta_query" => [
-                    [
-                        "key"     => self::META_KEY_FEEDBACK_FORM_ID,
-                        "value"   => $inline_form->id,
-                        "compare" => "=",
-                    ],
-                ],
-            ];
-            $comments = get_comments($args);
-            $content  = "";
-            if ($comments) {
-                $content .= "<div class='wpd-last-inline-comments-wrapper'>";
-                $content .= "<div class='wpd-last-inline-comments'>";
-                foreach ($comments as $k => $comment) {
-                    $content        .= "<div class='wpd-last-inline-comment' data-inline-comment-id='" . esc_attr($comment->comment_ID) . "'>";
-                    $content        .= "<div>";
-                    $content        .= "<span class='wpd-last-inline-comment-author-avatar'>" . get_avatar($comment->comment_author_email, 16) . "</span>";
-                    $content        .= "<span class='wpd-last-inline-comment-author-name'>" . esc_html($comment->comment_author) . "</span>";
-                    $content        .= "<span class='wpd-last-inline-comment-date'>" . esc_html($this->helper->dateDiff($comment->comment_date_gmt)) . "</span>";
-                    $content        .= "</div>";
-                    $commentContent = function_exists("mb_substr") ? mb_substr($comment->comment_content, 0, 85) : substr($comment->comment_content, 0, 85);
-                    if (strlen($comment->comment_content) > strlen($commentContent)) {
-                        $commentContent .= "&nbsp;<a href='" . get_comment_link($comment) . "' class='wpd-load-inline-comment' title='" . esc_html__("Read More", "wpdiscuz") . "'>[...]</a>";
-                    }
-                    $content .= "<span class='wpd-last-inline-comment-text'>" . wp_unslash($commentContent) . "</span>";
-                    $content .= "</div>";
-                }
-                $content .= "</div>";
-                if (!$this->options->wp["isPaginate"]) {
-                    $content .= "<a href='' class='wpd-view-all-inline-comments'>" . esc_html($this->options->getPhrase("wc_inline_comments_view_all")) . "</a>";
-                }
-                $content .= "</div>";
-            }
-            wp_send_json_success($content);
-        } else {
+        $inline_form_id = (int)WpdiscuzHelper::sanitize(INPUT_POST, "inline_form_id", FILTER_SANITIZE_NUMBER_INT, 0);
+        $inline_form    = $this->dbManager->getFeedbackForm($inline_form_id);
+
+        if (!$inline_form || !apply_filters("wpdiscuz_enable_feedback_shortcode_button", true)) {
             wp_send_json_error("wc_msg_required_fields");
         }
+
+        $post = get_post($inline_form->post_id);
+        WpdiscuzHelper::validatePostAccess($post);
+
+        $args     = [
+            "orderby"    => $this->options->thread_display["orderCommentsBy"],
+            "order"      => "DESC",
+            "number"     => 3,
+            "status"     => !$this->options->wp["isPaginate"] && current_user_can("moderate_comments") ? "all" : "approve",
+            "meta_query" => [
+                [
+                    "key"     => self::META_KEY_FEEDBACK_FORM_ID,
+                    "value"   => $inline_form->id,
+                    "compare" => "=",
+                ],
+            ],
+        ];
+        $comments = get_comments($args);
+        $content  = "";
+        if ($comments) {
+            $content .= "<div class='wpd-last-inline-comments-wrapper'>";
+            $content .= "<div class='wpd-last-inline-comments'>";
+            foreach ($comments as $k => $comment) {
+                $content        .= "<div class='wpd-last-inline-comment' data-inline-comment-id='" . esc_attr($comment->comment_ID) . "'>";
+                $content        .= "<div>";
+                $content        .= "<span class='wpd-last-inline-comment-author-avatar'>" . get_avatar($comment->comment_author_email, 16) . "</span>";
+                $content        .= "<span class='wpd-last-inline-comment-author-name'>" . esc_html($comment->comment_author) . "</span>";
+                $content        .= "<span class='wpd-last-inline-comment-date'>" . esc_html($this->helper->dateDiff($comment->comment_date_gmt)) . "</span>";
+                $content        .= "</div>";
+                $commentContent = function_exists("mb_substr") ? mb_substr($comment->comment_content, 0, 85) : substr($comment->comment_content, 0, 85);
+                if (strlen($comment->comment_content) > strlen($commentContent)) {
+                    $commentContent .= "&nbsp;<a href='" . get_comment_link($comment) . "' class='wpd-load-inline-comment' title='" . esc_html__("Read More", "wpdiscuz") . "'>[...]</a>";
+                }
+                $content .= "<span class='wpd-last-inline-comment-text'>" . wp_kses_post(wp_unslash($commentContent)) . "</span>";
+                $content .= "</div>";
+            }
+            $content .= "</div>";
+            if (!$this->options->wp["isPaginate"]) {
+                $content .= "<a href='' class='wpd-view-all-inline-comments'>" . esc_html($this->options->getPhrase("wc_inline_comments_view_all")) . "</a>";
+            }
+            $content .= "</div>";
+        }
+        wp_send_json_success($content);
     }
 
     /**
@@ -1010,6 +1013,11 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
     }
 
     public function unsubscribe() {
+        $rateLimitResult = $this->helper->checkRateLimit('unsubscribe', 20, MINUTE_IN_SECONDS);
+        if (is_wp_error($rateLimitResult)) {
+            wp_send_json_error($rateLimitResult->get_error_code());
+        }
+
         $this->helper->validateNonce();
         $sid  = WpdiscuzHelper::sanitize(INPUT_POST, "sid", FILTER_SANITIZE_NUMBER_INT, 0);
         $skey = WpdiscuzHelper::sanitize(INPUT_POST, "skey", "FILTER_SANITIZE_STRING");

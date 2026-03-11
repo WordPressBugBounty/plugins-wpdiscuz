@@ -361,7 +361,7 @@ class WpdiscuzDBManager implements WpDiscuzConstants {
      * Confirm  post or comment subscription
      */
     public function notificationConfirm($subscribe_id, $key) {
-        $sql_confirm = $this->db->prepare("UPDATE `{$this->emailNotification}` SET `confirm` = 1 WHERE `id` = %d AND `activation_key` LIKE %s;", $subscribe_id, $key);
+        $sql_confirm = $this->db->prepare("UPDATE `{$this->emailNotification}` SET `confirm` = 1 WHERE `id` = %d AND `activation_key` = %s;", $subscribe_id, $key);
 
         return $this->db->query($sql_confirm);
     }
@@ -370,7 +370,7 @@ class WpdiscuzDBManager implements WpDiscuzConstants {
      * delete subscription
      */
     public function unsubscribe($id, $activation_key) {
-        $sql_unsubscribe = $this->db->prepare("DELETE FROM `{$this->emailNotification}` WHERE `id` = %d AND `activation_key` LIKE %s", $id, $activation_key);
+        $sql_unsubscribe = $this->db->prepare("DELETE FROM `{$this->emailNotification}` WHERE `id` = %d AND `activation_key` = %s", $id, $activation_key);
 
         return $this->db->query($sql_unsubscribe);
     }
@@ -869,65 +869,104 @@ class WpdiscuzDBManager implements WpDiscuzConstants {
     /* === STATISTICS === */
 
     /* === MODAL === */
+    public function getAllSubscriptions($args = []) {
 
-    public function getAllSubscriptions($args) {
-
-        $defaults = ["confirm" => 1, "orderby" => "id", "order" => "desc"];
+        $defaults = [
+            'confirm' => 1,
+            'orderby' => 'id',
+            'order'   => 'DESC',
+            'limit'   => null,
+            'offset'  => null,
+        ];
 
         $args = wp_parse_args($args, $defaults);
 
-        $sql = "SELECT * FROM `{$this->emailNotification}` WHERE 1";
+        $allowed_orderby = [
+            'id',
+            'email',
+            'post_id',
+            'subscription_date',
+            'confirm',
+        ];
 
-        if (!empty($args["id"])) {
-            $sql .= " AND `id` = " . (int)$args["id"];
+        $allowed_order = ['ASC', 'DESC'];
+
+        $orderby = in_array($args['orderby'], $allowed_orderby, true)
+            ? $args['orderby']
+            : 'id';
+
+        $order = in_array(strtoupper($args['order']), $allowed_order, true)
+            ? strtoupper($args['order'])
+            : 'DESC';
+
+        $where  = [];
+        $values = [];
+
+        if (isset($args['id'])) {
+            $where[]  = "id = %d";
+            $values[] = absint($args['id']);
         }
 
-        if (!empty($args["email"])) {
-            $sql .= " AND `email` = " . esc_sql($args["email"]);
+        if (!empty($args['email'])) {
+            $where[]  = "email = %s";
+            $values[] = sanitize_email($args['email']);
         }
 
-        if (!empty($args["subscribtion_id"])) {
-            $sql .= " AND `subscribtion_id` = " . (int)$args["subscribtion_id"];
+        if (isset($args['subscribtion_id'])) {
+            $where[]  = "subscribtion_id = %d";
+            $values[] = absint($args['subscribtion_id']);
         }
 
-        if (!empty($args["post_id"])) {
-            $sql .= " AND `post_id` = " . (int)$args["post_id"];
+        if (isset($args['post_id'])) {
+            $where[]  = "post_id = %d";
+            $values[] = absint($args['post_id']);
         }
 
-        if (!empty($args["subscribtion_type"])) {
-            $sql .= " AND `subscribtion_type` = '" . esc_sql($args["subscribtion_type"]) . "'";
+        if (!empty($args['subscribtion_type'])) {
+            $where[]  = "subscribtion_type = %s";
+            $values[] = sanitize_text_field($args['subscribtion_type']);
         }
 
-        if (!empty($args["activation_key"])) {
-            $sql .= " AND `activation_key` = " . esc_sql($args["activation_key"]);
+        if (!empty($args['activation_key'])) {
+            $where[]  = "activation_key = %s";
+            $values[] = sanitize_text_field($args['activation_key']);
         }
 
-        if (!empty($args["confirm"])) {
-            $sql .= " AND `confirm` = " . (int)$args["confirm"];
+        if (isset($args['confirm'])) {
+            $where[]  = "confirm = %d";
+            $values[] = absint($args['confirm']);
         }
 
-        if (!empty($args["subscription_date"])) {
-            $sql .= " AND `subscription_date` = " . esc_sql($args["subscription_date"]);
+        if (!empty($args['subscription_date'])) {
+            $where[]  = "subscription_date = %s";
+            $values[] = sanitize_text_field($args['subscription_date']);
         }
 
-        if (!empty($args["imported_from"])) {
-            $sql .= " AND `imported_from` = " . esc_sql($args["imported_from"]);
+        if (!empty($args['imported_from'])) {
+            $where[]  = "imported_from = %s";
+            $values[] = sanitize_text_field($args['imported_from']);
         }
 
-        if (!empty($args["orderby"])) {
-            $sql .= " ORDER BY " . esc_sql($args["orderby"]);
+        $sql = "SELECT * FROM {$this->emailNotification}";
+
+        if (!empty($where)) {
+            $sql .= " WHERE " . implode(' AND ', $where);
         }
 
-        if (!empty($args["order"])) {
-            $sql .= " " . esc_sql($args["order"]);
+        $sql .= " ORDER BY {$orderby} {$order}";
+
+        if (!empty($args['limit'])) {
+            $sql      .= " LIMIT %d";
+            $values[] = absint($args['limit']);
         }
 
-        if (!empty($args["limit"])) {
-            $sql .= " LIMIT " . (int)$args["limit"];
+        if (!empty($args['offset'])) {
+            $sql      .= " OFFSET %d";
+            $values[] = absint($args['offset']);
         }
 
-        if (!empty($args["offset"])) {
-            $sql .= " OFFSET " . (int)$args["offset"];
+        if (!empty($values)) {
+            $sql = $this->db->prepare($sql, $values);
         }
 
         return $this->db->get_results($sql, ARRAY_A);
@@ -1286,7 +1325,7 @@ class WpdiscuzDBManager implements WpDiscuzConstants {
     }
 
     public function getFeedbackForm($id) {
-        $sql = $this->db->prepare("SELECT * FROM `{$this->feedbackForms}` WHERE `id` = %s;", $id);
+        $sql = $this->db->prepare("SELECT * FROM `{$this->feedbackForms}` WHERE `id` = %d;", $id);
 
         return $this->db->get_row($sql);
     }
