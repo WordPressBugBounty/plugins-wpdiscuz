@@ -2,7 +2,7 @@
 /*
  * Plugin Name: wpDiscuz
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.47
+ * Version: 7.6.48
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Plugin URI: https://wpdiscuz.com/
@@ -1335,21 +1335,22 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 $cArgs                                        = $this->getDefaultCommentsArgs($post->ID);
                 $this->wpdiscuzOptionsJs["loadLastCommentId"] = $this->dbManager->getLastCommentId($cArgs);
             }
-            $this->wpdiscuzOptionsJs["dataFilterCallbacks"]   = [];
-            $this->wpdiscuzOptionsJs["phraseFilters"]         = [];
-            $this->wpdiscuzOptionsJs["scrollSize"]            = 32;
-            $this->wpdiscuzOptionsJs["url"]                   = admin_url("admin-ajax.php");
-            $this->wpdiscuzOptionsJs["customAjaxUrl"]         = plugins_url(WPDISCUZ_DIR_NAME . "/utils/ajax/wpdiscuz-ajax.php");
-            $this->wpdiscuzOptionsJs["bubbleUpdateUrl"]       = rest_url("wpdiscuz/v1/update");
-            $this->wpdiscuzOptionsJs["restNonce"]             = wp_create_nonce("wp_rest");
-            $this->wpdiscuzOptionsJs["is_rate_editable"]      = isset($formGeneralOptions["is_rate_editable"]) ? $formGeneralOptions["is_rate_editable"] : 0;
-            $this->wpdiscuzOptionsJs["menu_icon"]             = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg";
-            $this->wpdiscuzOptionsJs["menu_icon_hover"]       = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg_hover.svg";
-            $this->wpdiscuzOptionsJs["isUpdateNonceWithAjax"] = apply_filters("wpdiscuz_is_update_nonce_with_ajax", false, WpdiscuzHelper::getCurrentUser());
-            $this->wpdiscuzOptionsJs                          = apply_filters("wpdiscuz_js_options", $this->wpdiscuzOptionsJs, $this->options);
-            $loadQuill                                        = $this->options->form["richEditor"] === "both" || (!wp_is_mobile() && $this->options->form["richEditor"] === "desktop");
-            $customCSSSlug                                    = "wpdiscuz-frontend-custom-css";
-            $customFileName                                   = "style-custom";
+            $this->wpdiscuzOptionsJs["dataFilterCallbacks"]      = [];
+            $this->wpdiscuzOptionsJs["phraseFilters"]            = [];
+            $this->wpdiscuzOptionsJs["scrollSize"]               = 32;
+            $this->wpdiscuzOptionsJs["url"]                      = admin_url("admin-ajax.php");
+            $this->wpdiscuzOptionsJs["customAjaxUrl"]            = plugins_url(WPDISCUZ_DIR_NAME . "/utils/ajax/wpdiscuz-ajax.php");
+            $this->wpdiscuzOptionsJs["bubbleUpdateUrl"]          = rest_url("wpdiscuz/v1/update");
+            $this->wpdiscuzOptionsJs["restNonce"]                = wp_create_nonce("wp_rest");
+            $this->wpdiscuzOptionsJs["is_rate_editable"]         = isset($formGeneralOptions["is_rate_editable"]) ? $formGeneralOptions["is_rate_editable"] : 0;
+            $this->wpdiscuzOptionsJs["menu_icon"]                = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg";
+            $this->wpdiscuzOptionsJs["menu_icon_hover"]          = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg_hover.svg";
+            $this->wpdiscuzOptionsJs["isUpdateNonceWithAjax"]    = apply_filters("wpdiscuz_is_update_nonce_with_ajax", false, WpdiscuzHelper::getCurrentUser());
+            $this->wpdiscuzOptionsJs["postAttachmentsAsGallery"] = apply_filters("wpdiscuz_post_attachments_as_gallery", false);
+            $this->wpdiscuzOptionsJs                             = apply_filters("wpdiscuz_js_options", $this->wpdiscuzOptionsJs, $this->options);
+            $loadQuill                                           = $this->options->form["richEditor"] === "both" || (!wp_is_mobile() && $this->options->form["richEditor"] === "desktop");
+            $customCSSSlug                                       = "wpdiscuz-frontend-custom-css";
+            $customFileName                                      = "style-custom";
             if (is_rtl()) {
                 $customCSSSlug  = "wpdiscuz-frontend-custom-rtl-css";
                 $customFileName = "style-custom-rtl";

@@ -727,19 +727,16 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         }
 
         if ($commentId && in_array($voteType, $allowedVoteTypes, true)) {
-            if ($isUserLoggedIn) {
-                $userIdOrIp = get_current_user_id();
-            } else {
-                $userIdOrIp = md5($this->helper->getRealIPAddr());
-            }
-            $isUserVoted = $this->dbManager->isUserVoted($userIdOrIp, $commentId);
-            if (!$isUserLoggedIn && md5($comment->comment_author_IP) == $userIdOrIp) {
+            $userIP = $this->helper->getRealIPAddr();
+            $userID = get_current_user_id();
+            if ($comment->comment_author_IP == $userIP) {
                 wp_send_json_error("wc_deny_voting_from_same_ip");
-            }
-            if ((int)$comment->user_id == (int)$userIdOrIp) {
+            } elseif ($userID && $userID == $comment->user_id) {
                 wp_send_json_error("wc_self_vote");
             }
-            $response = [];
+            $userIdOrIp  = $userID ?: md5($userIP);
+            $isUserVoted = $this->dbManager->isUserVoted($userIdOrIp, $commentId);
+            $response    = [];
             if ($isUserVoted != "") {
                 $isUserVotedInt = intval($isUserVoted);
                 $vote           = $isUserVotedInt + $voteType;

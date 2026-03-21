@@ -114,13 +114,35 @@ jQuery(document).ready(function ($) {
     });
 
     if (parseInt(wpdiscuzAjaxObj.wmuIsLightbox)) {
+
         function wmuAddLightBox() {
-            $(".wmu-lightbox").colorbox({
-                maxHeight: "95%",
-                maxWidth: "95%",
-                rel: 'wmu-lightbox',
-                fixed: true
-            });
+
+            if (wpdiscuzAjaxObj.postAttachmentsAsGallery) {
+                $(".wmu-lightbox").colorbox({
+                    maxHeight: "95%",
+                    maxWidth: "95%",
+                    rel: 'wmu-lightbox',
+                    fixed: true
+                });
+            } else {
+                $(".wmu-attached-images").each(function(){
+                    // create a unique gallery for each comment
+                    var galleryID = 'gallery-' + $(this).closest('.comment').attr('id'); // or any unique identifier
+                    $(this).find('.wmu-lightbox').each(function(){
+                        $(this).attr('rel', galleryID); // set rel dynamically
+                    });
+                });
+
+                // initialize colorbox
+                $('.wmu-lightbox').colorbox({
+                    maxHeight: "95%",
+                    maxWidth: "95%",
+                    photo: true,
+                    fixed: true,
+                    rel: function(){ return $(this).attr('rel'); }
+                });
+            }
+
         }
 
         wmuAddLightBox();

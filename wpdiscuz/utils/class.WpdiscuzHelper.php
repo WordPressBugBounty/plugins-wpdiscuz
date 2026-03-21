@@ -65,9 +65,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         add_action("add_meta_boxes", [&$this, "addRatingResetButton"], 10, 2);
 
         add_filter("nonce_life", [&$this, "setNonceLife"], 15, 2);
-        add_action("wpdiscuz_init", function () {
-            add_action("wp", [&$this, "setNonceInCookies"]);
-        });
+        add_action("wpdiscuz_init", [&$this, "setNonceInCookies"]);
 
         add_action("save_post", [$this, "updatePostAuthorsTrs"]);
 
@@ -199,11 +197,6 @@ class WpdiscuzHelper implements WpDiscuzConstants {
 
     public function setNonceInCookies($timeDependent = 2, $checkNonce = true) {
         if (headers_sent()) {
-            return;
-        }
-
-        global $post;
-        if (!$this->isLoadWpdiscuz($post)) {
             return;
         }
 

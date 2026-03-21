@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comment, comments, ajax comments, comment form, comment fields
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 7.6.47
+Stable tag: 7.6.48
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -185,7 +185,15 @@ Nothing will be lost!  **Comments - wpDiscuz** will show all old comments.
 
 **IMPORTANT!**
 
-Please don't forget delete all caches and purge CDN after the update.
+Please remember to delete all caches and purge CDN after the update.
+
+= Comments - wpDiscuz v7.6.48 - 21.03.2026 =
+
+* Added: A new filter hook "wpdiscuz_show_vote" to allow hiding/showing vote buttons for certain comments.
+* Added: A new filter hook "wpdiscuz_post_attachments_as_gallery" to allow controlling whether a post's attachments should be displayed as a gallery or not.
+* Fixed: Prevent adding unnecessary statistics on comment deletion.
+* Fixed: Guests can't vote on guest comments.
+* Fixed: Issue with adding nonce in cookies that leads to an issue with nonce verification.
 
 = Comments - wpDiscuz v7.6.47 - 11.03.2026 =
 

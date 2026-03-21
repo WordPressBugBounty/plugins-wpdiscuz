@@ -293,7 +293,7 @@ class WpdiscuzHelperOptimization implements WpDiscuzConstants {
             }
         }
 
-        update_post_meta($postId, self::POSTMETA_STATISTICS, []);
+        delete_post_meta($postId, self::POSTMETA_STATISTICS);
     }
 
     public function cleanAllCaches() {

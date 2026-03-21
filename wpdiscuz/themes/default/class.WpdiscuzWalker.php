@@ -299,7 +299,7 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
             $replace[] = $commentLinkIcon;
         }
 
-        $showVote = false;
+        $showVote = apply_filters("wpdiscuz_show_vote", false, $comment, $user["user"], $args["current_user"]);
         if ($this->options->thread_layouts["showVotingButtons"] && $isApproved) {
             if ($this->options->thread_layouts["votingButtonsStyle"]) {
                 $voteCount  = isset($commentMetas[self::META_KEY_VOTES_SEPARATE]) ? maybe_unserialize($commentMetas[self::META_KEY_VOTES_SEPARATE][0]) : ["like" => 0, "dislike" => 0];
