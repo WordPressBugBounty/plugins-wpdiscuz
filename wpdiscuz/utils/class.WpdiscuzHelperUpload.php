@@ -243,7 +243,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
                         $images .= "</a>";
                     } else {
                         $images .= apply_filters("wpdiscuz_mu_attached_image_before", "<a href='" . esc_attr($url) . "' class='wmu-attached-image-link' target='_blank' rel='noreferrer ugc'>", $attachment->ID);
-                        $images .= $images .= $imageHtml;
+                        $images .= $imageHtml;
                         $images .= apply_filters("wpdiscuz_mu_attached_image_after", "</a>", $attachment->ID);
                     }
                     $images .= $deleteHtml;
