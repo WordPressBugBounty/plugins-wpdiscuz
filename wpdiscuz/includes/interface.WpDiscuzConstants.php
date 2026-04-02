@@ -92,6 +92,8 @@ interface WpDiscuzConstants {
     const METAKEY_ATTCHMENT_IMPORTED_FROM = "_wmu_imported_from";
     const METAKEY_ATTACHMENTS = "wmu_attachments";
     const KEY_IMAGES = "images";
+    const KEY_VIDEOS = "videos";
+    const KEY_FILES  = "files";
     const INPUT_NAME = "wmu_files";
     const DELETE_UNATTACHED_FILES_ACTION = "wpdiscuz_delete_unattached_images";
     const DELETE_UNATTACHED_FILES_KEY_RECURRENCE = "wpdiscuz_delete_unattached_images_every_48h";

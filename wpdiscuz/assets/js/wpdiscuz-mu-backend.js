@@ -69,12 +69,33 @@ jQuery(document).ready(function ($) {
         $(this).val(value.replace('-', ''));
     });
 
-    $('.wmu-lightbox').colorbox({
-        maxHeight: '95%',
-        maxWidth: '95%',
-        rel: 'wmu-lightbox',
-        fixed: true
-    });
+    function wmuAddLightBox() {
+        if (wpdiscuzMUJsObj.postAttachmentsAsGallery) {
+            $('.wmu-lightbox').colorbox({
+                maxHeight: '95%',
+                maxWidth: '95%',
+                rel: 'wmu-lightbox',
+                fixed: true
+            });
+        } else {
+            $('.wmu-attached-images').each(function () {
+                var commentId = $(this).closest('.wmu-comment-attachments').data('comment-id');
+                var galleryID = 'gallery-' + commentId;
+                $(this).find('.wmu-lightbox').each(function () {
+                    $(this).attr('rel', galleryID);
+                });
+            });
+            $('.wmu-lightbox').colorbox({
+                maxHeight: '95%',
+                maxWidth: '95%',
+                photo: true,
+                fixed: true,
+                rel: function () { return $(this).attr('rel'); }
+            });
+        }
+    }
+    wmuAddLightBox();
+    window.wmuAddLightBox = wmuAddLightBox;
 
     function wmuGetAjaxObj(data) {
         return $.ajax({

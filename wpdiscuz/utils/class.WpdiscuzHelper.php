@@ -226,8 +226,17 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                 'httponly' => true,
                 'samesite' => 'Strict',
             ]);
+            setcookie(self::GLOBAL_NONCE_NAME . '_exp_' . COOKIEHASH, (string)$expires, [
+                'expires'  => $expires,
+                'path'     => '/',
+                'domain'   => '',
+                'secure'   => false,
+                'httponly' => false,
+                'samesite' => 'Strict',
+            ]);
         } else {
             setcookie(self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH, $nonce, $expires, '/', "", false, true);
+            setcookie(self::GLOBAL_NONCE_NAME . '_exp_' . COOKIEHASH, (string)$expires, $expires, '/', "", false, false);
         }
     }
 

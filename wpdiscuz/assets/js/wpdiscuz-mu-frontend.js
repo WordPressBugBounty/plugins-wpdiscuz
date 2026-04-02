@@ -2,6 +2,9 @@ jQuery(document).ready(function ($) {
 
     const wpNativeAjax = parseInt(wpdiscuzAjaxObj.isNativeAjaxEnabled, 10);
 
+    // Per-form file list: maps form DOM element -> Array of File objects
+    const wmuFileLists = new WeakMap();
+
     $('body').on('click', '#wpdcom .wmu-upload-wrap', function () {
         $('.wpd-form-foot', $(this).parents('.wpd_comm_form')).slideDown(parseInt(wpdiscuzAjaxObj.enableDropAnimation) ? 500 : 0);
     });
@@ -9,44 +12,145 @@ jQuery(document).ready(function ($) {
     $(document).delegate('.wmu-add-files', 'change', function () {
         const btn = $(this);
         const form = btn.closest('.wpd_comm_form');
-        const files = btn[0].files ? btn[0].files : [];
+        const files = btn[0].files ? Array.from(btn[0].files) : [];
         if (files.length) {
+            wmuFileLists.set(form[0], files);
             $('.wmu-action-wrap .wmu-tabs', form).html('');
-            $.each(files, function (key, file) {
-                let mimeType = file.type;
-                let previewArgs = {
-                    'id': '',
-                    'icon': '',
-                    'fullname': file.name,
-                    'shortname': getShortname(file.name),
-                    'type': '',
-                };
-
-                if (mimeType.match(/^image/)) {
-                    previewArgs.type = 'images';
-                    if (window.FileReader) {
-                        const reader = new FileReader();
-                        reader.readAsDataURL(file);
-                        reader.onloadend = function () {
-                            previewArgs.icon = this.result;
-                            previewArgs.shortname = '';
-                            initPreview(form, previewArgs);
-                        }
-                    }
-                } else if (mimeType.match(/^video/) || mimeType.match(/^audio/)) {
-                    previewArgs.type = 'videos';
-                    previewArgs.icon = wpdiscuzAjaxObj.wmuIconVideo;
-                    initPreview(form, previewArgs);
-                } else {
-                    previewArgs.type = 'files';
-                    previewArgs.icon = wpdiscuzAjaxObj.wmuIconFile;
-                    initPreview(form, previewArgs);
-                }
+            $.each(files, function (index, file) {
+                renderFilePreview(form, file, index);
             });
         } else {
             return;
         }
     });
+
+    $(document).delegate('.wmu-preview-delete', 'click', function () {
+        const $preview  = $(this).closest('.wmu-preview');
+        const $form     = $preview.closest('.wpd_comm_form');
+        const index     = parseInt($preview.data('wmu-index'));
+        const type      = $preview.data('wmu-type');
+
+        const fileArray = wmuFileLists.get($form[0]) || [];
+        fileArray[index] = null;
+        wmuFileLists.set($form[0], fileArray);
+        syncFileInput($form, fileArray);
+
+        $preview.remove();
+
+        const $tab = $('.wmu-action-wrap .wmu-' + type + '-tab', $form);
+        if (!$tab.children('.wmu-preview').length) {
+            $tab.addClass('wmu-hide');
+        }
+    });
+
+    $(document).delegate('.wmu-replace-input', 'change', function () {
+        const input = $(this);
+        const preview = input.closest('.wmu-preview');
+        const form = preview.closest('.wpd_comm_form');
+        const index = parseInt(preview.data('wmu-index'));
+        const newFile = this.files[0];
+
+        if (!newFile) return;
+
+        const fileArray = wmuFileLists.get(form[0]) || [];
+        fileArray[index] = newFile;
+        wmuFileLists.set(form[0], fileArray);
+
+        syncFileInput(form, fileArray);
+        updatePreviewForFile(form, preview, newFile);
+
+        // Reset so the same file can be re-selected if needed
+        input.val('');
+    });
+
+    function syncFileInput(form, fileArray) {
+        if (typeof DataTransfer === 'undefined') return;
+        const dt = new DataTransfer();
+        fileArray.forEach(function (file) {
+            if (file) dt.items.add(file);
+        });
+        const mainInput = form.find('.wmu-add-files')[0];
+        if (mainInput) {
+            mainInput.files = dt.files;
+        }
+    }
+
+    function renderFilePreview(form, file, index) {
+        let mimeType = file.type;
+        let previewArgs = {
+            'id': '',
+            'icon': '',
+            'fullname': file.name,
+            'shortname': getShortname(file.name),
+            'type': '',
+            'index': index,
+        };
+
+        if (mimeType.match(/^image/)) {
+            previewArgs.type = 'images';
+            if (window.FileReader) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = function () {
+                    previewArgs.icon = this.result;
+                    previewArgs.shortname = '';
+                    initPreview(form, previewArgs);
+                }
+            }
+        } else if (mimeType.match(/^video/) || mimeType.match(/^audio/)) {
+            previewArgs.type = 'videos';
+            previewArgs.icon = wpdiscuzAjaxObj.wmuIconVideo;
+            initPreview(form, previewArgs);
+        } else {
+            previewArgs.type = 'files';
+            previewArgs.icon = wpdiscuzAjaxObj.wmuIconFile;
+            initPreview(form, previewArgs);
+        }
+    }
+
+    function updatePreviewForFile(form, previewEl, file) {
+        let mimeType = file.type;
+        let newType;
+
+        if (mimeType.match(/^image/)) {
+            newType = 'images';
+        } else if (mimeType.match(/^video/) || mimeType.match(/^audio/)) {
+            newType = 'videos';
+        } else {
+            newType = 'files';
+        }
+
+        const oldType = previewEl.data('wmu-type');
+        const index = parseInt(previewEl.data('wmu-index'));
+
+        if (oldType !== newType) {
+            // File type changed — remove from old tab, add to new tab
+            const oldTab = $('.wmu-action-wrap .wmu-' + oldType + '-tab', form);
+            previewEl.remove();
+            if (!oldTab.children().length) {
+                oldTab.addClass('wmu-hide');
+            }
+            renderFilePreview(form, file, index);
+        } else {
+            // Same type — update the existing preview element in-place
+            previewEl.attr('title', file.name);
+            previewEl.data('wmu-type', newType);
+            previewEl.find('.wmu-file-name').text(getShortname(file.name));
+
+            if (mimeType.match(/^image/) && window.FileReader) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = function () {
+                    previewEl.find('.wmu-preview-img').attr('src', this.result);
+                    previewEl.find('.wmu-file-name').text('');
+                };
+            } else if (mimeType.match(/^video/) || mimeType.match(/^audio/)) {
+                previewEl.find('.wmu-preview-img').attr('src', wpdiscuzAjaxObj.wmuIconVideo);
+            } else {
+                previewEl.find('.wmu-preview-img').attr('src', wpdiscuzAjaxObj.wmuIconFile);
+            }
+        }
+    }
 
     /**
      * @param form
@@ -60,7 +164,14 @@ jQuery(document).ready(function ($) {
         previewTemplate = previewTemplate.replace('[PREVIEW_ID]', args.id);
         previewTemplate = previewTemplate.replace('[PREVIEW_ICON]', args.icon);
         previewTemplate = previewTemplate.replace('[PREVIEW_FILENAME]', args.shortname);
-        $('.wmu-action-wrap .wmu-' + args.type + '-tab', form).removeClass('wmu-hide').append(previewTemplate);
+        previewTemplate = previewTemplate.replace('[PREVIEW_INDEX]', typeof args.index !== 'undefined' ? args.index : '');
+        const $preview = $(previewTemplate);
+        // Copy the accept attribute from the main file input so the replace picker is equally restricted
+        const accept = form.find('.wmu-add-files').attr('accept');
+        if (accept) {
+            $preview.find('.wmu-replace-input').attr('accept', accept);
+        }
+        $('.wmu-action-wrap .wmu-' + args.type + '-tab', form).removeClass('wmu-hide').append($preview);
     }
 
     function getShortname(str) {

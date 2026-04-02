@@ -2,7 +2,7 @@
 /*
  * Plugin Name: wpDiscuz
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.49
+ * Version: 7.6.50
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Plugin URI: https://wpdiscuz.com/
@@ -106,6 +106,10 @@ class WpdiscuzCore implements WpDiscuzConstants {
         $this->helperAjax         = new WpdiscuzHelperAjax($this->options, $this->dbManager, $this->helper, $this->helperEmail, $this->wpdiscuzForm);
         $this->helperUpload       = new WpdiscuzHelperUpload($this->options, $this->dbManager, $this->wpdiscuzForm, $this->helper);
         $this->cache              = new WpdiscuzCache($this->options, $this->helper);
+        if (is_admin()) {
+            include_once WPDISCUZ_DIR_PATH . "/options/pro-teasers/media-uploader/class.WmuProTeaser.php";
+            new WmuProTeaser($this->options, $this->version);
+        }
         $this->requestUri         = !empty($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"] : "";
 
         do_action("wpdiscuz_init");
@@ -174,6 +178,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
         add_action("wp_ajax_nopriv_wpdAddInlineComment", [&$this, "addInlineComment"]);
         add_action("wp_footer", [&$this, "footerContents"]);
         add_action("enqueue_block_editor_assets", [&$this, "gutenbergButton"]);
+        add_action("enqueue_block_editor_assets", [&$this, "blocksFiles"]);
 
         add_filter("extra_plugin_headers", [&$this, "extraPluginHeaders"]);
         add_filter("auto_update_plugin", [&$this, "shouldUpdate"], 10, 2);
@@ -183,14 +188,12 @@ class WpdiscuzCore implements WpDiscuzConstants {
 
         add_action("admin_bar_menu", [&$this, "addToolbarItems"], 300);
 
-        add_filter('register_block_type_args', [&$this, "replaceDefaultCommentBlock"], 99, 2);
+        add_filter('pre_render_block', [&$this, "preRenderCoreCommentsBlock"], 99, 3);
 
         add_action("elementor/editor/after_enqueue_scripts", [&$this, "inlineCommentForElementorJS"]);
         add_action("elementor/editor/after_enqueue_styles", [&$this, "inlineCommentForElementorCSS"]);
         add_action("elementor/editor/footer", [&$this, "feedbackDialog"]);
         add_action("elementor/widgets/register", [&$this, "registerWpdiscuzWidgetInElementor"]);
-
-        add_action("enqueue_block_editor_assets", [$this, "blocksFiles"]);
     }
 
     public static function getInstance() {
@@ -1222,6 +1225,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 "wmuMsgConfirmAttachmentDelete" => esc_html__("Do you really want to delet this attachment?", "wpdiscuz"),
                 "msgConfirmPurgeCache"          => esc_html__("Do you really want to delete comments and users cache?", "wpdiscuz"),
                 "wpdOptionNonce"                => wp_create_nonce("wpd-option-nonce"),
+                "postAttachmentsAsGallery"      => (bool) apply_filters("wpdiscuz_post_attachments_as_gallery", false),
             ];
             // Media Upload Lightbox
             wp_register_style("wmu-colorbox-css", plugins_url(WPDISCUZ_DIR_NAME . "/assets/third-party/colorbox/colorbox.css"));
@@ -1335,22 +1339,24 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 $cArgs                                        = $this->getDefaultCommentsArgs($post->ID);
                 $this->wpdiscuzOptionsJs["loadLastCommentId"] = $this->dbManager->getLastCommentId($cArgs);
             }
-            $this->wpdiscuzOptionsJs["dataFilterCallbacks"]      = [];
-            $this->wpdiscuzOptionsJs["phraseFilters"]            = [];
-            $this->wpdiscuzOptionsJs["scrollSize"]               = 32;
-            $this->wpdiscuzOptionsJs["url"]                      = admin_url("admin-ajax.php");
-            $this->wpdiscuzOptionsJs["customAjaxUrl"]            = plugins_url(WPDISCUZ_DIR_NAME . "/utils/ajax/wpdiscuz-ajax.php");
-            $this->wpdiscuzOptionsJs["bubbleUpdateUrl"]          = rest_url("wpdiscuz/v1/update");
-            $this->wpdiscuzOptionsJs["restNonce"]                = wp_create_nonce("wp_rest");
-            $this->wpdiscuzOptionsJs["is_rate_editable"]         = isset($formGeneralOptions["is_rate_editable"]) ? $formGeneralOptions["is_rate_editable"] : 0;
-            $this->wpdiscuzOptionsJs["menu_icon"]                = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg";
-            $this->wpdiscuzOptionsJs["menu_icon_hover"]          = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg_hover.svg";
-            $this->wpdiscuzOptionsJs["isUpdateNonceWithAjax"]    = apply_filters("wpdiscuz_is_update_nonce_with_ajax", false, WpdiscuzHelper::getCurrentUser());
-            $this->wpdiscuzOptionsJs["postAttachmentsAsGallery"] = apply_filters("wpdiscuz_post_attachments_as_gallery", false);
-            $this->wpdiscuzOptionsJs                             = apply_filters("wpdiscuz_js_options", $this->wpdiscuzOptionsJs, $this->options);
-            $loadQuill                                           = $this->options->form["richEditor"] === "both" || (!wp_is_mobile() && $this->options->form["richEditor"] === "desktop");
-            $customCSSSlug                                       = "wpdiscuz-frontend-custom-css";
-            $customFileName                                      = "style-custom";
+            $this->wpdiscuzOptionsJs["dataFilterCallbacks"]         = [];
+            $this->wpdiscuzOptionsJs["phraseFilters"]               = [];
+            $this->wpdiscuzOptionsJs["scrollSize"]                  = 32;
+            $this->wpdiscuzOptionsJs["url"]                         = admin_url("admin-ajax.php");
+            $this->wpdiscuzOptionsJs["customAjaxUrl"]               = plugins_url(WPDISCUZ_DIR_NAME . "/utils/ajax/wpdiscuz-ajax.php");
+            $this->wpdiscuzOptionsJs["bubbleUpdateUrl"]             = rest_url("wpdiscuz/v1/update");
+            $this->wpdiscuzOptionsJs["restNonce"]                   = wp_create_nonce("wp_rest");
+            $this->wpdiscuzOptionsJs["is_rate_editable"]            = isset($formGeneralOptions["is_rate_editable"]) ? $formGeneralOptions["is_rate_editable"] : 0;
+            $this->wpdiscuzOptionsJs["menu_icon"]                   = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg";
+            $this->wpdiscuzOptionsJs["menu_icon_hover"]             = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg_hover.svg";
+            $this->wpdiscuzOptionsJs["isUpdateNonceWithAjax"]       = apply_filters("wpdiscuz_is_update_nonce_with_ajax", true, WpdiscuzHelper::getCurrentUser());
+            $this->wpdiscuzOptionsJs["nonceCookieExpName"]          = WpdiscuzHelper::GLOBAL_NONCE_NAME . "_exp_" . COOKIEHASH;
+            $this->wpdiscuzOptionsJs["postAttachmentsAsGallery"]    = apply_filters("wpdiscuz_post_attachments_as_gallery", false);
+            $this->wpdiscuzOptionsJs["wmuPhraseNotAllowedFileType"] = __("File type is not allowed", "wpdiscuz");
+            $this->wpdiscuzOptionsJs                                = apply_filters("wpdiscuz_js_options", $this->wpdiscuzOptionsJs, $this->options);
+            $loadQuill                                              = $this->options->form["richEditor"] === "both" || (!wp_is_mobile() && $this->options->form["richEditor"] === "desktop");
+            $customCSSSlug                                          = "wpdiscuz-frontend-custom-css";
+            $customFileName                                         = "style-custom";
             if (is_rtl()) {
                 $customCSSSlug  = "wpdiscuz-frontend-custom-rtl-css";
                 $customFileName = "style-custom-rtl";
@@ -2692,7 +2698,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
         $form->initFormFields();
         if (apply_filters("is_load_wpdiscuz", $form->getFormID() && (comments_open($post) || $post->comment_count) && is_singular() && post_type_supports($post->post_type, "comments"), $post)) {
             ob_start();
-            include ABSPATH . "wp-content/plugins/wpdiscuz/themes/default/comment-form.php";
+            include WPDISCUZ_DIR_PATH . "/themes/default/comment-form.php";
             $html = ob_get_clean();
         } elseif (is_single() || is_page()) {
             if (comments_open() || get_comments_number()) {
@@ -2707,22 +2713,49 @@ class WpdiscuzCore implements WpDiscuzConstants {
         return $html;
     }
 
-    public function replaceDefaultCommentBlock($settings, $name) {
-        if ($name == 'core/comments') {
-            $settings['render_callback'] = [&$this, 'renderBlockWpdiscuz'];
+    public function preRenderCoreCommentsBlock($preRender, $parsedBlock, $block) {
+        if ($parsedBlock['blockName'] !== 'core/comments') {
+            return $preRender;
         }
+        $context = isset($_GET['context']) ? $_GET['context'] : '';
+        if ($context === 'edit') {
+            WP_Block_Supports::$block_to_render = $parsedBlock;
+            $result                             = $this->renderBlockWpdiscuz([], '', $block);
+            WP_Block_Supports::$block_to_render = null;
+            return $result;
+        }
+        global $post;
+        $post_id = isset($block->context['postId']) ? $block->context['postId'] : 0;
+        if (!$post_id && !empty($post->ID)) {
+            $post_id = $post->ID;
+        }
+        if (!$post_id) {
+            return $preRender;
+        }
+        $post = get_post($post_id);
+        $form = $this->wpdiscuzForm->getForm($post_id);
+        $form->initFormFields();
+        if (!apply_filters("is_load_wpdiscuz", $form->getFormID() && (comments_open($post) || $post->comment_count) && is_singular() && post_type_supports($post->post_type, "comments"), $post)) {
+            return $preRender;
+        }
+        WP_Block_Supports::$block_to_render = $parsedBlock;
+        $result                             = $this->renderBlockWpdiscuz([], '', $block);
+        WP_Block_Supports::$block_to_render = null;
 
-        return $settings;
+        return $result;
     }
 
     public function wpdiscuzBlockInit() {
-        register_block_type(__DIR__ . "/assets/block", ["render_callback" => [&$this, "renderBlockWpdiscuz"]]);
+        register_block_type(WPDISCUZ_DIR_PATH . "/assets/block", ["render_callback" => [&$this, "renderBlockWpdiscuz"]]);
     }
 
     public function renderBlockWpdiscuz($attributes, $content, $block) {
         global $post;
-        $post_id = isset($block->context['postId']) ? $block->context['postId'] : 0;
-        $context = isset($_GET['context']) ? $_GET['context'] : '';
+        $post_id = $block->context['postId'] ?? 0;
+        $context = $_GET['context'] ?? '';
+        if (!$post_id && !empty($post->ID)) {
+            $post_id = $post->ID;
+        }
         ob_start();
         if ($context === 'edit') {
             $editBlockNotice = wp_kses_post(__('This is just a demo of wpDiscuz comment section.<br>
@@ -2745,12 +2778,12 @@ class WpdiscuzCore implements WpDiscuzConstants {
                     echo '</div>';
                 } else {
                     echo '<div class="wpdiscuz-edit-bloc-notice block-editor-warning">' . $editBlockNotice . '</div>';
-                    include __DIR__ . "/themes/default/comment-form.php";
+                    include WPDISCUZ_DIR_PATH . "/themes/default/comment-form.php";
                 }
                 $post = $post_before;
             } else {
                 echo '<div class="wpdiscuz-edit-bloc-notice block-editor-warning">' . $editBlockNotice . '</div>';
-                include __DIR__ . "/themes/default/demo.php";
+                include WPDISCUZ_DIR_PATH . "/themes/default/demo.php";
             }
         } else {
             if ($post_id) {

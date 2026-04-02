@@ -1,6 +1,6 @@
 #the-comment-list .wmu-attachment img{vertical-align:bottom;}
 #the-comment-list .wmu-comment-attachments{padding:0px 5px; margin:3px 0px 10px 0px;}
-#the-comment-list .wmu-attachment-delete{cursor:pointer; border-top:1px solid #ffffff; visibility:hidden; font-size:5px; line-height:12px; text-align:center; padding:2px 0px 1px 0px; margin:0px; z-index:100; background: url('../img/file-icons/delete.png') center no-repeat; border-bottom:white 1px solid;}
+#the-comment-list .wmu-attachment-delete{cursor:pointer; border-top:1px solid #ffffff; visibility:hidden; font-size:5px; line-height:12px; text-align:center; padding:2px 0px 1px 0px; margin:0px; z-index:100; border-bottom:white 1px solid;}
 #the-comment-list .wmu-attachment:hover > .wmu-attachment-delete{visibility:visible;}
 #the-comment-list .wmu-attachment-delete:hover{visibility:visible; background-color:#FFEFEF; border-bottom:#FFD6D6 1px solid;}
 

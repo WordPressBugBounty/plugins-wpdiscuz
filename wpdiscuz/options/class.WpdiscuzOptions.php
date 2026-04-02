@@ -1252,6 +1252,8 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $jsArgs["wmuKeyImages"]            = self::KEY_IMAGES;
         $jsArgs["wmuSingleImageWidth"]     = $this->content["wmuSingleImageWidth"];
         $jsArgs["wmuSingleImageHeight"]    = $this->content["wmuSingleImageHeight"];
+        $jsArgs["wmuIconVideo"]            = plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/file-icons/video-audio-type.png");
+        $jsArgs["wmuIconFile"]             = plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/file-icons/file-type.png");
 
         ob_start();
         include_once WPDISCUZ_DIR_PATH . '/utils/layouts/media-preview/preview.php';

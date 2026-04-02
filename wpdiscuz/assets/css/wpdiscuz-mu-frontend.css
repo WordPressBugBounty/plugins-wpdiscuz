@@ -9,13 +9,21 @@
 #wpdcom .wmu-tabs .wmu-preview-images .wmu-preview-remove .wmu-file-name{display: none;}
 #wpdcom .wmu-tabs .wmu-preview-remove {position:relative;}
 #wpdcom .wmu-tabs .wmu-preview-remove img{max-height:45px;}
-#wpdcom .wmu-tabs .wmu-preview-remove .wmu-delete{line-height:45px; position: absolute; display:none; top:0px; left:0px; width:100%; z-index:100; background: url('../img/delete.png') center no-repeat #eeeeee; opacity:0.8;}
-#wpdcom .wmu-tabs .wmu-preview-remove:hover .wmu-delete{display:block; z-index:100;}
+#wpdcom .wmu-tabs .wmu-preview-delete,
+#wpdcom .wmu-tabs .wmu-preview-replace{cursor:pointer; position:absolute; bottom:0; width:50%; display:none; text-align:center; background:rgba(255,255,255,0.88); z-index:101; font-size:14px; line-height:18px; padding:1px 0; box-sizing:border-box;}
+#wpdcom .wmu-tabs .wmu-preview-delete{left:0; color:#c0392b;}
+#wpdcom .wmu-tabs .wmu-preview-replace{right:0; color:#444;}
+#wpdcom .wmu-tabs .wmu-preview-remove:hover .wmu-preview-delete,
+#wpdcom .wmu-tabs .wmu-preview-remove:hover .wmu-preview-replace{display:block;}
+#wpdcom .wmu-tabs .wmu-preview-delete:hover{background:rgba(255,230,230,0.95); color:#c0392b;}
+#wpdcom .wmu-tabs .wmu-preview-replace:hover{background:rgba(220,240,255,0.95); color:#0073aa;}
 #wpdcom .wmu-preview{margin:1px 3px; cursor:pointer;display: inline-block;}
 #wpdcom .wmu-attachment img{vertical-align:bottom;}
 #wpdcom .wmu-attachment audio{vertical-align:bottom;}
 #wpdcom .wmu-attachment-delete,
-.wpd-content .wmu-attachment-delete{cursor:pointer; border-top:1px solid #ffffff; visibility:hidden; font-size:5px; line-height:12px; text-align:center; padding:2px 0px 1px 0px; margin:0px; z-index:100; background: url('../img/file-icons/delete.png') center no-repeat; border-bottom:white 1px solid;}
+.wpd-content .wmu-attachment-delete{cursor:pointer; border-top:1px solid #ffffff; visibility:hidden; font-size:5px; line-height:12px; text-align:center; padding:2px 0px 1px 0px; margin:0px; z-index:100; border-bottom:white 1px solid;}
+#wpdcom .wmu-attachment-delete svg,
+.wpd-content .wmu-attachment-delete svg {fill:#d63638;width: 11px;height: 11px;}
 #wpdcom .wmu-attachment:hover > .wmu-attachment-delete,
 .wpd-content .wmu-attachment:hover > .wmu-attachment-delete{visibility:visible;}
 #wpdcom .wmu-attachment-delete:hover,

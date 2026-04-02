@@ -109,6 +109,8 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         if ($this->isUploadingAllowed()) {
             $html = "<div class='wmu-action-wrap'>";
             $html .= "<div class='wmu-tabs wmu-" . self::KEY_IMAGES . "-tab wmu-hide'></div>";
+            $html .= "<div class='wmu-tabs wmu-" . self::KEY_VIDEOS . "-tab wmu-hide'></div>";
+            $html .= "<div class='wmu-tabs wmu-" . self::KEY_FILES  . "-tab wmu-hide'></div>";
             $html .= apply_filters("wpdiscuz_mu_tabs", "");
             $html .= "</div>";
             echo $html;
@@ -117,6 +119,9 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
 
     public function commentText($content, $comment) {
         if ($comment && strpos($this->requestUri, self::PAGE_COMMENTS) !== false && $this->options->content["wmuIsShowFilesDashboard"]) {
+            if (empty($this->currentUser->ID)) {
+                $this->currentUser = WpdiscuzHelper::getCurrentUser();
+            }
             $content = $this->getAttachments($content, $comment);
         }
         return $content;
@@ -126,12 +131,17 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         return $this->getAttachments($content, $comment);
     }
 
+    /**
+     * @param $content
+     * @param $comment WP_Comment
+     * @return mixed|string
+     */
     private function getAttachments($content, $comment) {
         $attachments = get_comment_meta($comment->comment_ID, self::METAKEY_ATTACHMENTS, true);
         if ($attachments && is_array($attachments)) {
             // get files from jetpack CDN on ajax calls
             add_filter("jetpack_photon_admin_allow_image_downsize", "__return_true");
-            $content .= "<div class='wmu-comment-attachments'>";
+            $content .= "<div class='wmu-comment-attachments' data-comment-id='{$comment->comment_ID}'>";
             foreach ($attachments as $key => $ids) {
                 if (!empty($ids)) {
                     $attachIds = array_map("intval", $ids);
@@ -148,14 +158,14 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         return $content;
     }
 
-    public function getAttachedImages($attachIds, $currentUser = null, $size = "full", $lazyLoad = true) {
+    public function getAttachedImages($attachIds, $currentUser = null, $size = "full", $lazyLoad = true, $totalCount = null, $forceAdminStyle = false) {
         global $pagenow;
         $images = "";
         if ($attachIds) {
-            $attachments = get_posts(["include" => $attachIds, "post_type" => "attachment", "orderby" => "ID", "order" => "asc"]);
+            $attachments = get_posts(["include" => $attachIds, "post_type" => "attachment", "orderby" => "post__in"]);
             if ($attachments && is_array($attachments)) {
                 $style = "";
-                if ($pagenow == self::PAGE_COMMENTS) {
+                if ($forceAdminStyle || $pagenow == self::PAGE_COMMENTS) {
                     $style            .= "max-height:100px;";
                     $style            .= "width:auto;";
                     $height           = "";
@@ -163,7 +173,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
                     $secondarySizeKey = "";
                     $secondarySize    = "";
                 } else {
-                    if (count($attachments) > 1) {
+                    if (($totalCount ?? count($attachments)) > 1) {
                         $whData = apply_filters("wpdiscuz_mu_image_sizes", ["width" => 90, "height" => 90]);
                         $width  = $whData["width"];
                         $height = $whData["height"];
@@ -189,7 +199,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
                     $style .= "$secondarySizeKey:auto;";
                 }
 
-                if ($pagenow == self::PAGE_COMMENTS) {
+                if ($forceAdminStyle || $pagenow == self::PAGE_COMMENTS) {
                     $size = "thumbnail";
                 } else {
                     foreach ($this->getImageSizes() as $sizeKey => $sizeValue) {
@@ -336,6 +346,13 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         if ($size > ($this->options->content["wmuMaxFileSize"] * 1024 * 1024)) {
             wp_send_json_error("wmuPhraseMaxFileSize");
         }
+
+        foreach ($files as $file) {
+            $extension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
+            if (!$this->isAllowedFileType($this->getMimeType($file, $extension), $extension)) {
+                wp_send_json_error(["error" => sprintf(__(".%s files are not allowed", "wpdiscuz"), $extension)]);
+            }
+        }
     }
 
     /**
@@ -429,7 +446,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         return false;
     }
 
-    private function isAllowedFileType($mimeType, $extension) {
+    public function isAllowedFileType($mimeType, $extension) {
         $isAllowed = false;
         if (!empty($this->mimeTypes) && is_array($this->mimeTypes)) {
             foreach ($this->mimeTypes as $ext => $mimes) {
@@ -443,7 +460,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         return $isAllowed;
     }
 
-    private function getMimeType($file, $extension) {
+    public function getMimeType($file, $extension) {
         $mimeType = "";
         if (function_exists("finfo_open") && function_exists("finfo_file")) {
             $finfo    = finfo_open(FILEINFO_MIME_TYPE);
@@ -528,7 +545,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         return $bool;
     }
 
-    private function uploadSingleFile($file) {
+    public function uploadSingleFile($file) {
         $currentTime       = WpdiscuzHelper::getMicrotime();
         $attachmentData    = [];
         $path              = $this->wpUploadsPath . "/";
@@ -715,10 +732,36 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         return current_user_can("moderate_comments") || ($this->helper->isCommentEditable($comment) && $this->helper->canUserEditComment($comment, $currentUser, $args));
     }
 
+    public function canReplaceAttachment($currentUser, $attachment, $type) {
+        if (!apply_filters("wpdiscuz_mu_isactive", false)) {
+            return false;
+        }
+        $commentId = (int)get_post_meta($attachment->ID, WpdiscuzCore::METAKEY_ATTCHMENT_COMMENT_ID, true);
+        return (bool)apply_filters("wpdiscuz_mu_can_replace_attachments", false, $currentUser, $commentId, $type);
+    }
+
     public function getDeleteHtml($currentUser, $attachment, $type) {
         $attachmentId = self::encrypt($attachment->ID);
-        $deleteHtml   = "<div class='wmu-attachment-delete wmu-delete-" . esc_attr($type) . "' title='" . esc_html__("Delete", "wpdiscuz") . "' data-wmu-attachment='" . esc_attr($attachmentId) . "'>&nbsp;</div>";
-        return $this->canEditAttachments($currentUser, $attachment) ? $deleteHtml : "<div class='wmu-separator'></div>";
+        $deleteHtml   = "<div class='wmu-attachment-delete wmu-delete-" . esc_attr($type) . "' title='" . esc_html__("Delete", "wpdiscuz") . "' data-wmu-attachment='" . esc_attr($attachmentId) . "'>";
+        $deleteHtml   .= "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'><path d='M232.7 69.9C237.1 56.8 249.3 48 263.1 48L377 48C390.8 48 403 56.8 407.4 69.9L416 96L512 96C529.7 96 544 110.3 544 128C544 145.7 529.7 160 512 160L128 160C110.3 160 96 145.7 96 128C96 110.3 110.3 96 128 96L224 96L232.7 69.9zM128 208L512 208L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 208zM216 272C202.7 272 192 282.7 192 296L192 488C192 501.3 202.7 512 216 512C229.3 512 240 501.3 240 488L240 296C240 282.7 229.3 272 216 272zM320 272C306.7 272 296 282.7 296 296L296 488C296 501.3 306.7 512 320 512C333.3 512 344 501.3 344 488L344 296C344 282.7 333.3 272 320 272zM424 272C410.7 272 400 282.7 400 296L400 488C400 501.3 410.7 512 424 512C437.3 512 448 501.3 448 488L448 296C448 282.7 437.3 272 424 272z'/></svg>";
+        $deleteHtml   .= "</div>";
+        if ($this->canEditAttachments($currentUser, $attachment)) {
+            if ($this->canReplaceAttachment($currentUser, $attachment, $type)) {
+                $deleteHtml .= $this->getAttachmentReplaceHtml($attachmentId);
+            }
+            return $deleteHtml;
+        }
+        return "<div class='wmu-separator'></div>";
+    }
+
+    private function getAttachmentReplaceHtml($attachmentId) {
+        $label       = esc_attr__("Replace", "wpdiscuz");
+        $allowedExts = apply_filters("wpdiscuz_mu_allowed_extensions", "accept='image/*'");
+        $replaceHtml = "<label class='wmu-attachment-replace' title='" . $label . "' data-wmu-attachment='" . esc_attr($attachmentId) . "'>";
+        $replaceHtml .= "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'><path d='M500.7 138.7L512 149.4L512 96C512 78.3 526.3 64 544 64C561.7 64 576 78.3 576 96L576 224C576 241.7 561.7 256 544 256L416 256C398.3 256 384 241.7 384 224C384 206.3 398.3 192 416 192L463.9 192L456.3 184.8C456.1 184.6 455.9 184.4 455.7 184.2C380.7 109.2 259.2 109.2 184.2 184.2C109.2 259.2 109.2 380.7 184.2 455.7C259.2 530.7 380.7 530.7 455.7 455.7C463.9 447.5 471.2 438.8 477.6 429.6C487.7 415.1 507.7 411.6 522.2 421.7C536.7 431.8 540.2 451.8 530.1 466.3C521.6 478.5 511.9 490.1 501 501C401 601 238.9 601 139 501C39.1 401 39 239 139 139C238.9 39.1 400.7 39 500.7 138.7z'/></svg>";
+        $replaceHtml .= "<input type='file' style='display:none' class='wmu-replace-attachment-input' " . $allowedExts . ">";
+        $replaceHtml .= "</label>";
+        return $replaceHtml;
     }
 
     public function commentListArgs($args) {
@@ -768,7 +811,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
     public function exportPersonalData($data, $commentId) {
         $attachments = get_comment_meta($commentId, self::METAKEY_ATTACHMENTS, true);
         if ($attachments && is_array($attachments)) {
-            $isWmuExists = apply_filters("wpdiscuz_mu_exists", false);
+            $isWmuExists = apply_filters("wpdiscuz_mu_isactive", false);
             foreach ($attachments as $key => $attachIds) {
                 if (empty($attachIds)) {
                     continue;
