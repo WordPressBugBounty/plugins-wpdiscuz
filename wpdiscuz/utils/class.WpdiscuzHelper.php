@@ -185,7 +185,9 @@ class WpdiscuzHelper implements WpDiscuzConstants {
 
     public function validateNonce() {
         if (is_user_logged_in() || apply_filters('wpdiscuz_validate_nonce_for_guests', true)) {
-            $nonce         = !empty($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]) ? sanitize_text_field($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]) : "";
+            $nonce         = !empty($_POST[self::GLOBAL_NONCE_NAME]) ? sanitize_text_field($_POST[self::GLOBAL_NONCE_NAME])
+                : (!empty($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH])
+                    ? sanitize_text_field($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]) : "");
             $timeDependent = wp_verify_nonce($nonce, $this->generateNonceKey());
             if (!$timeDependent) {
                 wp_die(__("Nonce is invalid.", "wpdiscuz"));
@@ -215,19 +217,10 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             return;
         }
 
-        $expires = time() + HOUR_IN_SECONDS * 10;
-        $nonce   = $this->generateNonce();
+        $nonce = $this->generateNonce();
         if (version_compare(phpversion(), "7.3", ">=")) {
             setcookie(self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH, $nonce, [
-                'expires'  => $expires,
-                'path'     => '/',
-                'domain'   => '',
-                'secure'   => false,
-                'httponly' => true,
-                'samesite' => 'Strict',
-            ]);
-            setcookie(self::GLOBAL_NONCE_NAME . '_exp_' . COOKIEHASH, (string)$expires, [
-                'expires'  => $expires,
+                'expires'  => 0,
                 'path'     => '/',
                 'domain'   => '',
                 'secure'   => false,
@@ -235,8 +228,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                 'samesite' => 'Strict',
             ]);
         } else {
-            setcookie(self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH, $nonce, $expires, '/', "", false, true);
-            setcookie(self::GLOBAL_NONCE_NAME . '_exp_' . COOKIEHASH, (string)$expires, $expires, '/', "", false, false);
+            setcookie(self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH, $nonce, 0, '/', "", false, false);
         }
     }
 

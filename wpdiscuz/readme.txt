@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comment, comments, ajax comments, comment form, comment fields
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 7.6.50
+Stable tag: 7.6.51
 Requires PHP: 5.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -187,9 +187,13 @@ Nothing will be lost!  **Comments - wpDiscuz** will show all old comments.
 
 Please remember to delete all caches and purge CDN after the update.
 
+= Comments - wpDiscuz v7.6.51 - 06.04.2026 =
+
+* Fixed: An issue with wpDiscuz nonce validation
+
 = Comments - wpDiscuz v7.6.50 - 02.04.2026 =
 
-* Fixed: An issue with wpdiscuz nonce validation
+* Fixed: An issue with wpDiscuz nonce validation
 * Added: Load wpDiscuz comments for block themes automatically
 * Added: Support for attachment preview replace (no need to re-upload all attachments anymore)
 

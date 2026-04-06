@@ -115,7 +115,7 @@ jQuery(document).ready(function ($) {
     var bubbleLocation = wpdiscuzAjaxObj.bubbleLocation;
     var inlineFeedbackAttractionType = wpdiscuzAjaxObj.inlineFeedbackAttractionType;
     var scrollSize = parseInt(wpdiscuzAjaxObj.scrollSize);
-        scrollSize = scrollSize ? scrollSize : 32;
+    scrollSize = scrollSize ? scrollSize : 32;
     var wpdiscuzAgreementFields = [];
     var reCaptchaWidgets = [];
     var bubbleNewCommentIds = [];
@@ -124,33 +124,24 @@ jQuery(document).ready(function ($) {
     var userInteractedAt = 0;
     const isUpdateNonceWithAjax = wpdiscuzAjaxObj.isUpdateNonceWithAjax;
 
-    function wpdGetCookieValue(name) {
-        let match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)'));
-        return match ? decodeURIComponent(match[1]) : null;
-    }
-
     if (isUpdateNonceWithAjax) {
-        let nonceCookieExpName   = wpdiscuzAjaxObj.nonceCookieExpName;
-        let wpdNonceRefreshDone  = false;
-        let wpdNonceEventsList   = ['mousedown', 'mousemove', 'touchstart', 'scroll', 'keydown'];
+        let wpdNonceRefreshDone = false;
+        let wpdNonceEventsList = ['mousedown', 'mousemove', 'touchstart', 'scroll', 'keydown'];
 
         function wpdNonceOnInteraction() {
             if (wpdNonceRefreshDone) {
                 return;
             }
-           wpdNonceRefreshDone = true;
+            wpdNonceRefreshDone = true;
 
             wpdNonceEventsList.forEach(function (e) {
                 document.removeEventListener(e, wpdNonceOnInteraction);
             });
 
-            let nonceExpValue = nonceCookieExpName ? wpdGetCookieValue(nonceCookieExpName) : null;
-            let nowSeconds    = Math.floor(Date.now() / 1000);
-
-            if (!nonceExpValue || (parseInt(nonceExpValue, 10) - nowSeconds) < 3600) {
-                let data = new FormData();
-                data.append('action', 'wpdGetNonce');
-                getAjaxObj(isNativeAjaxEnabled, false, data);
+            if (!Cookies.get(wpdiscuzAjaxObj.nonceCookieName)) {
+                var nonceData = new FormData();
+                nonceData.append('action', 'wpdGetNonce');
+                getAjaxObj(isNativeAjaxEnabled, false, nonceData);
             }
         }
 
@@ -2443,14 +2434,37 @@ jQuery(document).ready(function ($) {
             });
         }
         var url = isNative ? wpdiscuzAjaxObj.url : wpdiscuzAjaxObj.customAjaxUrl;
-        console.log(url);
-        return $.ajax({
-            type: 'POST',
-            url: url,
-            data: data,
-            contentType: false,
-            processData: false
-        });
+
+        function doRequest() {
+            return $.ajax({type: 'POST', url: url, data: data, contentType: false, processData: false});
+        }
+
+        if (action !== 'wpdGetNonce' && wpdiscuzAjaxObj.nonceCookieName) {
+            var nonce = Cookies.get(wpdiscuzAjaxObj.nonceCookieName);
+            if (nonce) {
+                data.append('wpdiscuz_nonce', nonce);
+            } else {
+                var deferred = $.Deferred();
+                var nonceData = new FormData();
+                nonceData.append('action', 'wpdGetNonce');
+                getAjaxObj(isNative, false, nonceData).always(function () {
+                    var freshNonce = Cookies.get(wpdiscuzAjaxObj.nonceCookieName);
+                    if (freshNonce) {
+                        data.append('wpdiscuz_nonce', freshNonce);
+                    }
+                    doRequest()
+                        .done(function () {
+                            deferred.resolve.apply(deferred, arguments);
+                        })
+                        .fail(function () {
+                            deferred.reject.apply(deferred, arguments);
+                        });
+                });
+                return deferred.promise();
+            }
+        }
+
+        return doRequest();
     }
 
     wpdiscuzAjaxObj.getAjaxObj = getAjaxObj;

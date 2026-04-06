@@ -2,7 +2,7 @@
 /*
  * Plugin Name: wpDiscuz
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.50
+ * Version: 7.6.51
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Plugin URI: https://wpdiscuz.com/
@@ -1350,7 +1350,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
             $this->wpdiscuzOptionsJs["menu_icon"]                   = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg";
             $this->wpdiscuzOptionsJs["menu_icon_hover"]             = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg_hover.svg";
             $this->wpdiscuzOptionsJs["isUpdateNonceWithAjax"]       = apply_filters("wpdiscuz_is_update_nonce_with_ajax", true, WpdiscuzHelper::getCurrentUser());
-            $this->wpdiscuzOptionsJs["nonceCookieExpName"]          = WpdiscuzHelper::GLOBAL_NONCE_NAME . "_exp_" . COOKIEHASH;
+            $this->wpdiscuzOptionsJs["nonceCookieName"]             = WpdiscuzHelper::GLOBAL_NONCE_NAME . "_" . COOKIEHASH;
             $this->wpdiscuzOptionsJs["postAttachmentsAsGallery"]    = apply_filters("wpdiscuz_post_attachments_as_gallery", false);
             $this->wpdiscuzOptionsJs["wmuPhraseNotAllowedFileType"] = __("File type is not allowed", "wpdiscuz");
             $this->wpdiscuzOptionsJs                                = apply_filters("wpdiscuz_js_options", $this->wpdiscuzOptionsJs, $this->options);

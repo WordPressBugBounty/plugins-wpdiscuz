@@ -11,6 +11,10 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
      * @var WpdiscuzDBManager
      */
     private $dbManager;
+
+    /**
+     * @var WpdiscuzHelper
+     */
     private $helper;
     private $helperEmail;
     /**
