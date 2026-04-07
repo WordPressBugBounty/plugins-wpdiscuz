@@ -176,7 +176,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     }
 
     public function generateNonceKey() {
-        return ($key = get_home_url()) ? md5($key) : self::GLOBAL_NONCE_NAME;
+        return self::GLOBAL_NONCE_NAME;
     }
 
     public function generateNonce() {
