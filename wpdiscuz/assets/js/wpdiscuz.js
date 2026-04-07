@@ -123,47 +123,50 @@ jQuery(document).ready(function ($) {
     var wpdiscuzLoadCount = 1;
     var userInteractedAt = 0;
     const isUpdateNonceWithAjax = wpdiscuzAjaxObj.isUpdateNonceWithAjax;
+    var wpdiscuzNonce = null;
 
-    if (isUpdateNonceWithAjax) {
-        let wpdNonceRefreshDone = false;
-        let wpdNonceEventsList = ['mousedown', 'mousemove', 'touchstart', 'scroll', 'keydown'];
-
-        function wpdNonceOnInteraction() {
-            if (wpdNonceRefreshDone) {
-                return;
-            }
-            wpdNonceRefreshDone = true;
-
-            wpdNonceEventsList.forEach(function (e) {
-                document.removeEventListener(e, wpdNonceOnInteraction);
-            });
-
-            if (!Cookies.get(wpdiscuzAjaxObj.nonceCookieName)) {
-                var nonceData = new FormData();
-                nonceData.append('action', 'wpdGetNonce');
-                getAjaxObj(isNativeAjaxEnabled, false, nonceData);
-            }
-        }
-
-        wpdNonceEventsList.forEach(function (e) {
-            document.addEventListener(e, wpdNonceOnInteraction);
-        });
-    }
-
-    var htmlScrollBehavior = $('html').css('scroll-behavior');
-    var bodyScrollBehavior = $('body').css('scroll-behavior');
-
-    if (userInteractionCheck) {
-        document.addEventListener('mousedown', wpdEventTriggered);
-        document.addEventListener('mousemove', wpdEventTriggered);
-        document.addEventListener('touchstart', wpdEventTriggered);
-        document.addEventListener('scroll', wpdEventTriggered);
-        document.addEventListener('keydown', wpdEventTriggered);
-    }
-
-    function wpdEventTriggered(evt) {
-        userInteractedAt = Math.ceil(Date.now() / 1000);
-    }
+    // if (isUpdateNonceWithAjax) {
+    //     let wpdNonceRefreshDone = false;
+    //     let wpdNonceEventsList = ['mousedown', 'mousemove', 'touchstart', 'scroll', 'keydown'];
+    //
+    //     function wpdNonceOnInteraction() {
+    //         if (wpdNonceRefreshDone) {
+    //             return;
+    //         }
+    //         wpdNonceRefreshDone = true;
+    //
+    //         wpdNonceEventsList.forEach(function (e) {
+    //             document.removeEventListener(e, wpdNonceOnInteraction);
+    //         });
+    //
+    //         if (!wpdiscuzNonce) {
+    //             var nonceData = new FormData();
+    //             nonceData.append('action', 'wpdGetNonce');
+    //             getAjaxObj(isNativeAjaxEnabled, false, nonceData).done(function (response) {
+    //                 wpdiscuzNonce = response.data[wpdiscuzAjaxObj.nonceName];
+    //             });
+    //         }
+    //     }
+    //
+    //     wpdNonceEventsList.forEach(function (e) {
+    //         document.addEventListener(e, wpdNonceOnInteraction);
+    //     });
+    // }
+    //
+    // var htmlScrollBehavior = $('html').css('scroll-behavior');
+    // var bodyScrollBehavior = $('body').css('scroll-behavior');
+    //
+    // if (userInteractionCheck) {
+    //     document.addEventListener('mousedown', wpdEventTriggered);
+    //     document.addEventListener('mousemove', wpdEventTriggered);
+    //     document.addEventListener('touchstart', wpdEventTriggered);
+    //     document.addEventListener('scroll', wpdEventTriggered);
+    //     document.addEventListener('keydown', wpdEventTriggered);
+    // }
+    //
+    // function wpdEventTriggered(evt) {
+    //     userInteractedAt = Math.ceil(Date.now() / 1000);
+    // }
 
 
     $("#wp-admin-bar-wpdiscuz > .ab-item").prepend("<img src='" + wpdiscuzAjaxObj.menu_icon + "' style='width:22px;height:22px;vertical-align:middle;'>");
@@ -2439,18 +2442,17 @@ jQuery(document).ready(function ($) {
             return $.ajax({type: 'POST', url: url, data: data, contentType: false, processData: false});
         }
 
-        if (action !== 'wpdGetNonce' && wpdiscuzAjaxObj.nonceCookieName) {
-            var nonce = Cookies.get(wpdiscuzAjaxObj.nonceCookieName);
-            if (nonce) {
-                data.append('wpdiscuz_nonce', nonce);
+        if (action !== 'wpdGetNonce' && wpdiscuzAjaxObj.nonceName) {
+            if (wpdiscuzNonce) {
+                data.append(wpdiscuzAjaxObj.nonceName, wpdiscuzNonce);
             } else {
                 var deferred = $.Deferred();
                 var nonceData = new FormData();
                 nonceData.append('action', 'wpdGetNonce');
-                getAjaxObj(isNative, false, nonceData).always(function () {
-                    var freshNonce = Cookies.get(wpdiscuzAjaxObj.nonceCookieName);
-                    if (freshNonce) {
-                        data.append('wpdiscuz_nonce', freshNonce);
+                getAjaxObj(isNative, false, nonceData).always(function (response) {
+                    wpdiscuzNonce = response.data[wpdiscuzAjaxObj.nonceName];
+                    if (wpdiscuzNonce) {
+                        data.append(wpdiscuzAjaxObj.nonceName, wpdiscuzNonce);
                     }
                     doRequest()
                         .done(function () {

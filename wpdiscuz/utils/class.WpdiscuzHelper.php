@@ -65,7 +65,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         add_action("add_meta_boxes", [&$this, "addRatingResetButton"], 10, 2);
 
         add_filter("nonce_life", [&$this, "setNonceLife"], 15, 2);
-        add_action("wpdiscuz_init", [&$this, "setNonceInCookies"]);
+//        add_action("wpdiscuz_init", [&$this, "setNonceInCookies"]);
 
         add_action("save_post", [$this, "updatePostAuthorsTrs"]);
 
@@ -186,14 +186,13 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     public function validateNonce() {
         if (is_user_logged_in() || apply_filters('wpdiscuz_validate_nonce_for_guests', true)) {
             $nonce         = !empty($_POST[self::GLOBAL_NONCE_NAME]) ? sanitize_text_field($_POST[self::GLOBAL_NONCE_NAME])
-                : (!empty($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH])
-                    ? sanitize_text_field($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]) : "");
+                : "";
             $timeDependent = wp_verify_nonce($nonce, $this->generateNonceKey());
             if (!$timeDependent) {
                 wp_die(__("Nonce is invalid.", "wpdiscuz"));
             }
 
-            $this->setNonceInCookies($timeDependent, false);
+//            $this->setNonceInCookies($timeDependent, false);
         }
     }
 

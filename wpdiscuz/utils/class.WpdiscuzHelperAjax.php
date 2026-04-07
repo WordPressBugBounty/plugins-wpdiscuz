@@ -80,8 +80,8 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
     }
 
     public function getNonce() {
-        $this->helper->setNonceInCookies(2, false);
-        wp_send_json_success();
+        $nonce = $this->helper->generateNonce();
+        wp_send_json_success([self::GLOBAL_NONCE_NAME => $nonce]);
     }
 
     public function stickComment() {
