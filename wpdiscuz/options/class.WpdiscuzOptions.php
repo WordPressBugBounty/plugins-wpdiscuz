@@ -553,7 +553,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             "wc_unable_sent_email"                              => esc_html__("Unable to send an email", "wpdiscuz"),
             "wc_subscription_fault"                             => esc_html__("Subscription Fault", "wpdiscuz"),
             "wc_comments_are_deleted"                           => esc_html__("Your comments have been deleted from database", "wpdiscuz"),
-            "wc_cancel_subs_success"                            => esc_html__("You cancel all your subscriptions successfully", "wpdiscuz"),
+            "wc_cancel_subs_success"                            => esc_html__("You have successfully canceled all your subscriptions.", "wpdiscuz"),
             "wc_cancel_follows_success"                         => esc_html__("You cancel all your follows successfully", "wpdiscuz"),
             "wc_follow_confirm_success"                         => esc_html__("Follow has been confirmed successfully", "wpdiscuz"),
             "wc_follow_cancel_success"                          => esc_html__("Follow has been canceled successfully", "wpdiscuz"),

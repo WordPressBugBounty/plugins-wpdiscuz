@@ -211,7 +211,7 @@ if (!defined("ABSPATH")) {
         </tr>
         <tr valign="top">
             <th scope="row"><label
-                    for="wc_cancel_subs_success"><?php esc_html_e("You cancel all your subscriptions successfully", "wpdiscuz"); ?></label>
+                    for="wc_cancel_subs_success"><?php esc_html_e("You have successfully canceled all your subscriptions.", "wpdiscuz"); ?></label>
             </th>
             <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_cancel_subs_success"]); ?>"
                                    name="wc_cancel_subs_success" id="wc_cancel_subs_success"/></td>
