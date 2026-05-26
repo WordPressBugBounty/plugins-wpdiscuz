@@ -731,7 +731,7 @@ $settings      = $this->settingsArray();
             </div>
 
             <?php
-            if (!$tab || ($tab && !isset($settings["core"][$tab]) && !isset($settings["addons"][$tab]))) {
+            if (!$tab || ($tab && !isset($settings["core"][$tab]) && !isset($settings["addons"][$tab]) && !isset($settings["teasers"][$tab]))) {
                 ?>
                 <!-- wpd-box-wrap start -->
                 <div class="wpd-box-wrap wpd-settings-home">
@@ -782,11 +782,12 @@ $settings      = $this->settingsArray();
                             <div class="wpd-box">
                                 <div class="wpd-body">
                                     <div class="wpd-icon">
-                                        <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/addon.png")); ?>"
-                                             style="height: 20px; padding: 0px;"/>
+                                        <?php $iconSrc = !empty($addon["icon"]) ? $addon["icon"] : plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/addon.png"); ?>
+                                        <img src="<?php echo esc_url_raw($iconSrc); ?>"/>
                                     </div>
                                     <div class="wpd-title">
-                                        <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key)); ?>"><?php echo esc_html($addon["title"]); ?></a>
+                                        <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key)); ?>" title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>"><span
+                                                class="wpd-addon-title-text"><?php echo esc_html($addon["title"]); ?></span></a>
                                     </div>
                                     <div class="wpd-more">
                                         <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/dots.png")); ?>"
@@ -801,6 +802,47 @@ $settings      = $this->settingsArray();
                     <div class="wpd-clear"></div>
                     <?php
                 }
+                if (!empty($settings["teasers"])) {
+                    ?>
+                    <div class="wpd-section">
+                        <h3><?php esc_html_e("Pro Add-ons", "wpdiscuz") ?></h3>
+                    </div>
+                    <!-- wpd-box-wrap start -->
+                    <div class="wpd-box-wrap wpd-box-addons wpd-box-teasers wpd-settings-home">
+                        <?php foreach ($settings["teasers"] as $addon_key => $addon) {
+                                $cardHref = admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key);
+                                if (!empty($addon["anchor"])) {
+                                    $cardHref .= "#" . $addon["anchor"];
+                                }
+                            ?>
+                            <!-- Teaser card start -->
+                            <div class="wpd-box wpd-pro-teaser-dashboard-card wpd-pro-teaser-<?php echo esc_attr(sanitize_title($addon["title"])); ?>">
+                                <div class="wpd-body">
+                                    <div class="wpd-icon">
+                                        <?php $iconSrc = !empty($addon["icon"]) ? $addon["icon"] : plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/addon.png"); ?>
+                                        <img src="<?php echo esc_url_raw($iconSrc); ?>"/>
+                                    </div>
+                                    <div class="wpd-title">
+                                        <a href="<?php echo esc_url_raw($cardHref); ?>" title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>">
+                                            <?php if (!empty($addon["is_new"])): ?>
+                                                <span class="wpd-new-badge"><?php esc_html_e("NEW", "wpdiscuz"); ?></span>
+                                            <?php endif; ?>
+                                            <span class="wpd-addon-title-text"><?php echo esc_html($addon["title"]); ?></span>
+                                        </a>
+                                    </div>
+                                    <div class="wpd-more">
+                                        <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/dots.png")); ?>"
+                                             style="height: 18px; padding-top: 2px;"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Teaser card end -->
+                        <?php } ?>
+                    </div>
+                    <!-- wpd-box-wrap end -->
+                    <div class="wpd-clear"></div>
+                    <?php
+                }
             } else {
                 ?>
                 <div id="wpd-settings-tab" class="wpd-box-wrap wpd-settings-tab_<?php echo esc_attr($tab); ?>"
@@ -808,7 +850,7 @@ $settings      = $this->settingsArray();
                     <!-- Settings Content start -->
                     <div class="wpd-box wpd-setcon">
                         <?php
-                        $setting  = isset($settings["core"][$tab]) ? $settings["core"][$tab] : $settings["addons"][$tab];
+                        $setting  = isset($settings["core"][$tab]) ? $settings["core"][$tab] : (isset($settings["addons"][$tab]) ? $settings["addons"][$tab] : $settings["teasers"][$tab]);
                         $filePath = $setting["file_path"];
                         ?>
                         <div class="wpd-setcon-head">
@@ -835,6 +877,7 @@ $settings      = $this->settingsArray();
                                 $resetAllTabs = $mainUrlAll . "&_wpnonce={$nonce}&redirect_to=" . urlencode_deep($mainUrlTab);
                                 //                                $resetAllTabs = wp_nonce_url($resetAllTabs, "wpdiscuz_reset_options_nonce-all");
                                 ?>
+                                <?php if (empty($setting["no_save"])): ?>
                                 <div class="wpd-opt-row">
                                     <input type="hidden" name="wpd_tab" value="<?php echo esc_attr($tab); ?>"/>
                                     <div>
@@ -849,6 +892,7 @@ $settings      = $this->settingsArray();
                                            name="wc_submit_options"
                                            value="<?php esc_attr_e("Save Changes", "wpdiscuz"); ?>"/>
                                 </div>
+                                <?php endif; ?>
                             </form>
                         </div>
                     </div>
@@ -862,8 +906,9 @@ $settings      = $this->settingsArray();
                             foreach ($settings["core"] as $tab_key => $setting) {
                                 ?>
                                 <li<?php if ($tab === $tab_key) echo " class='wpd-active'"; ?>><a
-                                        href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"><span
-                                            class="dashicons dashicons-arrow-left-alt2"></span> <?php echo esc_html($setting["title"]); ?>
+                                        href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"
+                                        title="<?php echo esc_attr("wpDiscuz - " . $setting["title_original"]); ?>"><span
+                                            class="dashicons dashicons-arrow-left-alt2"></span><span class="wpd-menu-title-text"> <?php echo esc_html($setting["title"]); ?></span>
                                     </a></li>
                                 <?php
                             }
@@ -879,9 +924,43 @@ $settings      = $this->settingsArray();
                                 foreach ($settings["addons"] as $addon_key => $addon) {
                                     ?>
                                     <li<?php if ($tab === $addon_key) echo " class='wpd-active'"; ?>><a
-                                            href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key)); ?>"><span
-                                                class="dashicons dashicons-arrow-left-alt2"></span> <?php echo esc_html($addon["title"]); ?>
+                                            href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key)); ?>"
+                                            title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>"><span
+                                                class="dashicons dashicons-arrow-left-alt2"></span><span class="wpd-menu-title-text"> <?php echo esc_html($addon["title"]); ?></span>
                                         </a></li>
+                                    <?php
+                                }
+                                ?>
+                            </ul>
+                            <?php
+                        }
+                        if (!empty($settings["teasers"])) {
+                            ?>
+                            <ul class="wpd-box wpd-menu-group wpd-menu-group-teasers">
+                                <li class="wpd-menu-head">
+                                    <span class="wpd-menu-head-label"><?php esc_html_e("Pro Add-ons", "wpdiscuz") ?></span>
+                                    <span class="dashicons dashicons-arrow-up"></span>
+                                </li>
+                                <?php
+                                foreach ($settings["teasers"] as $addon_key => $addon) {
+                                    $is_active    = ($tab === $addon_key) ? "wpd-active" : "";
+                                    $teaserHref   = admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key);
+                                    if (!empty($addon["anchor"])) {
+                                        $teaserHref .= "#" . $addon["anchor"];
+                                    }
+                                    ?>
+                                    <li class="wpd-pro-teaser-menu-item <?php echo $is_active; ?>">
+                                        <a href="<?php echo esc_url_raw($teaserHref); ?>"
+                                           title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>">
+                                            <span class="dashicons dashicons-arrow-left-alt2"></span>
+                                            <span class="wpd-menu-title-wrap">
+                                                <span class="wpd-menu-title-text"><?php echo esc_html($addon["title"]); ?></span>
+                                                <?php if (!empty($addon["is_new"])): ?>
+                                                    <span class="wpd-new-badge"><?php esc_html_e("NEW", "wpdiscuz"); ?></span>
+                                                <?php endif; ?>
+                                            </span>
+                                        </a>
+                                    </li>
                                     <?php
                                 }
                                 ?>

@@ -26,8 +26,8 @@ class WpdiscuzAddons implements WpDiscuzConstants {
 
             add_action("wpdiscuz_submenu_page", [$this, "addonsMenu"]);
             add_action("wpdiscuz_addons_check", [$this, "addonsCheck"]);
-            add_action("wp_ajax_dismiss_wpdiscuz_addon_note", [&$this, "dismissAddonNote"]);
-            add_action("admin_notices", [&$this, "adminNotices"]);
+            add_action("wp_ajax_dismiss_wpdiscuz_addon_note", [$this, "dismissAddonNote"]);
+            add_action("admin_notices", [$this, "adminNotices"]);
         }
     }
 
@@ -541,7 +541,7 @@ class WpdiscuzAddons implements WpDiscuzConstants {
             $plugins["wpdiscuz-advanced-likers"] = [
                 "file"     => "wpdiscuz-advanced-likers/class.WpdiscuzVoters.php",
                 "instance" => $instance,
-                "name"     => "wpDiscuz - Advanced Liking",
+                "name"     => "wpDiscuz - Advanced Likers",
             ];
         }
         if (is_plugin_active("wpdiscuz-comment-author-info/wpdiscuz-comment-author-info.php")) {

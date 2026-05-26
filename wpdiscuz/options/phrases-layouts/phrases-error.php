@@ -119,6 +119,20 @@ if (!defined("ABSPATH")) {
             <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_msg_required_fields"]); ?>"
                                    name="wc_msg_required_fields" id="wc_msg_required_fields"/></td>
         </tr>
+        <tr valign="top">
+            <th scope="row"><label
+                    for="wc_msg_comment_is_trash"><?php esc_html_e("This comment is not acceptable.", "wpdiscuz"); ?></label>
+            </th>
+            <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_msg_comment_is_trash"]); ?>"
+                                   name="wc_msg_comment_is_trash" id="wc_msg_comment_is_trash"/></td>
+        </tr>
+        <tr valign="top">
+            <th scope="row"><label
+                    for="wc_msg_comment_is_spam"><?php esc_html_e("This comment is not acceptable.", "wpdiscuz"); ?></label>
+            </th>
+            <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_msg_comment_is_spam"]); ?>"
+                                   name="wc_msg_comment_is_spam" id="wc_msg_comment_is_spam"/></td>
+        </tr>
         </tbody>
     </table>
 </div>

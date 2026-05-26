@@ -29,8 +29,8 @@ class WpdiscuzRest extends WP_REST_Controller {
                 "data"          => [
                     [
                         "methods"             => "GET",
-                        "callback"            => [&$this, "checkNewComments"],
-                        "permission_callback" => [&$this, "checkPermission"],
+                        "callback"            => [$this, "checkNewComments"],
+                        "permission_callback" => [$this, "checkPermission"],
                         "args"                => [
                             "postId"            => [
                                 "required" => true,

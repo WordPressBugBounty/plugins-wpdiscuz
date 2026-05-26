@@ -27,7 +27,6 @@ if (wp_is_block_theme()) {
         global $wpDiscuzSubscriptionMessage, $wpDiscuzSubscriptionKey, $wpDiscuzSubscriptionAction;
         $wpdiscuz = wpDiscuz();
         add_filter("is_load_wpdiscuz", '__return_true');
-        $wpdiscuz->helper->setNonceInCookies(2, false);
         if ($wpDiscuzSubscriptionKey) {
             echo '<h2 class="wpdc-unsubscription-message">' . esc_html__('Do you want to delete', 'wpdiscuz') . ' ' . esc_html($wpDiscuzSubscriptionMessage) . '?</h2>';
             ?>
@@ -53,7 +52,8 @@ if (wp_is_block_theme()) {
         if ($userEmail) {
             ?>
             <div class="wpdc-unsubscription-bulk">
-                <a href="<?php echo home_url("/wpdiscuzsubscription/bulkmanagement/"); ?>"
+                <?php $bulkManageLink = home_url("/wpdiscuzsubscription/bulkmanagement/"); ?>
+                <a href="<?php echo wp_nonce_url($bulkManageLink, $wpdiscuz->helper->generateNonceKey()); ?>"
                    class="wpdc-unsubscription-manage-link">
                     <?php esc_html_e($wpdiscuz->options->getPhrase("wc_user_settings_email_me_delete_links")) ?>
                 </a>( <?php esc_html_e($userEmail); ?> )
@@ -64,31 +64,36 @@ if (wp_is_block_theme()) {
         <?php } ?>
     </div>
     <script>
-        document.getElementById("wpdc-unsubscription-delete-button").addEventListener("click", async function () {
-            try {
-                const wpdcUnsubscriptionAction = this.getAttribute("data-action");
-                const wpdcUnsubscriptionKey = this.getAttribute("data-key");
-                const wpdcUnsubscriptionDeleteUrl = '<?php echo admin_url('admin-ajax.php'); ?>';
+        let wpdcUnsubscriptionDeleteButton = document.getElementById("wpdc-unsubscription-delete-button");
+        if (wpdcUnsubscriptionDeleteButton) {
+            wpdcUnsubscriptionDeleteButton.addEventListener("click", async function () {
+                try {
+                    const wpdcUnsubscriptionAction = this.getAttribute("data-action");
+                    const wpdcUnsubscriptionKey = this.getAttribute("data-key");
+                    const wpdcUnsubscriptionDeleteUrl = '<?php echo admin_url('admin-ajax.php'); ?>';
+                    const wpdiscuzNonce = '<?php echo $wpdiscuz->helper->generateNonce(); ?>';
 
-                const wpdcUnsubscriptionData = new FormData();
-                wpdcUnsubscriptionData.append('action', 'wpdiscuzDeleteDataWithEmail');
-                wpdcUnsubscriptionData.append('unsubscription_action', wpdcUnsubscriptionAction);
-                wpdcUnsubscriptionData.append('unsubscription_key', wpdcUnsubscriptionKey);
+                    const wpdcUnsubscriptionData = new FormData();
+                    wpdcUnsubscriptionData.append('action', 'wpdiscuzDeleteDataWithEmail');
+                    wpdcUnsubscriptionData.append('wpdiscuz_nonce', wpdiscuzNonce);
+                    wpdcUnsubscriptionData.append('unsubscription_action', wpdcUnsubscriptionAction);
+                    wpdcUnsubscriptionData.append('unsubscription_key', wpdcUnsubscriptionKey);
 
-                const wpdcUnsubscriptionDeleteResponse = await fetch(wpdcUnsubscriptionDeleteUrl, {
-                    method: 'POST',
-                    body: wpdcUnsubscriptionData,
-                });
-                const wpdcUnsubscriptionResponseData = await wpdcUnsubscriptionDeleteResponse.json();
-                console.log(wpdcUnsubscriptionResponseData);
-                if (wpdcUnsubscriptionResponseData.success) {
-                    this.style.display = 'none';
+                    const wpdcUnsubscriptionDeleteResponse = await fetch(wpdcUnsubscriptionDeleteUrl, {
+                        method: 'POST',
+                        body: wpdcUnsubscriptionData,
+                    });
+                    const wpdcUnsubscriptionResponseData = await wpdcUnsubscriptionDeleteResponse.json();
+                    console.log(wpdcUnsubscriptionResponseData);
+                    if (wpdcUnsubscriptionResponseData.success) {
+                        this.style.display = 'none';
+                    }
+                    document.querySelector('.wpdc-unsubscription-message').innerHTML = wpdcUnsubscriptionResponseData.data.message;
+                } catch (e) {
+                    console.error(e);
                 }
-                document.querySelector('.wpdc-unsubscription-message').innerHTML = wpdcUnsubscriptionResponseData.data.message;
-            } catch (e) {
-                console.error(e);
-            }
-        })
+            });
+        }
     </script>
     <?php
     do_action("wpdiscuz_subscription_template_after");

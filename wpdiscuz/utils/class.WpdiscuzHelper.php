@@ -14,6 +14,10 @@ class WpdiscuzHelper implements WpDiscuzConstants {
      * @var $dbManager WpdiscuzDBManager
      */
     private $dbManager;
+
+    /**
+     * @var wpDiscuzForm
+     */
     private $wpdiscuzForm;
     private static $current_time;
     private $avatars;
@@ -23,47 +27,46 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         $this->dbManager    = $dbManager;
         $this->wpdiscuzForm = $wpdiscuzForm;
         self::$current_time = current_time("timestamp");
-        add_filter("the_champ_login_interface_filter", [&$this, "wpDiscuzSuperSocializerLogin"], 15, 2);
-        add_filter("pre_comment_user_ip", [&$this, "fixLocalhostIp"], 10);
+        add_filter("the_champ_login_interface_filter", [$this, "wpDiscuzSuperSocializerLogin"], 15, 2);
+        add_filter("pre_comment_user_ip", [$this, "fixLocalhostIp"], 10);
         add_filter("get_avatar_url", [$this, "preGetDefaultAvatarUrl"], 99, 3);
 
         if ($this->options->subscription["enableUserMentioning"]) {
-            add_filter("comment_text", [&$this, "userMentioning"], 10, 3);
+            add_filter("comment_text", [$this, "userMentioning"], 10, 3);
         }
         if ($this->options->content["enableShortcodes"]) {
-            add_filter("comment_text", [&$this, "doShortcode"], 10, 3);
+            add_filter("comment_text", [$this, "doShortcode"], 10, 3);
         }
-        add_filter("comment_text", [&$this, "multipleBlockquotesToOne"], 100);
-        add_filter("wp_update_comment_data", [&$this, "commentDataArr"], 10, 3);
-        add_action("post_updated", [&$this, "checkFeedbackShortcodes"], 10, 3);
-        add_action("update_postmeta", [&$this, "checkMetaFeedbackShortcodes"], 10, 4);
-        add_action("added_post_meta", [&$this, "checkMetaFeedbackShortcodes"], 10, 4);
-        add_filter("comment_row_actions", [&$this, "commentRowStickAction"], 10, 2);
-        add_filter("admin_comment_types_dropdown", [&$this, "addCommentTypes"]);
-        add_filter("wpdiscuz_after_comment_author", [&$this, "userNicename"], 1, 3);
+        add_filter("comment_text", [$this, "multipleBlockquotesToOne"], 100);
+        add_filter("wp_update_comment_data", [$this, "commentDataArr"], 10, 3);
+        add_action("post_updated", [$this, "checkFeedbackShortcodes"], 10, 3);
+        add_action("update_postmeta", [$this, "checkMetaFeedbackShortcodes"], 10, 4);
+        add_action("added_post_meta", [$this, "checkMetaFeedbackShortcodes"], 10, 4);
+        add_filter("comment_row_actions", [$this, "commentRowStickAction"], 10, 2);
+        add_filter("admin_comment_types_dropdown", [$this, "addCommentTypes"]);
+        add_filter("wpdiscuz_after_comment_author", [$this, "userNicename"], 1, 3);
 
-        add_action("wp_ajax_wpdGetInfo", [&$this, "wpdGetInfo"]);
-        add_action("wp_ajax_nopriv_wpdGetInfo", [&$this, "wpdGetInfo"]);
+        add_action("wp_ajax_wpdGetInfo", [$this, "wpdGetInfo"]);
+        add_action("wp_ajax_nopriv_wpdGetInfo", [$this, "wpdGetInfo"]);
         if ($this->options->login["showActivityTab"]) {
-            add_action("wp_ajax_wpdGetActivityPage", [&$this, "getActivityPage"]);
-            add_action("wp_ajax_nopriv_wpdGetActivityPage", [&$this, "getActivityPage"]);
+            add_action("wp_ajax_wpdGetActivityPage", [$this, "getActivityPage"]);
+            add_action("wp_ajax_nopriv_wpdGetActivityPage", [$this, "getActivityPage"]);
         }
         if ($this->options->login["showSubscriptionsTab"]) {
-            add_action("wp_ajax_wpdGetSubscriptionsPage", [&$this, "getSubscriptionsPage"]);
-            add_action("wp_ajax_nopriv_wpdGetSubscriptionsPage", [&$this, "getSubscriptionsPage"]);
+            add_action("wp_ajax_wpdGetSubscriptionsPage", [$this, "getSubscriptionsPage"]);
+            add_action("wp_ajax_nopriv_wpdGetSubscriptionsPage", [$this, "getSubscriptionsPage"]);
         }
         if ($this->options->login["showFollowsTab"]) {
-            add_action("wp_ajax_wpdGetFollowsPage", [&$this, "getFollowsPage"]);
-            add_action("wp_ajax_nopriv_wpdGetFollowsPage", [&$this, "getFollowsPage"]);
+            add_action("wp_ajax_wpdGetFollowsPage", [$this, "getFollowsPage"]);
+            add_action("wp_ajax_nopriv_wpdGetFollowsPage", [$this, "getFollowsPage"]);
         }
-        add_action("admin_post_disableAddonsDemo", [&$this, "disableAddonsDemo"]);
+        add_action("admin_post_disableAddonsDemo", [$this, "disableAddonsDemo"]);
         $requestUri = !empty($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"] : "";
         if (!get_option(self::OPTION_SLUG_DEACTIVATION) && (strpos($requestUri, "/plugins.php") !== false)) {
-            add_action("admin_footer", [&$this, "wpdDeactivationReasonModal"]);
+            add_action("admin_footer", [$this, "wpdDeactivationReasonModal"]);
         }
         add_filter("wpdiscuz_comment_author", [$this, "umAuthorName"], 10, 2);
-        add_action("add_meta_boxes", [&$this, "addRatingResetButton"], 10, 2);
-        add_action("wpdiscuz_init", [&$this, "setNonceInCookies"]);
+        add_action("add_meta_boxes", [$this, "addRatingResetButton"], 10, 2);
         add_action("save_post", [$this, "updatePostAuthorsTrs"]);
 
     }
@@ -172,51 +175,13 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         return wp_create_nonce($this->generateNonceKey());
     }
 
-    public function validateNonce() {
-        if (is_user_logged_in() || apply_filters('wpdiscuz_validate_nonce_for_guests', true)) {
-            $nonce         = !empty($_POST[self::GLOBAL_NONCE_NAME]) ? sanitize_text_field($_POST[self::GLOBAL_NONCE_NAME])
-                : (!empty($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH])
-                    ? sanitize_text_field($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]) : "");
-            $timeDependent = wp_verify_nonce($nonce, $this->generateNonceKey());
-            if (!$timeDependent) {
-                wp_die(__("Nonce is invalid.", "wpdiscuz"));
-            }
-            $this->setNonceInCookies($timeDependent, false);
+    public function validateNonce($nonce = '') {
+        if (empty($nonce)) {
+            $nonce = !empty($_POST[self::GLOBAL_NONCE_NAME]) ? sanitize_text_field($_POST[self::GLOBAL_NONCE_NAME]) : "";
         }
-    }
-
-    public function setNonceInCookies($timeDependent = 2, $checkNonce = true) {
-        if (headers_sent()) {
-            return;
-        }
-
-        $validateNonceForGuests = apply_filters('wpdiscuz_validate_nonce_for_guests', true);
-
-        if (!$validateNonceForGuests && !is_user_logged_in()) {
-            return;
-        }
-
-        if ($checkNonce) {
-            $nonce         = !empty($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]) ? sanitize_text_field($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]) : "";
-            $timeDependent = wp_verify_nonce($nonce, $this->generateNonceKey());
-        }
-
-        if ($timeDependent && $timeDependent < 2) {
-            return;
-        }
-
-        $nonce = $this->generateNonce();
-        if (version_compare(phpversion(), "7.3", ">=")) {
-            setcookie(self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH, $nonce, [
-                'expires'  => 0,
-                'path'     => '/',
-                'domain'   => '',
-                'secure'   => false,
-                'httponly' => false,
-                'samesite' => 'Strict',
-            ]);
-        } else {
-            setcookie(self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH, $nonce, 0, '/', "", false, false);
+        $timeDependent = wp_verify_nonce($nonce, $this->generateNonceKey());
+        if (!$timeDependent) {
+            wp_die(__("Nonce is invalid.", "wpdiscuz"));
         }
     }
 
@@ -317,7 +282,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             $hook = "";
         }
         $ret = preg_replace_callback("#[^\"|\'](https" . $hook . ":\/\/[^\s]+(\.jpe?g|\.png|\.gif|\.bmp))#i", [
-            &$this,
+            $this,
             "replaceUrlToImg"
         ], $ret);
         // this one is not in an array because we need it to run last, for cleanup of accidental links within links
@@ -397,15 +362,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
      * return client real ip
      */
     public static function getRealIPAddr() {
-        $ip = $_SERVER["REMOTE_ADDR"];
-
-        $ip = apply_filters("pre_comment_user_ip", $ip);
-
-        if ($ip === "::1") {
-            $ip = "127.0.0.1";
-        }
-
-        return $ip;
+        return apply_filters("pre_comment_user_ip", ($_SERVER["REMOTE_ADDR"] ?? ""));
     }
 
     public function getUIDData($uid) {
@@ -450,15 +407,28 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         return apply_filters("is_load_wpdiscuz", $form->getFormID() && (comments_open($post) || $post->comment_count) && is_singular() && post_type_supports($post->post_type, "comments"), $post);
     }
 
+    /**
+     * Returns true if wpDiscuz has a form assigned to the post and the post type supports comments.
+     * Unlike isLoadWpdiscuz(), this works in any context (admin, AJAX, non-singular) and is
+     * intended for use by addons that need to check wpDiscuz support outside of page rendering.
+     */
+    public function isPostSupportedByWpdiscuz($postId) {
+        $post = get_post($postId);
+        if (!$post || !post_type_supports($post->post_type, "comments")) {
+            return false;
+        }
+        return (bool)$this->wpdiscuzForm->getForm($post->ID)->getFormID();
+    }
+
     public function replaceCommentContentCode($content) {
         if (is_ssl()) {
             $content = preg_replace_callback("#<\s*?img[^>]*src*=*[\"\']?([^\"\']*)[^>]+>#is", [
-                &$this,
+                $this,
                 "replaceImageToURL"
             ], $content);
         }
 
-        return preg_replace_callback("#`(.*?)`#is", [&$this, "replaceCodeContent"], stripslashes($content));
+        return preg_replace_callback("#`(.*?)`#is", [$this, "replaceCodeContent"], stripslashes($content));
     }
 
     private function replaceImageToURL($matches) {
@@ -610,7 +580,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             $storedCookieEmail = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? sanitize_email($_COOKIE["comment_author_email_" . COOKIEHASH]) : "";
         }
 
-        return ($storedCookieEmail === $comment->comment_author_email && self::getIP() === $comment->comment_author_IP);
+        return ($storedCookieEmail === $comment->comment_author_email && self::getRealIPAddr() === $comment->comment_author_IP);
     }
 
     public function addCommentTypes($args) {
@@ -845,7 +815,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     }
 
     private function getSubscriptionsTitleHtml() {
-//        $this->validateNonce();
+        $this->validateNonce();
         ob_start();
         include_once WPDISCUZ_DIR_PATH . "/utils/layouts/subscriptions/title.php";
 
@@ -873,7 +843,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     }
 
     private function getFollowsTitleHtml() {
-//        $this->validateNonce();
+        $this->validateNonce();
         ob_start();
         include_once WPDISCUZ_DIR_PATH . "/utils/layouts/follows/title.php";
 
@@ -900,10 +870,6 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         wp_die($html);
     }
 
-    public static function getIP() {
-        return $_SERVER["REMOTE_ADDR"] ?? "0.0.0.0";
-    }
-
     public static function isBanned() {
         $mod_keys = trim(get_option('disallowed_keys'));
         if ('' === $mod_keys) {
@@ -912,7 +878,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
 
         $currentUser = wp_get_current_user();
         $email       = '';
-        $ip          = self::getIP();
+        $ip          = self::getRealIPAddr();
         if ($currentUser->exists()) {
             $email = $currentUser->user_email;
         }
@@ -1703,6 +1669,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         return !in_array(strstr($email, "@"), [
             "@facebook.com",
             "@twitter.com",
+            "@x.com",
             "@wechat.com",
             "@weibo.com",
             "@baidu.com",
@@ -1717,7 +1684,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         $form = $this->wpdiscuzForm->getForm($post->ID);
         if ($form->getFormID() && ($form->getEnableRateOnPost() || $form->getRatingsExists())) {
             add_meta_box("wpd_reset_ratings", __("Reset Ratings", "wpdiscuz"), [
-                &$this,
+                $this,
                 "resetRatingsButtons"
             ], $postType, "side", "low");
         }
@@ -1894,8 +1861,8 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             #wpdcom .wpd-comment .wpd-follow-link:hover{color: <?php echo esc_html($this->options->thread_styles["primaryColor"]); ?>;}
             #wpdcom .wpd-comment-status .wpd-sticky{color: <?php echo esc_html($this->options->thread_styles["primaryColor"]); ?>;}
             #wpdcom .wpd-thread-filter .wpdf-active{color: <?php echo esc_html($this->options->thread_styles["primaryColor"]); ?>; border-bottom-color:<?php echo esc_html($this->options->thread_styles["primaryColor"]); ?>;}
-            #wpdcom .wpd-comment-info-bar {border: 1px dashed <?php echo esc_html($this->colorBrightness($this->options->thread_styles["primaryColor"], '0.2')); ?>; background: <?php echo esc_html($this->colorBrightness($this->options->thread_styles["primaryColor"], '0.9')); ?>; }
-            #wpdcom .wpd-comment-info-bar .wpd-current-view i{color: <?php echo esc_html($this->options->thread_styles["primaryColor"]); ?>;}
+            #wpdcom .wpd-inline-filter-cta {border: 1px dashed <?php echo esc_html($this->colorBrightness($this->options->thread_styles["primaryColor"], '0.2')); ?>; background: <?php echo esc_html($this->colorBrightness($this->options->thread_styles["primaryColor"], '0.9')); ?>; }
+            #wpdcom .wpd-inline-filter-cta .wpd-current-view i{color: <?php echo esc_html($this->options->thread_styles["primaryColor"]); ?>;}
             #wpdcom .wpd-filter-view-all:hover{background: <?php echo esc_html($this->options->thread_styles["primaryColor"]); ?>;}
             #wpdcom .wpdiscuz-item .wpdiscuz-rating > label {color: <?php echo esc_html($this->options->rating["ratingInactiveColor"]); ?>;}
             #wpdcom .wpdiscuz-item .wpdiscuz-rating:not(:checked) > label:hover,

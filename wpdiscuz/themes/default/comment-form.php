@@ -24,6 +24,9 @@ if (!post_password_required($post->ID) && $load) {
     ?>
     <div class="wpdiscuz_top_clearing"></div>
     <?php
+    /**
+     * @var $form \wpdFormAttr\Form
+     */
     $form = $wpdiscuz->wpdiscuzForm->getForm($post->ID);
 
     $wpCommClasses[] = "wpd-layout-" . $form->getLayout();
@@ -213,6 +216,7 @@ if (!post_password_required($post->ID) && $load) {
         do_action("wpdiscuz_before_comments", $post, $currentUser, $commentsCount);
         if ($form->isUserCanSeeComments($currentUser, $post->ID)) {
             $wooExists = class_exists("WooCommerce") && get_post_type($post->ID) === "product";
+            do_action("wpdiscuz_comments_wrapper_before", $post, $currentUser, $commentsCount);
             ?>
             <div id="wpd-threads" class="wpd-thread-wrapper">
                 <div class="wpd-thread-head">
@@ -244,14 +248,14 @@ if (!post_password_required($post->ID) && $load) {
                         }
                         if ($wpdiscuz->options->thread_display["showReactedFilterButton"]) {
                             ?>
-                            <div class="wpd-filter wpdf-reacted wpd_not_clicked <?php echo esc_attr($filtersVisibilityClass); ?>"
+                            <div class="wpd-filter wpdf-reacted wpd_not_clicked <?php echo esc_attr($filtersVisibilityClass); ?>" data-filter-type="most_reacted"
                                  wpd-tooltip="<?php echo esc_attr($wpdiscuz->options->getPhrase("wc_most_reacted_comment")); ?>">
                                 <i class="fas fa-bolt"></i></div>
                             <?php
                         }
                         if ($wpdiscuz->options->thread_display["showHottestFilterButton"]) {
                             ?>
-                            <div class="wpd-filter wpdf-hottest wpd_not_clicked <?php echo esc_attr($filtersVisibilityClass); ?>"
+                            <div class="wpd-filter wpdf-hottest wpd_not_clicked <?php echo esc_attr($filtersVisibilityClass); ?>" data-filter-type="hottest_thread"
                                  wpd-tooltip="<?php echo esc_attr($wpdiscuz->options->getPhrase("wc_hottest_comment_thread")); ?>">
                                 <i class="fas fa-fire"></i></div>
                             <?php
@@ -321,12 +325,7 @@ if (!post_password_required($post->ID) && $load) {
                         }
                         ?>
                     </div>
-                </div>
-                <div class="wpd-comment-info-bar">
-                    <div class="wpd-current-view"><i
-                            class="fas fa-quote-left"></i> <?php esc_html_e($wpdiscuz->options->getPhrase("wc_inline_feedbacks")); ?>
-                    </div>
-                    <div class="wpd-filter-view-all"><?php esc_html_e($wpdiscuz->options->getPhrase("wc_inline_comments_view_all")); ?></div>
+                    <div class="wpd-filter-container wpdiscuz-hidden"></div>
                 </div>
                 <?php do_action("wpdiscuz_before_thread_list", $post, $currentUser, $commentsCount); ?>
                 <div class="wpd-thread-list">
@@ -402,9 +401,10 @@ if (!post_password_required($post->ID) && $load) {
                 </div>
             </div>
             <?php
+            do_action("wpdiscuz_comments_wrapper_after", $post, $currentUser, $commentsCount);
         }
         do_action("wpdiscuz_after_comments", $post, $currentUser, $commentsCount);
-        if ($commentsCount) {
+        if ($commentsCount && $form->isUserCanSeeComments($currentUser, $post->ID)) {
             if ($wpdiscuz->options->general["showPluginPoweredByLink"]) {
                 ?>
                 <div class="by-wpdiscuz">

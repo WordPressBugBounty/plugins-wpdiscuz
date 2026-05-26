@@ -1307,10 +1307,14 @@ class WpdiscuzDBManager implements WpDiscuzConstants {
                         $avg                                   += $newData["meta_value"] * $newData["count"];
                         $c                                     += $newData["count"];
                     }
-                    update_post_meta($value["post_id"], self::POSTMETA_RATING_SEPARATE_AVG . $k, round($avg / $c, 1));
-                    update_post_meta($value["post_id"], self::POSTMETA_RATING_SEPARATE_COUNT . $k, $c);
+                    if ($c) {
+                        update_post_meta($value["post_id"], self::POSTMETA_RATING_SEPARATE_AVG . $k, round($avg / $c, 1));
+                        update_post_meta($value["post_id"], self::POSTMETA_RATING_SEPARATE_COUNT . $k, $c);
+                    }
                 }
-                update_post_meta($value["post_id"], self::POSTMETA_RATING_COUNT, $newValues, $val);
+                if ($newValues) {
+                    update_post_meta($value["post_id"], self::POSTMETA_RATING_COUNT, $newValues, $val);
+                }
             }
         }
     }

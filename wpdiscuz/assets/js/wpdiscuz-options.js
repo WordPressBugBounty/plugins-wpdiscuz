@@ -757,6 +757,7 @@ jQuery(document).ready(function ($) {
                 url: ajaxurl,
                 data: {
                     action: 'searchOption',
+                    security: wpdiscuzObj.wpdOptionNonce,
                     s: s
                 }
             });
@@ -770,6 +771,16 @@ jQuery(document).ready(function ($) {
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown);
             });
+        } else {
+            if (searchAjax) {
+                searchAjax.abort();
+            }
+            $('#wpd-opt-search-results').html('').hide();
+        }
+    });
+    $(document).on('mousedown', function (e) {
+        if (!$(e.target).closest('#wpd-opt-search-field, #wpd-opt-search-results').length) {
+            $('#wpd-opt-search-results').hide();
         }
     });
     //========================= /SETTING SEARCH =====================//

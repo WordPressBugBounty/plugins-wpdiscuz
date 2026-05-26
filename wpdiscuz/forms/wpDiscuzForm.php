@@ -25,36 +25,36 @@ class wpDiscuzForm implements wpdFormConst {
         $this->formPostRel        = $options->formPostRel;
         SocialLogin::getInstance($this->options);
 
-        add_action("wpdiscuz_init", [&$this, "registerPostType"], 1);
-        add_action("admin_init", [&$this, "custoFormRoleCaps"], 999);
-        add_action("admin_menu", [&$this, "addFormToAdminMenu"], 874);
-        add_action("admin_enqueue_scripts", [&$this, "customFormAdminScripts"], 245);
-        add_action("manage_wpdiscuz_form_posts_custom_column", [&$this, "displayContentTypesOnList"], 10, 2);
-        add_filter("manage_wpdiscuz_form_posts_columns", [&$this, "addContentTypeColumn"]);
-        add_action("edit_form_after_title", [&$this, "renderFormGeneralSettings"]);
-        add_action("wp_ajax_wpdiscuzCustomFields", [&$this, "wpdiscuzFieldsDialogContent"]);
-        add_action("wp_ajax_adminFieldForm", [&$this, "adminFieldForm"]);
-        add_action("transition_comment_status", [&$this, "changeCommentStatus"], 10, 3);
-        add_action("delete_comment", [&$this, "deleteCommentRating"], 269);
-        add_filter("wpdiscuz_before_subscription_added", [&$this->form, "validateSubscribtionCaptcha"]);
+        add_action("wpdiscuz_init", [$this, "registerPostType"], 1);
+        add_action("admin_init", [$this, "custoFormRoleCaps"], 999);
+        add_action("admin_menu", [$this, "addFormToAdminMenu"], 874);
+        add_action("admin_enqueue_scripts", [$this, "customFormAdminScripts"], 245);
+        add_action("manage_wpdiscuz_form_posts_custom_column", [$this, "displayContentTypesOnList"], 10, 2);
+        add_filter("manage_wpdiscuz_form_posts_columns", [$this, "addContentTypeColumn"]);
+        add_action("edit_form_after_title", [$this, "renderFormGeneralSettings"]);
+        add_action("wp_ajax_wpdiscuzCustomFields", [$this, "wpdiscuzFieldsDialogContent"]);
+        add_action("wp_ajax_adminFieldForm", [$this, "adminFieldForm"]);
+        add_action("transition_comment_status", [$this, "changeCommentStatus"], 10, 3);
+        add_action("delete_comment", [$this, "deleteCommentRating"], 269);
+        add_filter("wpdiscuz_before_subscription_added", [$this->form, "validateSubscribtionCaptcha"]);
 
         add_filter("wpdiscuz_js_options", [$this, "transferJSData"], 10);
-        add_action("save_post", [&$this, "saveFormData"], 10, 3);
-        add_action("wp_trash_post", [&$this, "deleteOrTrashForm"]);
+        add_action("save_post", [$this, "saveFormData"], 10, 3);
+        add_action("wp_trash_post", [$this, "deleteOrTrashForm"]);
         add_action("add_meta_boxes", [$this, "formCustomCssMetabox"]);
-        add_action("add_meta_boxes_comment", [&$this, "renderEditCommentForm"], 10);
-        add_filter("comment_save_pre", [&$this, "validateMetaCommentSavePre"], 10);
-        add_action("comment_post", [&$this, "addCommentMeta"], 5);
-        add_action("edit_comment", [&$this, "updateCommentMeta"], 10);
-        add_filter("comment_text", [&$this, "renderCommentMetaHtml"], 10, 2);
-        add_filter("wpdiscuz_after_read_more", [&$this, "afterReadMore"], 10, 2);
-        add_filter("post_row_actions", [&$this, "addCloneFormAction"], 10, 2);
-        add_filter("admin_post_cloneWpdiscuzForm", [&$this, "cloneForm"]);
-        add_filter("the_content", [&$this->form, "displayRatingMeta"], 10);
-        add_shortcode("wpdrating", [&$this->form, "getRatingMetaHtml"]);
-        add_action("wpdiscuz_comment_form_before", [&$this->form, "displayRatingMetaBeforeCommentForm"], 10, 3);
-        add_action("admin_notices", [&$this, "formExists"]);
-        add_action("wp_loaded", [&$this, "initPersonalDataExporter"]);
+        add_action("add_meta_boxes_comment", [$this, "renderEditCommentForm"], 10);
+        add_filter("comment_save_pre", [$this, "validateMetaCommentSavePre"], 10);
+        add_action("comment_post", [$this, "addCommentMeta"], 5);
+        add_action("edit_comment", [$this, "updateCommentMeta"], 10);
+        add_filter("comment_text", [$this, "renderCommentMetaHtml"], 10, 2);
+        add_filter("wpdiscuz_after_read_more", [$this, "afterReadMore"], 10, 2);
+        add_filter("post_row_actions", [$this, "addCloneFormAction"], 10, 2);
+        add_filter("admin_post_cloneWpdiscuzForm", [$this, "cloneForm"]);
+        add_filter("the_content", [$this->form, "displayRatingMeta"], 10);
+        add_shortcode("wpdrating", [$this->form, "getRatingMetaHtml"]);
+        add_action("wpdiscuz_comment_form_before", [$this->form, "displayRatingMetaBeforeCommentForm"], 10, 3);
+        add_action("admin_notices", [$this, "formExists"]);
+        add_action("wp_loaded", [$this, "initPersonalDataExporter"]);
     }
 
     public function initPersonalDataExporter() {
@@ -99,6 +99,7 @@ class wpDiscuzForm implements wpdFormConst {
     }
 
     public function adminFieldForm() {
+        check_ajax_referer("wpd-option-nonce", "security");
         $this->canManageOptions();
         $field     = Sanitizer::sanitize(INPUT_POST, "fieldType", "FILTER_SANITIZE_STRING");
         $isDefault = Sanitizer::sanitize(INPUT_POST, "defaultField", FILTER_SANITIZE_NUMBER_INT);
@@ -234,6 +235,7 @@ class wpDiscuzForm implements wpdFormConst {
     }
 
     public function wpdiscuzFieldsDialogContent() {
+        check_ajax_referer("wpd-option-nonce", "_wpnonce");
         $this->canManageOptions();
         include_once WPDISCUZ_DIR_PATH . "/forms/wpdFormAttr/html/admin-form-fields-list.php";
         wp_die();
@@ -251,6 +253,7 @@ class wpDiscuzForm implements wpdFormConst {
             "can_not_delete_field"    => esc_html__("You can not delete default field.", "wpdiscuz"),
             "confirm_delete_message"  => esc_html__("You really want to delete this item ?", "wpdiscuz"),
             "loaderImg"               => plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/form-loading.gif"),
+            "nonce"                   => wp_create_nonce("wpd-option-nonce"),
         ];
     }
 
@@ -322,6 +325,10 @@ class wpDiscuzForm implements wpdFormConst {
         }
     }
 
+    /**
+     * @param $postID
+     * @return mixed|null|\wpdFormAttr\Form
+     */
     public function getForm($postID) {
         $formID = 0;
         if (!$this->form->getFormID()) {
@@ -342,7 +349,7 @@ class wpDiscuzForm implements wpdFormConst {
 
     public function formCustomCssMetabox() {
         add_meta_box(self::WPDISCUZ_META_FORMS_CSS, esc_html__("Custom CSS", "wpdiscuz"), [
-            &$this,
+            $this,
             "formCustomCssMetaboxHtml"
         ], self::WPDISCUZ_FORMS_CONTENT_TYPE, "side");
     }

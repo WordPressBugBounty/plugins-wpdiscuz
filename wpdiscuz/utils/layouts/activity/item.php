@@ -4,7 +4,7 @@ if (!defined("ABSPATH")) {
 }
 $title = get_the_title($item->comment_post_ID);
 
-$canDeleteComment = (boolean)apply_filters("wpdiscuz_can_delete_comment", true, $item->comment_ID);
+$canDeleteComment = (bool)apply_filters("wpdiscuz_can_delete_comment", true, $item->comment_ID);
 $commentLeftStyle = $canDeleteComment ? "" : "width:99%;border-right:none;";
 ?>
 <div class="wpd-item">

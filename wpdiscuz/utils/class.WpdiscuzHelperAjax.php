@@ -28,55 +28,55 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         $this->helper       = $helper;
         $this->helperEmail  = $helperEmail;
         $this->wpdiscuzForm = $wpdiscuzForm;
-        add_action("wp_ajax_wpdStickComment", [&$this, "stickComment"]);
-        add_action("wp_ajax_wpdCloseThread", [&$this, "closeThread"]);
-        add_action("wp_ajax_wpdDeactivate", [&$this, "deactivate"]);
-        add_action("wp_ajax_wpdImportSTCR", [&$this, "importSTCR"]);
-        add_action("wp_ajax_wpdImportLSTC", [&$this, "importLSTC"]);
+        add_action("wp_ajax_wpdStickComment", [$this, "stickComment"]);
+        add_action("wp_ajax_wpdCloseThread", [$this, "closeThread"]);
+        add_action("wp_ajax_wpdDeactivate", [$this, "deactivate"]);
+        add_action("wp_ajax_wpdImportSTCR", [$this, "importSTCR"]);
+        add_action("wp_ajax_wpdImportLSTC", [$this, "importLSTC"]);
 
-        add_action("wp_ajax_wpdFollowUser", [&$this, "followUser"]);
-        add_action("wp_ajax_wpdRegenerateVoteMetas", [&$this, "regenerateVoteMetas"]);
-        add_action("wp_ajax_wpdRegenerateClosedComments", [&$this, "regenerateClosedComments"]);
-        add_action("wp_ajax_wpdRegenerateVoteData", [&$this, "regenerateVoteData"]);
-        add_action("wp_ajax_wpdSyncCommenterData", [&$this, "syncCommenterData"]);
-        add_action("wp_ajax_wpdRebuildRatings", [&$this, "rebuildRatings"]);
-        add_action("wp_ajax_wpdFixTables", [&$this, "fixTables"]);
+        add_action("wp_ajax_wpdFollowUser", [$this, "followUser"]);
+        add_action("wp_ajax_wpdRegenerateVoteMetas", [$this, "regenerateVoteMetas"]);
+        add_action("wp_ajax_wpdRegenerateClosedComments", [$this, "regenerateClosedComments"]);
+        add_action("wp_ajax_wpdRegenerateVoteData", [$this, "regenerateVoteData"]);
+        add_action("wp_ajax_wpdSyncCommenterData", [$this, "syncCommenterData"]);
+        add_action("wp_ajax_wpdRebuildRatings", [$this, "rebuildRatings"]);
+        add_action("wp_ajax_wpdFixTables", [$this, "fixTables"]);
         if ($this->options->login["showActivityTab"] || $this->options->login["showSubscriptionsTab"] || $this->options->login["showFollowsTab"]) {
-            add_action("wp_ajax_wpdDeleteComment", [&$this, "deleteComment"]);
-            add_action("wp_ajax_wpdCancelSubscription", [&$this, "deleteSubscription"]);
-            add_action("wp_ajax_wpdCancelFollow", [&$this, "deleteFollow"]);
-            add_action("wp_ajax_wpdEmailDeleteLinks", [&$this->helperEmail, "emailDeleteLinksAction"]);
-            add_action("wp_ajax_nopriv_wpdGuestAction", [&$this, "guestAction"]);
+            add_action("wp_ajax_wpdDeleteComment", [$this, "deleteComment"]);
+            add_action("wp_ajax_wpdCancelSubscription", [$this, "deleteSubscription"]);
+            add_action("wp_ajax_wpdCancelFollow", [$this, "deleteFollow"]);
+            add_action("wp_ajax_wpdEmailDeleteLinks", [$this->helperEmail, "emailDeleteLinksAction"]);
+            add_action("wp_ajax_nopriv_wpdGuestAction", [$this, "guestAction"]);
         }
         if ($this->options->content["commentReadMoreLimit"]) {
-            add_action("wp_ajax_wpdReadMore", [&$this, "readMore"]);
-            add_action("wp_ajax_nopriv_wpdReadMore", [&$this, "readMore"]);
+            add_action("wp_ajax_wpdReadMore", [$this, "readMore"]);
+            add_action("wp_ajax_nopriv_wpdReadMore", [$this, "readMore"]);
         }
-        add_action("wp_ajax_wpdRedirect", [&$this, "redirect"]);
-        add_action("wp_ajax_nopriv_wpdRedirect", [&$this, "redirect"]);
+        add_action("wp_ajax_wpdRedirect", [$this, "redirect"]);
+        add_action("wp_ajax_nopriv_wpdRedirect", [$this, "redirect"]);
         if ($this->options->thread_layouts["showVotingButtons"]) {
-            add_action("wp_ajax_wpdVoteOnComment", [&$this, "voteOnComment"]);
-            add_action("wp_ajax_nopriv_wpdVoteOnComment", [&$this, "voteOnComment"]);
+            add_action("wp_ajax_wpdVoteOnComment", [$this, "voteOnComment"]);
+            add_action("wp_ajax_nopriv_wpdVoteOnComment", [$this, "voteOnComment"]);
         }
-        add_action("wp_ajax_wpdGetInlineCommentForm", [&$this, "getInlineCommentForm"]);
-        add_action("wp_ajax_nopriv_wpdGetInlineCommentForm", [&$this, "getInlineCommentForm"]);
-        add_action("wp_ajax_wpdGetLastInlineComments", [&$this, "getLastInlineComments"]);
-        add_action("wp_ajax_nopriv_wpdGetLastInlineComments", [&$this, "getLastInlineComments"]);
-        add_action("wp_ajax_wpdEditComment", [&$this, "editComment"]);
-        add_action("wp_ajax_nopriv_wpdEditComment", [&$this, "editComment"]);
-        add_action("wp_ajax_wpdUserRate", [&$this, "userRate"]);
-        add_action("wp_ajax_nopriv_wpdUserRate", [&$this, "userRate"]);
-        add_action("wp_ajax_wpdUnsubscribe", [&$this, "unsubscribe"]);
-        add_action("wp_ajax_nopriv_wpdUnsubscribe", [&$this, "unsubscribe"]);
-        add_action("wp_ajax_wpd_stat_brief", [&$this, "wpd_stat_brief"]);
-        add_action("wp_ajax_wpd_stat_subs", [&$this, "wpd_stat_subs"]);
-        add_action("wp_ajax_wpd_stat_graph", [&$this, "wpd_stat_graph"]);
-        add_action("wp_ajax_wpd_stat_user", [&$this, "wpd_stat_user"]);
-        add_action("wp_ajax_searchOption", [&$this, "searchOption"]);
-        add_action("wp_ajax_wpdResetPostRating", [&$this, "resetPostRating"]);
-        add_action("wp_ajax_wpdResetFieldsRatings", [&$this, "resetFieldsRatings"]);
-        add_action("wp_ajax_wpdGetNonce", [&$this, "getNonce"]);
-        add_action("wp_ajax_nopriv_wpdGetNonce", [&$this, "getNonce"]);
+        add_action("wp_ajax_wpdGetInlineCommentForm", [$this, "getInlineCommentForm"]);
+        add_action("wp_ajax_nopriv_wpdGetInlineCommentForm", [$this, "getInlineCommentForm"]);
+        add_action("wp_ajax_wpdGetLastInlineComments", [$this, "getLastInlineComments"]);
+        add_action("wp_ajax_nopriv_wpdGetLastInlineComments", [$this, "getLastInlineComments"]);
+        add_action("wp_ajax_wpdEditComment", [$this, "editComment"]);
+        add_action("wp_ajax_nopriv_wpdEditComment", [$this, "editComment"]);
+        add_action("wp_ajax_wpdUserRate", [$this, "userRate"]);
+        add_action("wp_ajax_nopriv_wpdUserRate", [$this, "userRate"]);
+        add_action("wp_ajax_wpdUnsubscribe", [$this, "unsubscribe"]);
+        add_action("wp_ajax_nopriv_wpdUnsubscribe", [$this, "unsubscribe"]);
+        add_action("wp_ajax_wpd_stat_brief", [$this, "wpd_stat_brief"]);
+        add_action("wp_ajax_wpd_stat_subs", [$this, "wpd_stat_subs"]);
+        add_action("wp_ajax_wpd_stat_graph", [$this, "wpd_stat_graph"]);
+        add_action("wp_ajax_wpd_stat_user", [$this, "wpd_stat_user"]);
+        add_action("wp_ajax_searchOption", [$this, "searchOption"]);
+        add_action("wp_ajax_wpdResetPostRating", [$this, "resetPostRating"]);
+        add_action("wp_ajax_wpdResetFieldsRatings", [$this, "resetFieldsRatings"]);
+        add_action("wp_ajax_wpdGetNonce", [$this, "getNonce"]);
+        add_action("wp_ajax_nopriv_wpdGetNonce", [$this, "getNonce"]);
     }
 
     public function getNonce() {
@@ -214,7 +214,9 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
      * Import subscriptions from "Subscribe To Comments Reloaded" plugin
      */
     public function importSTCR() {
-        $this->helper->validateNonce();
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error("Permission denied");
+        }
         $response = ["progress" => 0];
         $stcrData = isset($_POST["stcrData"]) ? sanitize_textarea_field($_POST["stcrData"]) : "";
         if ($stcrData) {
@@ -246,7 +248,9 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
      * Import subscriptions from "Lightweight Subscribe To Comments" plugin
      */
     public function importLSTC() {
-        $this->helper->validateNonce();
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error("Permission denied");
+        }
         $response = ["progress" => 0];
         $lstcData = isset($_POST["lstcData"]) ? sanitize_textarea_field($_POST["lstcData"]) : "";
         if ($lstcData) {
@@ -453,7 +457,6 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         if (!current_user_can('manage_options')) {
             wp_send_json_error("wc_vote_regenerate_not_possible");
         }
-        $this->helper->validateNonce();
         $response           = ["progress" => 0];
         $voteRegenerateData = isset($_POST["voteRegenerateData"]) ? $_POST["voteRegenerateData"] : "";
         if ($voteRegenerateData) {
@@ -489,7 +492,6 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         if (!current_user_can('manage_options')) {
             wp_send_json_error("regenerate_closed_comments_error");
         }
-        $this->helper->validateNonce();
         $response             = ["progress" => 0];
         $closedRegenerateData = isset($_POST["closedRegenerateData"]) ? sanitize_textarea_field($_POST["closedRegenerateData"]) : "";
         if ($closedRegenerateData) {
@@ -560,7 +562,6 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         if (!current_user_can('manage_options')) {
             wp_send_json_error("sync_commenter_data_error");
         }
-        $this->helper->validateNonce();
         $syncCommenterData = !empty($_POST["syncCommenterData"]) ? sanitize_textarea_field($_POST["syncCommenterData"]) : "";
         if ($syncCommenterData) {
             parse_str($syncCommenterData, $data);
@@ -578,7 +579,6 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         if (!current_user_can('manage_options')) {
             wp_send_json_error("rebuild_ratings_error");
         }
-        $this->helper->validateNonce();
         $response       = ["progress" => 0];
         $rebuildRatings = isset($_POST["rebuildRatings"]) ? sanitize_textarea_field($_POST["rebuildRatings"]) : "";
         if ($rebuildRatings) {
@@ -614,7 +614,6 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         if (!current_user_can('manage_options')) {
             wp_send_json_error("fix_tables_error");
         }
-        $this->helper->validateNonce();
         $fixTables = isset($_POST["fixTables"]) ? sanitize_textarea_field($_POST["fixTables"]) : "";
         if ($fixTables) {
             parse_str($fixTables, $data);
@@ -731,7 +730,7 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         }
 
         if ($commentId && in_array($voteType, $allowedVoteTypes, true)) {
-            $userIP = $this->helper->getRealIPAddr();
+            $userIP = WpdiscuzHelper::getRealIPAddr();
             $userID = get_current_user_id();
             if ($comment->comment_author_IP == $userIP) {
                 wp_send_json_error("wc_deny_voting_from_same_ip");
@@ -913,7 +912,8 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         $commentId = WpdiscuzHelper::sanitize(INPUT_POST, "commentId", FILTER_SANITIZE_NUMBER_INT, 0);
         if ($commentId) {
             $comment = get_comment($commentId);
-            if (!$comment) {
+            // checking comment status as well to prevent editing of deleted/spammed comments using wpDiscuz ajax edit action
+            if (!$comment || in_array($comment->comment_approved, ["trash", "spam"], true)) {
                 wp_send_json_error("wc_comment_edit_not_possible");
             }
             $postID = $comment->comment_post_ID;
@@ -985,7 +985,7 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
                     wp_send_json_error("wc_cannot_rate_again");
                 }
             } else if ($form->getUserCanRateOnPost()) {
-                $userIp = md5($this->helper->getRealIPAddr());
+                $userIp = md5(WpdiscuzHelper::getRealIPAddr());
                 $rateId = $this->dbManager->isUserRated(0, $userIp, $post_id);
                 if (!$rateId || ($rateId && $formOptions["is_rate_editable"])) {
                     $this->dbManager->addRate($post_id, 0, $userIp, $rating, current_time("timestamp"), $rateId);
@@ -1184,6 +1184,7 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
     }
 
     public function searchOption() {
+        check_ajax_referer("wpd-option-nonce", "security");
         if (!current_user_can("manage_options")) {
             wp_send_json_error("Permission denied");
         }

@@ -1,13 +1,15 @@
 <?php
 /*
  * Plugin Name: wpDiscuz
+ * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.54
+ * Version: 7.6.55
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
- * Plugin URI: https://wpdiscuz.com/
  * Text Domain: wpdiscuz
  * Domain Path: /languages/
+ * Requires at least: 6.0
+ * Requires PHP: 7.4
  * wpDiscuz Update: auto
  */
 if (!defined("ABSPATH")) {
@@ -87,18 +89,18 @@ class WpdiscuzCore implements WpDiscuzConstants {
         self::$DEFAULT_COMMENT_TYPE = version_compare(get_bloginfo("version"), "5.5", ">=") ? "comment" : "";
         $this->dbManager            = new WpdiscuzDBManager();
 
-        register_activation_hook(__FILE__, [&$this, "registerJobs"]);
-        register_deactivation_hook(__FILE__, [&$this, "deregisterJobs"]);
-        register_activation_hook(__FILE__, [&$this, "pluginActivation"]);
-        add_filter("cron_schedules", [&$this, "setIntervals"]);
-        add_action("init", [&$this, "wpdiscuzTextDomain"], 10);
-        add_action("init", [&$this, "wpdiscuzInit"], 11);
-        add_action("init", [&$this, "wpdiscuzBlockInit"], 12);
+        register_activation_hook(__FILE__, [$this, "registerJobs"]);
+        register_deactivation_hook(__FILE__, [$this, "deregisterJobs"]);
+        register_activation_hook(__FILE__, [$this, "pluginActivation"]);
+        add_filter("cron_schedules", [$this, "setIntervals"]);
+        add_action("init", [$this, "wpdiscuzTextDomain"], 10);
+        add_action("init", [$this, "wpdiscuzInit"], 11);
+        add_action("init", [$this, "wpdiscuzBlockInit"], 12);
 
     }
 
     public function wpdiscuzInit() {
-        $this->options            = new WpdiscuzOptions($this->dbManager);
+        $this->options            = new WpdiscuzOptions($this->dbManager, $this->version);
         $this->wpdiscuzForm       = new wpDiscuzForm($this->options, $this->version);
         $this->helper             = new WpdiscuzHelper($this->options, $this->dbManager, $this->wpdiscuzForm);
         $this->helperEmail        = new WpdiscuzHelperEmail($this->options, $this->dbManager, $this->helper);
@@ -106,94 +108,94 @@ class WpdiscuzCore implements WpDiscuzConstants {
         $this->helperAjax         = new WpdiscuzHelperAjax($this->options, $this->dbManager, $this->helper, $this->helperEmail, $this->wpdiscuzForm);
         $this->helperUpload       = new WpdiscuzHelperUpload($this->options, $this->dbManager, $this->wpdiscuzForm, $this->helper);
         $this->cache              = new WpdiscuzCache($this->options, $this->helper);
-        if (is_admin()) {
-            include_once WPDISCUZ_DIR_PATH . "/options/pro-teasers/media-uploader/class.WmuProTeaser.php";
-            new WmuProTeaser($this->options, $this->version);
-        }
+
         $this->requestUri = !empty($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"] : "";
 
         do_action("wpdiscuz_init");
 
         if ($this->options->thread_display["isLoadOnlyParentComments"]) {
-            add_action("wp_ajax_wpdShowReplies", [&$this, "showReplies"]);
-            add_action("wp_ajax_nopriv_wpdShowReplies", [&$this, "showReplies"]);
+            add_action("wp_ajax_wpdShowReplies", [$this, "showReplies"]);
+            add_action("wp_ajax_nopriv_wpdShowReplies", [$this, "showReplies"]);
         }
 
         /* /CRON JOBS */
-        add_action("wp_insert_site", [&$this, "addNewBlog"]);
-        add_action("delete_blog", [&$this, "deleteBlog"]);
-        add_action("wp", [&$this, "initCurrentPostType"]);
+        add_action("wp_insert_site", [$this, "addNewBlog"]);
+        add_action("delete_blog", [$this, "deleteBlog"]);
+        add_action("wp", [$this, "initCurrentPostType"]);
 
-        add_action("admin_init", [&$this, "uninstall"], 1);
+        add_action("admin_init", [$this, "uninstall"], 1);
 
-        add_action("admin_init", [&$this, "pluginNewVersion"], 1);
-        add_action("admin_enqueue_scripts", [&$this, "backendFiles"], 100);
-        add_action("wp_enqueue_scripts", [&$this, "frontendFiles"]);
-        add_action("admin_menu", [&$this, "addPluginOptionsPage"], 1);
-        add_action("admin_head", [&$this, "addInlineStyle"], 1);
-        add_shortcode("wpdiscuz_comments", [&$this, "wpdiscuzShortcode"]);
+        add_action("admin_init", [$this, "pluginNewVersion"], 1);
+        add_action("admin_enqueue_scripts", [$this, "backendFiles"], 100);
+        add_action("wp_enqueue_scripts", [$this, "frontendFiles"]);
+        add_action("admin_menu", [$this, "addPluginOptionsPage"], 1);
+        add_action("admin_head", [$this, "addInlineStyle"], 1);
+        add_shortcode("wpdiscuz_comments", [$this, "wpdiscuzShortcode"]);
 
-        add_action("wp_ajax_wpdLoadMoreComments", [&$this, "loadMoreComments"]);
-        add_action("wp_ajax_nopriv_wpdLoadMoreComments", [&$this, "loadMoreComments"]);
-        add_action("wp_ajax_wpdSorting", [&$this, "sorting"]);
-        add_action("wp_ajax_nopriv_wpdSorting", [&$this, "sorting"]);
-        add_action("wp_ajax_wpdAddComment", [&$this, "addComment"]);
-        add_action("wp_ajax_nopriv_wpdAddComment", [&$this, "addComment"]);
-        add_action("wp_ajax_wpdGetSingleComment", [&$this, "getSingleComment"]);
-        add_action("wp_ajax_nopriv_wpdGetSingleComment", [&$this, "getSingleComment"]);
-        add_action("wp_ajax_wpdMostReactedComment", [&$this, "mostReactedComment"]);
-        add_action("wp_ajax_nopriv_wpdMostReactedComment", [&$this, "mostReactedComment"]);
-        add_action("wp_ajax_wpdHottestThread", [&$this, "hottestThread"]);
-        add_action("wp_ajax_nopriv_wpdHottestThread", [&$this, "hottestThread"]);
+        add_action("wp_ajax_wpdLoadMoreComments", [$this, "loadMoreComments"]);
+        add_action("wp_ajax_nopriv_wpdLoadMoreComments", [$this, "loadMoreComments"]);
+        add_action("wp_ajax_wpdSorting", [$this, "sorting"]);
+        add_action("wp_ajax_nopriv_wpdSorting", [$this, "sorting"]);
+        add_action("wp_ajax_wpdAddComment", [$this, "addComment"]);
+        add_action("wp_ajax_nopriv_wpdAddComment", [$this, "addComment"]);
+        add_action("wp_ajax_wpdGetSingleComment", [$this, "getSingleComment"]);
+        add_action("wp_ajax_nopriv_wpdGetSingleComment", [$this, "getSingleComment"]);
+        add_action("wp_ajax_wpdMostReactedComment", [$this, "mostReactedComment"]);
+        add_action("wp_ajax_nopriv_wpdMostReactedComment", [$this, "mostReactedComment"]);
+        add_action("wp_ajax_wpdHottestThread", [$this, "hottestThread"]);
+        add_action("wp_ajax_nopriv_wpdHottestThread", [$this, "hottestThread"]);
+
+        add_action("wp_ajax_wpdGetInlineFilterCta", [$this, "getInlineFilterCta"]);
+        add_action("wp_ajax_nopriv_wpdGetInlineFilterCta", [$this, "getInlineFilterCta"]);
 
         $plugin = plugin_basename(__FILE__);
-        add_filter("plugin_action_links_$plugin", [&$this, "addPluginSettingsLink"]);
-        add_filter("comments_clauses", [&$this, "commentsClauses"]);
+        add_filter("plugin_action_links_$plugin", [$this, "addPluginSettingsLink"]);
+        add_filter("comments_clauses", [$this, "commentsClauses"]);
 
-        add_action("wp_ajax_wpdSaveEditedComment", [&$this, "saveEditedComment"]);
-        add_action("wp_ajax_nopriv_wpdSaveEditedComment", [&$this, "saveEditedComment"]);
+        add_action("wp_ajax_wpdSaveEditedComment", [$this, "saveEditedComment"]);
+        add_action("wp_ajax_nopriv_wpdSaveEditedComment", [$this, "saveEditedComment"]);
 
         if ($this->options->live["commentListUpdateType"]) {
-            add_action("wp_ajax_wpdUpdateAutomatically", [&$this, "updateAutomatically"]);
-            add_action("wp_ajax_nopriv_wpdUpdateAutomatically", [&$this, "updateAutomatically"]);
+            add_action("wp_ajax_wpdUpdateAutomatically", [$this, "updateAutomatically"]);
+            add_action("wp_ajax_nopriv_wpdUpdateAutomatically", [$this, "updateAutomatically"]);
         }
 
-        add_action("wp_loaded", [&$this, "addNewRoles"]);
-        add_filter("comments_template_query_args", [&$this, "commentsTemplateQueryArgs"]);
-        add_action("pre_get_comments", [&$this, "preGetComments"]);
-        add_filter("found_comments_query", [&$this, "foundCommentsQuery"], 10, 2);
+        add_action("wp_loaded", [$this, "addNewRoles"]);
+        add_filter("comments_template_query_args", [$this, "commentsTemplateQueryArgs"]);
+        add_action("pre_get_comments", [$this, "preGetComments"]);
+        add_filter("found_comments_query", [$this, "foundCommentsQuery"], 10, 2);
 
-        add_action("rest_api_init", [&$this, "registerRestRoutes"], 10);
+        add_action("rest_api_init", [$this, "registerRestRoutes"], 10);
 
         if ($this->options->live["enableBubble"] && $this->options->live["bubbleLiveUpdate"]) {
-            add_action("wp_ajax_wpdBubbleUpdate", [&$this, "bubbleUpdate"]);
-            add_action("wp_ajax_nopriv_wpdBubbleUpdate", [&$this, "bubbleUpdate"]);
+            add_action("wp_ajax_wpdBubbleUpdate", [$this, "bubbleUpdate"]);
+            add_action("wp_ajax_nopriv_wpdBubbleUpdate", [$this, "bubbleUpdate"]);
         }
 
-        add_action("admin_footer", [&$this, "feedbackDialog"]);
-        add_filter("mce_buttons", [&$this, "mceButton"]);
-        add_filter("mce_external_plugins", [&$this, "mceExternalPlugin"]);
-        add_shortcode(self::WPDISCUZ_FEEDBACK_SHORTCODE, [&$this, "feedbackShortcode"]);
-        add_action("wp_ajax_wpdAddInlineComment", [&$this, "addInlineComment"]);
-        add_action("wp_ajax_nopriv_wpdAddInlineComment", [&$this, "addInlineComment"]);
-        add_action("wp_footer", [&$this, "footerContents"]);
-        add_action("enqueue_block_editor_assets", [&$this, "gutenbergButton"]);
-        add_action("enqueue_block_editor_assets", [&$this, "blocksFiles"]);
+        add_action("admin_footer", [$this, "feedbackDialog"]);
+        add_filter("mce_buttons", [$this, "mceButton"]);
+        add_filter("mce_external_plugins", [$this, "mceExternalPlugin"]);
+        add_shortcode(self::WPDISCUZ_FEEDBACK_SHORTCODE, [$this, "feedbackShortcode"]);
+        add_action("wp_ajax_wpdAddInlineComment", [$this, "addInlineComment"]);
+        add_action("wp_ajax_nopriv_wpdAddInlineComment", [$this, "addInlineComment"]);
+        add_action("wp_footer", [$this, "footerContents"]);
+        add_action("enqueue_block_editor_assets", [$this, "gutenbergButton"]);
+        add_action("enqueue_block_editor_assets", [$this, "blocksFiles"]);
 
-        add_filter("extra_plugin_headers", [&$this, "extraPluginHeaders"]);
-        add_filter("auto_update_plugin", [&$this, "shouldUpdate"], 10, 2);
+        add_filter("extra_plugin_headers", [$this, "extraPluginHeaders"]);
+        add_filter("auto_update_plugin", [$this, "shouldUpdate"], 10, 2);
 
-        add_filter("preprocess_comment", [&$this, "validateRecaptcha"], 10, 2);
-        add_filter("preprocess_comment", [&$this, "validateWebSite"], 11, 2);
+        add_filter("preprocess_comment", [$this, "validateRecaptcha"], 10, 2);
+        add_filter("preprocess_comment", [$this, "validateWebSite"], 11, 2);
 
-        add_action("admin_bar_menu", [&$this, "addToolbarItems"], 300);
+        add_action("admin_bar_menu", [$this, "addToolbarItems"], 300);
 
-        add_filter('pre_render_block', [&$this, "preRenderCoreCommentsBlock"], 99, 3);
+        add_filter('pre_render_block', [$this, "preRenderCoreCommentsBlock"], 99, 3);
 
-        add_action("elementor/editor/after_enqueue_scripts", [&$this, "inlineCommentForElementorJS"]);
-        add_action("elementor/editor/after_enqueue_styles", [&$this, "inlineCommentForElementorCSS"]);
-        add_action("elementor/editor/footer", [&$this, "feedbackDialog"]);
-        add_action("elementor/widgets/register", [&$this, "registerWpdiscuzWidgetInElementor"]);
+        add_action("elementor/editor/after_enqueue_scripts", [$this, "inlineCommentForElementorJS"]);
+        add_action("elementor/editor/after_enqueue_styles", [$this, "inlineCommentForElementorCSS"]);
+        add_action("elementor/editor/footer", [$this, "feedbackDialog"]);
+        add_action("elementor/widgets/register", [$this, "registerWpdiscuzWidgetInElementor"]);
     }
 
     public static function getInstance() {
@@ -291,7 +293,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
     public function setIntervals($schedules) {
         $schedules[self::DELETE_UNATTACHED_FILES_KEY_RECURRENCE] = [
             "interval" => self::DELETE_UNATTACHED_FILES_RECURRENCE * HOUR_IN_SECONDS,
-            "display"  => esc_html__("Every 48 hours", "wpdiscuz")
+            "display"  => "Every 48 hours"
         ];
 
         return $schedules;
@@ -483,6 +485,13 @@ class WpdiscuzCore implements WpDiscuzConstants {
                     add_comment_meta($new_comment_id, self::META_KEY_CLOSED, "1");
                 }
                 $newComment    = get_comment($new_comment_id);
+
+                if ($newComment->comment_approved === "trash") {
+                    wp_send_json_error("wc_msg_comment_is_trash");
+                } elseif ($newComment->comment_approved === "spam") {
+                    wp_send_json_error("wc_msg_comment_is_spam");
+                }
+
                 $held_moderate = 1;
                 if ($newComment->comment_approved === "1") {
                     $held_moderate = 0;
@@ -558,7 +567,8 @@ class WpdiscuzCore implements WpDiscuzConstants {
         if ($commentId) {
             $this->isWpdiscuzLoaded = true;
             $comment                = get_comment($commentId);
-            if (!$comment) {
+            // checking comment status as well to prevent editing of deleted/spammed comments using wpDiscuz ajax edit action
+            if (!$comment || in_array($comment->comment_approved, ["trash", "spam"], true)) {
                 wp_send_json_error("wc_comment_edit_not_possible");
             }
             $commentPost = get_post($comment->comment_post_ID);
@@ -619,13 +629,16 @@ class WpdiscuzCore implements WpDiscuzConstants {
 //	                remove_filter( 'wp_is_comment_flood', 'wp_check_comment_flood', 10);
 
                     add_filter('wp_is_comment_flood', '__return_false', 99);
-
+                    $commentOldStatus               = $comment->comment_approved;
                     $commentdata                    = wp_slash($commentarr);
                     $commentdata['comment_content'] = wp_slash($trimmedContent);
                     $commentarr['comment_approved'] = wp_allow_comment($commentdata, true);
 
                     if (is_wp_error($commentarr['comment_approved'])) {
                         wp_die($commentarr['comment_approved']->get_error_message());
+                    }
+                    if ($highLevelUser) {
+                        $commentarr['comment_approved'] = $commentOldStatus;
                     }
 
                     if ($trimmedContent !== $comment->comment_content) {
@@ -778,7 +791,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                             if (!empty($commentListArgs['current_user']->ID)) {
                                 $commentListArgs['user_votes'] = $this->dbManager->getUserVotes($comments, $commentListArgs['current_user']->ID);
                             } else {
-                                $commentListArgs['user_votes'] = $this->dbManager->getUserVotes($comments, md5($this->helper->getRealIPAddr()));
+                                $commentListArgs['user_votes'] = $this->dbManager->getUserVotes($comments, md5(WpdiscuzHelper::getRealIPAddr()));
                             }
                         }
                         $response                      = [];
@@ -895,7 +908,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 if (!empty($commentListArgs["current_user"]->ID)) {
                     $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, $commentListArgs['current_user']->ID);
                 } else {
-                    $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, md5($this->helper->getRealIPAddr()));
+                    $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, md5(WpdiscuzHelper::getRealIPAddr()));
                 }
             }
             if ($this->options->wp["isPaginate"]) {
@@ -921,6 +934,31 @@ class WpdiscuzCore implements WpDiscuzConstants {
         $this->commentsArgs["caller"]  = "";
 
         return $commentData;
+    }
+
+    private function getSingleThreadComments($commentId, &$commentListArgs) {
+        if (!$commentId) {
+            return [];
+        }
+        $commentStatusIn   = $this->commentsArgs["status"] === "all" ? ["1", "0"] : ["1"];
+        $includeUnapproved = !empty($this->commentsArgs["include_unapproved"]) ? $this->commentsArgs["include_unapproved"] : null;
+        $parentComment     = $this->helperOptimization->getCommentRoot($commentId, $commentStatusIn, $includeUnapproved);
+        if (!$parentComment) {
+            return [];
+        }
+        $args = [
+            "format"  => "flat",
+            "status"  => $this->commentsArgs["status"],
+            "orderby" => $this->commentsArgs["orderby"],
+            "post_id" => $this->commentsArgs["post_id"],
+        ];
+        if (!empty($this->commentsArgs["include_unapproved"])) {
+            $args["include_unapproved"] = $this->commentsArgs["include_unapproved"];
+        }
+        $commentListArgs["isSingle"]         = true;
+        $commentListArgs["new_loaded_class"] = "wpd-new-loaded-comment";
+        $tree                                = $parentComment->get_children($args);
+        return array_merge([$parentComment], $tree);
     }
 
     public function _getWPComments(&$commentListArgs, &$commentData) {
@@ -952,64 +990,91 @@ class WpdiscuzCore implements WpDiscuzConstants {
             $this->commentsArgs["order"] = $oldOrder;
         } else { // AJAX LOAD MORE
             $limitBefore = $this->commentsArgs["number"];
-            if ($this->commentsArgs["number"]) {
-                $this->commentsArgs["number"] += 1;
-            }
-            if ($this->commentsArgs["wpdType"] === "inline") {
-                $this->commentsArgs["meta_query"] = [
-                    [
-                        "key"     => self::META_KEY_FEEDBACK_FORM_ID,
-                        "value"   => 0,
-                        "compare" => "!=",
-                    ],
-                ];
-            }
-            $commentList      = get_comments($this->commentsArgs);
-            $commentListCount = $commentList && is_array($commentList) ? count($commentList) : 0;
-            if ($limitBefore && $commentListCount > $limitBefore) {
-                unset($commentList[$commentListCount - 1]);
-                $commentListCount--;
-                $commentData["is_show_load_more"] = true;
+            if ($this->commentsArgs["wpdType"] === "most_reacted") {
+                $commentId                         = $this->dbManager->getMostReactedCommentId($this->commentsArgs["post_id"]);
+                $commentList                       = $this->getSingleThreadComments($commentId, $commentListArgs);
+                $commentData["is_show_load_more"]  = false;
+                $commentData["last_parent_id"]     = 0;
+                $commentListArgs["page"]           = 1;
+                $commentListArgs["last_parent_id"] = 0;
+            } elseif ($this->commentsArgs["wpdType"] === "hottest_thread") {
+                $commentStatusIn = $this->commentsArgs["status"] === "all" ? ["1", "0"] : ["1"];
+                $parentIds       = $this->dbManager->getParentCommentsHavingReplies($this->commentsArgs["post_id"], $commentStatusIn);
+                $childCount      = 0;
+                $hottestId       = 0;
+                foreach ($parentIds as $parentId) {
+                    $children = $this->dbManager->getHottestTree($parentId);
+                    $tmpCount = count($children);
+                    if ($childCount < $tmpCount) {
+                        $childCount = $tmpCount;
+                        $hottestId  = $parentId;
+                    }
+                }
+                $commentList                       = $this->getSingleThreadComments($hottestId, $commentListArgs);
+                $commentData["is_show_load_more"]  = false;
+                $commentData["last_parent_id"]     = 0;
+                $commentListArgs["page"]           = 1;
+                $commentListArgs["last_parent_id"] = 0;
             } else {
-                $commentData["is_show_load_more"] = false;
-            }
-            if ($commentList && is_array($commentList)) {
-                $commentData["last_parent_id"] = $commentList[$commentListCount - 1]->comment_ID;
-                // get count of left comments
-                if (apply_filters("wpdiscuz_show_comments_left", false)) {
-                    $lastId                               = $this->commentsArgs["last_parent_id"];
-                    $this->commentsArgs["last_parent_id"] = $commentData["last_parent_id"];
-                    $this->commentsArgs["count"]          = true;
-                    $this->commentsArgs["caller"]         = "wpdiscuz";
-                    $commentsLeft                         = get_comments($this->commentsArgs);
-                    $this->commentsArgs["last_parent_id"] = $lastId;
-                    $this->commentsArgs["count"]          = false;
-                    $this->commentsArgs["caller"]         = "";
-                    $commentData["comments_left"]         = $commentsLeft; //send back to ajax comments left count
-                    $commentData["comments_left_text"]    = apply_filters("wpdiscuz_comments_left_text",
-                        "({$commentsLeft})",
+                if ($this->commentsArgs["number"]) {
+                    $this->commentsArgs["number"] += 1;
+                }
+                if ($this->commentsArgs["wpdType"] === "inline") {
+                    $this->commentsArgs["meta_query"] = [
                         [
-                            "post"          => $this->commentsArgs["post_id"],
-                            "user"          => $this->commentsArgs["user"],
-                            "comments_left" => $commentsLeft
-                        ]
-                    );
+                            "key"     => self::META_KEY_FEEDBACK_FORM_ID,
+                            "value"   => 0,
+                            "compare" => "!=",
+                        ],
+                    ];
                 }
-                if ($this->options->wp["threadComments"]) {
-                    $commentList = $this->getChildren($commentList, $commentListArgs);
+                $commentList      = get_comments($this->commentsArgs);
+                $commentListCount = $commentList && is_array($commentList) ? count($commentList) : 0;
+                if ($limitBefore && $commentListCount > $limitBefore) {
+                    unset($commentList[$commentListCount - 1]);
+                    $commentListCount--;
+                    $commentData["is_show_load_more"] = true;
+                } else {
+                    $commentData["is_show_load_more"] = false;
                 }
-            } else {
-                $commentData["last_parent_id"] = 0;
+                if ($commentList && is_array($commentList)) {
+                    $commentData["last_parent_id"] = $commentList[$commentListCount - 1]->comment_ID;
+                    // get count of left comments
+                    if (apply_filters("wpdiscuz_show_comments_left", false)) {
+                        $lastId                               = $this->commentsArgs["last_parent_id"];
+                        $this->commentsArgs["last_parent_id"] = $commentData["last_parent_id"];
+                        $this->commentsArgs["count"]          = true;
+                        $this->commentsArgs["caller"]         = "wpdiscuz";
+                        $commentsLeft                         = get_comments($this->commentsArgs);
+                        $this->commentsArgs["last_parent_id"] = $lastId;
+                        $this->commentsArgs["count"]          = false;
+                        $this->commentsArgs["caller"]         = "";
+                        $commentData["comments_left"]         = $commentsLeft;
+                        $commentData["comments_left_text"]    = apply_filters("wpdiscuz_comments_left_text",
+                            "({$commentsLeft})",
+                            [
+                                "post"          => $this->commentsArgs["post_id"],
+                                "user"          => $this->commentsArgs["user"],
+                                "comments_left" => $commentsLeft
+                            ]
+                        );
+                    }
+                    if ($this->options->wp["threadComments"]) {
+                        $commentList = $this->getChildren($commentList, $commentListArgs);
+                    }
+                } else {
+                    $commentData["last_parent_id"] = 0;
+                }
+                $this->getStickyComments(false, $commentList, $commentListArgs);
+                $commentListArgs["page"]           = 1;
+                $commentListArgs["last_parent_id"] = $commentData["last_parent_id"];
             }
-            $this->getStickyComments(false, $commentList, $commentListArgs);
-            $commentListArgs["page"]           = 1;
-            $commentListArgs["last_parent_id"] = $commentData["last_parent_id"];
         }
         if ($commentList && $this->options->thread_layouts["highlightVotingButtons"]) {
             if (!empty($commentListArgs["current_user"]->ID)) {
                 $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, $commentListArgs['current_user']->ID);
             } else {
-                $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, md5($this->helper->getRealIPAddr()));
+                $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, md5(WpdiscuzHelper::getRealIPAddr()));
             }
         }
 
@@ -1167,21 +1232,21 @@ class WpdiscuzCore implements WpDiscuzConstants {
         $menuIcon = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyMDQ4IDIwNDgiIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCB0cmFuc2Zvcm09InRyYW5zbGF0ZSg5OTQsMzIwKSIgZD0ibTAgMGg1OGwzNCAyIDQzIDUgMzkgNyAzOCA5IDM0IDEwIDI5IDEwIDMwIDEyIDI2IDEyIDE5IDkgMjIgMTIgMTYgOSAyMSAxMyAyNCAxNiAyOCAyMSAxNyAxNCAxMSA5IDE0IDEzIDggNyA4IDggOCA3IDQgNHYyaDJsNyA4IDEwIDEwIDcgOCAxMiAxNCAxMCAxMiA5IDExIDE0IDE5IDE0IDIwIDEyIDE5IDE5IDMyIDE4IDM1IDEzIDI4IDEzIDMzIDEyIDM2IDcgMjQgOCAzMiA3IDM3IDQgMjcgMyAyOCAyIDQwdjQxbC0yIDQwLTUgNDItNyAzOS03IDMxLTkgMzItMTIgMzYtMTMgMzMtMTUgMzMtMTEgMjItMTMgMjMtMTUgMjUtOCAxMi0xMSAxNi0xNCAxOS0xMSAxNC0xMyAxNi0xMCAxMS03IDgtOSAxMC0zNiAzNi04IDctMTQgMTItMTcgMTQtMTcgMTMtMTEgOC0xNiAxMS0xNSAxMC0xOCAxMS0xNyAxMC0zMiAxNy0yOCAxMy0zMiAxMy0yOCAxMC0yOSA5LTMwIDgtMzggOC0zMyA1LTM3IDQtMzYgMmgtNDJsLTQ5LTMtMzItNC0yNC00LTIzLTUtMzAtNy0zNy0xMS0yOS0xMC0zMC0xMi0yNC0xMS0yMS0xMC05IDItMzAgNy02NyAxNy0yMDEgNTAtNyAxaC0xM2wtMTYtNC0xMS02LTEwLTgtOS0xMS04LTE2LTMtMTkgMy0yMCAzMi0xMjggMTktNzUgMTUtNjAgNS0xOSAyLTExIDItMy0xLTUtMTUtMzEtMTMtMzEtMTMtMzYtMTEtMzctOC0zMi03LTM2LTQtMjctMy0yNi0yLTMydi02M2wzLTQzIDQtMzAgNC0yNCA3LTM0IDgtMzAgOC0yNiA4LTIzIDExLTI4IDEyLTI3IDktMTkgMTAtMTkgMTMtMjMgMTMtMjEgMTItMTggMTItMTcgOS0xMiA4LTEwIDE4LTIyIDEyLTEzIDctOCAxMi0xMyAyMC0yMCA4LTcgMTMtMTIgMTQtMTIgMjUtMjAgMTctMTIgMTQtMTAgMTctMTEgMjgtMTcgMjYtMTQgMjItMTEgMjQtMTEgMjgtMTEgMTktNyAzOS0xMiAzMi04IDE4LTQgMjItNCAyNi00IDI3LTN6bTAgMTI4LTM3IDMtMzQgNS0zNCA3LTM2IDEwLTMyIDExLTI5IDEyLTI5IDE0LTIxIDExLTIyIDEzLTIxIDE0LTE0IDEwLTE2IDEyLTE3IDE0LTIwIDE4LTE1IDE0LTkgOS03IDgtMTQgMTUtOSAxMS0xMyAxNi0xMiAxNy0xOCAyNy05IDE1LTE0IDI1LTE1IDMxLTEzIDMyLTEyIDM1LTEwIDM4LTcgMzUtNCAyOC0zIDQwdjUxbDMgMzggNSAzNiA2IDI5IDggMzEgOCAyNSAxMCAyOCAxMyAzMCA4IDE3IDEwIDE5IDYgMTIgNCAxNXYxNGwtNiAyNi0zMiAxMjgtMTggNzMtMSA2IDIyNS01NiA3LTFoMTdsMTQgNCA0NSAyMyAyOCAxMiAyNCA5IDMwIDEwIDMwIDggMzUgNyAzNyA1IDI0IDIgMjIgMWgzMGwzNC0yIDI3LTMgMjYtNCAzMy03IDI5LTggMzYtMTIgMjctMTEgMjYtMTIgMjUtMTMgMjItMTMgMTktMTIgMTgtMTMgMTYtMTIgMTQtMTEgMTEtMTAgOC03IDEwLTkgMjctMjcgNy04IDktMTAgMTEtMTQgMTItMTUgMTItMTcgOC0xMiAxMy0yMSAxMy0yMyA4LTE2IDExLTIzIDExLTI3IDctMTkgMTAtMzMgOC0zMyA3LTQxIDMtMjcgMi0zNHYtMzVsLTItMzQtNS00MC03LTM2LTctMjgtOS0yOS0xMC0yNy0xMi0yOC0xMC0yMS0xMi0yMi0xMy0yMi0xNi0yNC0xMC0xNC0xMC0xMy05LTExLTExLTEzLTExLTEyLTE0LTE1LTEyLTEyLTgtNy0xMi0xMS0xMS05LTE1LTEyLTE4LTEzLTI3LTE4LTE1LTktMjUtMTQtMzEtMTUtMTktOC0yNC05LTI3LTktMzQtOS0zNS03LTI5LTQtNDAtM3oiIGZpbGw9IiNBQUFEQUUiLz4KPHBhdGggdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzA4LDgwNCkiIGQ9Im0wIDBoMTIxbDIgMiAxNiA4OCAxNyA5MiA5IDUwIDE0IDc1IDMgOSA0LTIzIDE1LTY4IDI3LTEyMyAxOS04NyA0LTE1aDEwNWw2IDI1IDQwIDE4MCAxNyA3NiA2IDI5IDEgNmgxbDE0LTc0IDI0LTEzMiAxOC05OCAzLTEyaDEyMmwtMSA4LTEyIDU3LTI2IDEyMy0yOCAxMzItMjAgOTQtMTkgOTAtMiA3LTIgMWgtMTI2bC0zLTktMTItNTAtMzItMTM2LTE4LTc3LTQtMTUtMS0xLTUgMjUtMjAgODctMTQgNjEtMjAgODctNiAyNi0zIDJoLTEyNWwtMi0zLTIyLTEwMy0xNi03NS0yNy0xMjctMTMtNjEtMjAtOTQtOS00MnoiIGZpbGw9IiNBQUFEQUUiLz4KPC9zdmc+Cg==";
         add_menu_page("wpDiscuz", "wpDiscuz", "manage_options", self::PAGE_WPDISCUZ, "", $menuIcon, 26);
         add_submenu_page(self::PAGE_WPDISCUZ, "&raquo; " . esc_html__("Dashboard", "wpdiscuz"), "&raquo; " . esc_html__("Dashboard", "wpdiscuz"), "manage_options", self::PAGE_WPDISCUZ, [
-            &$this->options,
+            $this->options,
             "dashboard"
         ]);
         add_submenu_page(self::PAGE_WPDISCUZ, "&raquo; " . esc_html__("Settings", "wpdiscuz"), "&raquo; " . esc_html__("Settings", "wpdiscuz"), "manage_options", self::PAGE_SETTINGS, [
-            &$this->options,
+            $this->options,
             "mainOptionsForm"
         ]);
         if (!$this->options->general["isUsePoMo"]) {
             add_submenu_page(self::PAGE_WPDISCUZ, "&raquo; " . esc_html__("Phrases", "wpdiscuz"), "&raquo; " . esc_html__("Phrases", "wpdiscuz"), "manage_options", self::PAGE_PHRASES, [
-                &$this->options,
+                $this->options,
                 "phrasesOptionsForm"
             ]);
         }
         add_submenu_page(self::PAGE_WPDISCUZ, "&raquo; " . esc_html__("Tools", "wpdiscuz"), "&raquo; " . esc_html__("Tools", "wpdiscuz"), "manage_options", self::PAGE_TOOLS, [
-            &$this->options,
+            $this->options,
             "tools"
         ]);
 
@@ -1222,7 +1287,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 "msgConfirmRemoveVotes"         => esc_html__("Do you really want to remove voting data?", "wpdiscuz"),
                 "msgConfirmRemoveSocialAvatars" => esc_html__("Do you really want to remove social network avatars ?", "wpdiscuz"),
                 "msgConfirmResetPhrases"        => esc_html__("Do you really want to reset phrases?", "wpdiscuz"),
-                "wmuMsgConfirmAttachmentDelete" => esc_html__("Do you really want to delet this attachment?", "wpdiscuz"),
+                "wmuMsgConfirmAttachmentDelete" => esc_html__("Do you really want to delete this attachment?", "wpdiscuz"),
                 "msgConfirmPurgeCache"          => esc_html__("Do you really want to delete comments and users cache?", "wpdiscuz"),
                 "wpdOptionNonce"                => wp_create_nonce("wpd-option-nonce"),
                 "postAttachmentsAsGallery"      => (bool)apply_filters("wpdiscuz_post_attachments_as_gallery", false),
@@ -1349,7 +1414,6 @@ class WpdiscuzCore implements WpDiscuzConstants {
             $this->wpdiscuzOptionsJs["is_rate_editable"]            = isset($formGeneralOptions["is_rate_editable"]) ? $formGeneralOptions["is_rate_editable"] : 0;
             $this->wpdiscuzOptionsJs["menu_icon"]                   = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg.svg";
             $this->wpdiscuzOptionsJs["menu_icon_hover"]             = WPDISCUZ_DIR_URL . "/assets/img/plugin-icon/wpdiscuz-svg_hover.svg";
-            $this->wpdiscuzOptionsJs["isUpdateNonceWithAjax"]       = apply_filters("wpdiscuz_is_update_nonce_with_ajax", true, WpdiscuzHelper::getCurrentUser());
             $this->wpdiscuzOptionsJs["nonceName"]                   = WpdiscuzHelper::GLOBAL_NONCE_NAME;
             $this->wpdiscuzOptionsJs["postAttachmentsAsGallery"]    = apply_filters("wpdiscuz_post_attachments_as_gallery", false);
             $this->wpdiscuzOptionsJs["wmuPhraseNotAllowedFileType"] = __("File type is not allowed", "wpdiscuz");
@@ -1803,13 +1867,13 @@ class WpdiscuzCore implements WpDiscuzConstants {
         $this->isWpdiscuzLoaded = $this->helper->isLoadWpdiscuz($post);
         if ($this->isWpdiscuzLoaded) {
             $this->form = $this->wpdiscuzForm->getForm($post->ID);
-            add_filter("comments_template", [&$this, "addCommentForm"], 9999999);
+            add_filter("comments_template", [$this, "addCommentForm"], 9999999);
         }
     }
 
     public function addContentModal() {
         echo "<span id='wpdUserContentInfoAnchor' style='display:none;' rel='#wpdUserContentInfo' data-wpd-lity>wpDiscuz</span>";
-        echo "<div id='wpdUserContentInfo' style='overflow:auto;background:#FDFDF6;padding:20px;width:600px;max-width:100%;border-radius:6px;' class='lity-hide'></div>";
+        echo "<div id='wpdUserContentInfo' style='overflow:auto;background:#FDFDF6;padding:20px;width:760px;max-width:100%;border-radius:6px;' class='lity-hide'></div>";
     }
 
     public function saveLastVisit($post) {
@@ -1986,7 +2050,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                         if (!empty($commentListArgs["current_user"]->ID)) {
                             $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, $commentListArgs['current_user']->ID);
                         } else {
-                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, md5($this->helper->getRealIPAddr()));
+                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, md5(WpdiscuzHelper::getRealIPAddr()));
                         }
                     }
                     do_action("wpdiscuz_before_show_replies", $this->commentsArgs, $commentListArgs["current_user"]);
@@ -2037,7 +2101,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                         if (!empty($commentListArgs['current_user']->ID)) {
                             $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, $commentListArgs['current_user']->ID);
                         } else {
-                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, md5($this->helper->getRealIPAddr()));
+                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, md5(WpdiscuzHelper::getRealIPAddr()));
                         }
                     }
                     $response["message"]           = wp_list_comments($commentListArgs, $comments);
@@ -2100,7 +2164,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                         if (!empty($commentListArgs['current_user']->ID)) {
                             $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, $commentListArgs['current_user']->ID);
                         } else {
-                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, md5($this->helper->getRealIPAddr()));
+                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, md5(WpdiscuzHelper::getRealIPAddr()));
                         }
                     }
                     $response["message"]           = wp_list_comments($commentListArgs, $comments);
@@ -2111,6 +2175,22 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 }
             }
         }
+    }
+
+    public function getInlineFilterCta() {
+        wpDiscuz()->helper->validateNonce();
+
+        $postId = absint($_POST['postId'] ?? 0);
+
+        if (!$postId) {
+            wp_send_json_error();
+        }
+
+        ob_start();
+        include WPDISCUZ_DIR_PATH . "/themes/default/wpd-inline-filter-cta.php";
+        $html = ob_get_clean();
+
+        wp_send_json_success(['html' => $html]);
     }
 
     private function getStickyComments($isPaginate, &$commentList, &$commentListArgs) {
@@ -2746,7 +2826,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
     }
 
     public function wpdiscuzBlockInit() {
-        register_block_type(WPDISCUZ_DIR_PATH . "/assets/block", ["render_callback" => [&$this, "renderBlockWpdiscuz"]]);
+        register_block_type(WPDISCUZ_DIR_PATH . "/assets/block", ["render_callback" => [$this, "renderBlockWpdiscuz"]]);
     }
 
     public function renderBlockWpdiscuz($attributes, $content, $block) {
@@ -2820,5 +2900,6 @@ class WpdiscuzCore implements WpDiscuzConstants {
     }
 
 }
+
 
 $wpdiscuz = wpDiscuz();

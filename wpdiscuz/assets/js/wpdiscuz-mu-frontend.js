@@ -9,7 +9,7 @@ jQuery(document).ready(function ($) {
         $('.wpd-form-foot', $(this).parents('.wpd_comm_form')).slideDown(parseInt(wpdiscuzAjaxObj.enableDropAnimation) ? 500 : 0);
     });
 
-    $(document).delegate('.wmu-add-files', 'change', function () {
+    $(document).on('change', '.wmu-add-files', function () {
         const btn = $(this);
         const form = btn.closest('.wpd_comm_form');
         const files = btn[0].files ? Array.from(btn[0].files) : [];
@@ -24,11 +24,11 @@ jQuery(document).ready(function ($) {
         }
     });
 
-    $(document).delegate('.wmu-preview-delete', 'click', function () {
-        const $preview  = $(this).closest('.wmu-preview');
-        const $form     = $preview.closest('.wpd_comm_form');
-        const index     = parseInt($preview.data('wmu-index'));
-        const type      = $preview.data('wmu-type');
+    $(document).on('click', '.wmu-preview-delete', function () {
+        const $preview = $(this).closest('.wmu-preview');
+        const $form = $preview.closest('.wpd_comm_form');
+        const index = parseInt($preview.data('wmu-index'));
+        const type = $preview.data('wmu-type');
 
         const fileArray = wmuFileLists.get($form[0]) || [];
         fileArray[index] = null;
@@ -43,7 +43,7 @@ jQuery(document).ready(function ($) {
         }
     });
 
-    $(document).delegate('.wmu-replace-input', 'change', function () {
+    $(document).on('change', '.wmu-replace-input', function () {
         const input = $(this);
         const preview = input.closest('.wmu-preview');
         const form = preview.closest('.wpd_comm_form');
@@ -236,10 +236,10 @@ jQuery(document).ready(function ($) {
                     fixed: true
                 });
             } else {
-                $(".wmu-attached-images").each(function(){
+                $(".wmu-attached-images").each(function () {
                     // create a unique gallery for each comment
                     var galleryID = 'gallery-' + $(this).closest('.comment').attr('id'); // or any unique identifier
-                    $(this).find('.wmu-lightbox').each(function(){
+                    $(this).find('.wmu-lightbox').each(function () {
                         $(this).attr('rel', galleryID); // set rel dynamically
                     });
                 });
@@ -250,7 +250,9 @@ jQuery(document).ready(function ($) {
                     maxWidth: "95%",
                     photo: true,
                     fixed: true,
-                    rel: function(){ return $(this).attr('rel'); }
+                    rel: function () {
+                        return $(this).attr('rel');
+                    }
                 });
             }
 

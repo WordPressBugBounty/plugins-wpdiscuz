@@ -35,7 +35,7 @@ $(document).ready(function ($) {
             currentColumnType = 'right';
         }
         currentContainer = $(this).parents('.wpd-form-col').find('.col-body');
-        tb_show(wpdFormAdminOptions.wpd_form_fields, ajaxurl + "?action=wpdiscuzCustomFields&width=700&height=400");
+        tb_show(wpdFormAdminOptions.wpd_form_fields, ajaxurl + "?action=wpdiscuzCustomFields&_wpnonce=" + wpdFormAdminOptions.nonce + "&width=700&height=400");
         return false;
     });
 
@@ -62,6 +62,7 @@ $(document).ready(function ($) {
             url: ajaxurl,
             data: {
                 action: 'adminFieldForm',
+                security: wpdFormAdminOptions.nonce,
                 fieldType: fieldType,
                 row: currentRowId,
                 col: currentColumnType,

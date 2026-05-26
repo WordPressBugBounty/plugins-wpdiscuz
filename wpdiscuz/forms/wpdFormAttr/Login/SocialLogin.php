@@ -3,8 +3,6 @@
 namespace wpdFormAttr\Login;
 
 use wpdFormAttr\FormConst\wpdFormConst;
-use wpdFormAttr\Login\twitter\TwitterOAuthException;
-use wpdFormAttr\Login\twitter\TwitterOAuth;
 use wpdFormAttr\Login\Utils;
 use wpdFormAttr\Tools\Sanitizer;
 
@@ -15,17 +13,17 @@ class SocialLogin {
 
     private function __construct($options) {
         $this->generalOptions = $options;
-        add_action("wpdiscuz_init", [&$this, "requestHandler"]);
-        add_action("wpdiscuz_front_scripts", [&$this, "socialScripts"]);
-        add_action("comment_main_form_bar_top", [&$this, "getButtons"]);
-        add_action("comment_main_form_after_head", [&$this, "getAgreement"]);
-        add_action("comment_reply_form_bar_top", [&$this, "getReplyFormButtons"], 1);
-        add_action("comment_reply_form_bar_top", [&$this, "getAgreement"], 2);
-        add_action("wp_ajax_wpd_social_login", [&$this, "login"]);
-        add_action("wp_ajax_nopriv_wpd_social_login", [&$this, "login"]);
-        add_action("wp_ajax_wpd_login_callback", [&$this, "loginCallBack"]);
-        add_action("wp_ajax_nopriv_wpd_login_callback", [&$this, "loginCallBack"]);
-        add_filter("get_avatar", [&$this, "userAvatar"], 999, 6);
+        add_action("wpdiscuz_init", [$this, "requestHandler"]);
+        add_action("wpdiscuz_front_scripts", [$this, "socialScripts"]);
+        add_action("comment_main_form_bar_top", [$this, "getButtons"]);
+        add_action("comment_main_form_after_head", [$this, "getAgreement"]);
+        add_action("comment_reply_form_bar_top", [$this, "getReplyFormButtons"], 1);
+        add_action("comment_reply_form_bar_top", [$this, "getAgreement"], 2);
+        add_action("wp_ajax_wpd_social_login", [$this, "login"]);
+        add_action("wp_ajax_nopriv_wpd_social_login", [$this, "login"]);
+        add_action("wp_ajax_wpd_login_callback", [$this, "loginCallBack"]);
+        add_action("wp_ajax_nopriv_wpd_login_callback", [$this, "loginCallBack"]);
+        add_filter("get_avatar", [$this, "userAvatar"], 999, 6);
     }
 
     public function requestHandler() {
@@ -38,6 +36,7 @@ class SocialLogin {
     }
 
     public function login() {
+        wpDiscuz()->helper->validateNonce();
         if (!get_option('users_can_register')) {
             return;
         }
@@ -86,6 +85,9 @@ class SocialLogin {
     }
 
     public function loginCallBack() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            wpDiscuz()->helper->validateNonce();
+        }
         if (!get_option('users_can_register')) {
             return;
         }
@@ -410,7 +412,8 @@ class SocialLogin {
         }
 
         $provider = "telegram";
-        $user     = isset($_POST["user"]["hash"]) ? $_POST["user"] : null;
+        $userRaw  = isset($_POST["user"]) ? json_decode(sanitize_text_field($_POST["user"]), true) : null;
+        $user     = isset($userRaw["hash"]) ? $userRaw : null;
 
         $check_hash = $user["hash"];
         unset($user["hash"]);
@@ -735,54 +738,83 @@ class SocialLogin {
         $this->redirect($postID);
     }
 
-    // https://apps.twitter.com/
+    // https://developer.x.com/en/docs/authentication/oauth-2-0/authorization-code
     public function twitterLogin($postID, $response) {
-        if ($this->generalOptions->social["twitterAppID"] && $this->generalOptions->social["twitterAppSecret"]) {
-            $twitter         = new TwitterOAuth($this->generalOptions->social["twitterAppID"], $this->generalOptions->social["twitterAppSecret"]);
-            $twitterCallBack = $this->createCallBackURL("twitter");
-            try {
-                $requestToken = $twitter->oauth("oauth/request_token", ["oauth_callback" => $twitterCallBack]);
-                Utils::addOAuthState($requestToken["oauth_token_secret"], $requestToken["oauth_token"], $postID);
-                $url                 = $twitter->url("oauth/authorize", ["oauth_token" => $requestToken["oauth_token"]]);
-                $response["code"]    = 200;
-                $response["message"] = "";
-                $response["url"]     = $url;
-            } catch (TwitterOAuthException $e) {
-                $response["message"] = $e->getOAuthMessage();
-            }
-        } else {
-            $response["message"] = esc_html__("X Consumer Key and Consumer Secret  required.", "wpdiscuz");
+        if (!$this->generalOptions->social["twitterAppID"] || !$this->generalOptions->social["twitterAppSecret"]) {
+            $response["message"] = esc_html__("X Consumer Key and Consumer Secret required.", "wpdiscuz");
+            return $response;
         }
+        $codeVerifier  = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+        $codeChallenge = rtrim(strtr(base64_encode(hash('sha256', $codeVerifier, true)), '+/', '-_'), '=');
+        $state         = Utils::generateOAuthState($this->generalOptions->social["twitterAppID"]);
+        Utils::addOAuthState("twitter|" . $codeVerifier, $state, $postID);
+        $oauthParams         = [
+            "client_id"             => $this->generalOptions->social["twitterAppID"],
+            "redirect_uri"          => $this->createCallBackURL("twitter"),
+            "scope"                 => "tweet.read users.read",
+            "response_type"         => "code",
+            "state"                 => $state,
+            "code_challenge"        => $codeChallenge,
+            "code_challenge_method" => "S256",
+        ];
+        $response["code"]    = 200;
+        $response["message"] = "";
+        $response["url"]     = add_query_arg($oauthParams, "https://x.com/i/oauth2/authorize");
         return $response;
     }
 
     public function twitterLoginCallBack() {
-        $oauthToken      = Sanitizer::sanitize(INPUT_GET, "oauth_token", "FILTER_SANITIZE_STRING");
-        $oauthVerifier   = Sanitizer::sanitize(INPUT_GET, "oauth_verifier", "FILTER_SANITIZE_STRING");
-        $oauthSecretData = Utils::getProviderByState($oauthToken);
-        $oauthSecret     = $oauthSecretData[wpdFormConst::WPDISCUZ_OAUTH_STATE_PROVIDER];
-        $postID          = $oauthSecretData[wpdFormConst::WPDISCUZ_OAUTH_CURRENT_POSTID];
-        if (!$oauthVerifier || !$oauthSecret) {
-            $this->redirect($postID, esc_html__("X authentication failed (OAuth secret does not exist).", "wpdiscuz"));
+        $code      = Sanitizer::sanitize(INPUT_GET, "code", "FILTER_SANITIZE_STRING");
+        $state     = Sanitizer::sanitize(INPUT_GET, "state", "FILTER_SANITIZE_STRING");
+        $stateData = Utils::getProviderByState($state);
+        $stored    = isset($stateData[wpdFormConst::WPDISCUZ_OAUTH_STATE_PROVIDER]) ? $stateData[wpdFormConst::WPDISCUZ_OAUTH_STATE_PROVIDER] : '';
+        $postID    = isset($stateData[wpdFormConst::WPDISCUZ_OAUTH_CURRENT_POSTID]) ? $stateData[wpdFormConst::WPDISCUZ_OAUTH_CURRENT_POSTID] : 0;
+        if (!$state || strpos($stored, 'twitter|') !== 0) {
+            $this->redirect($postID, esc_html__("X authentication failed (OAuth state does not exist).", "wpdiscuz"));
         }
-        $twitter = new TwitterOAuth($this->generalOptions->social["twitterAppID"], $this->generalOptions->social["twitterAppSecret"], $oauthToken, $oauthSecret);
-        try {
-            $accessToken = $twitter->oauth("oauth/access_token", ["oauth_verifier" => $oauthVerifier]);
-            $connection  = new TwitterOAuth($this->generalOptions->social["twitterAppID"], $this->generalOptions->social["twitterAppSecret"], $accessToken["oauth_token"], $accessToken["oauth_token_secret"]);
-            $twitterUser = $connection->get("account/verify_credentials", ["include_email" => "true"]);
-            if (!empty($twitterUser->id)) {
-                $uID = Utils::addUser($twitterUser, "twitter");
-                if (is_wp_error($uID)) {
-                    $this->redirect($postID, $uID->get_error_message());
-                }
-                $this->setCurrentUser($uID);
-                $this->redirect($postID);
-            } else {
-                $this->redirect($postID, esc_html__("X connection failed.", "wpdiscuz"));
-            }
-        } catch (TwitterOAuthException $e) {
-            $this->redirect($postID, $e->getOAuthMessage());
+        if (!$code) {
+            $this->redirect($postID, esc_html__("X authentication failed (OAuth code does not exist).", "wpdiscuz"));
         }
+        $codeVerifier  = substr($stored, strlen('twitter|'));
+        $tokenResponse = wp_remote_post("https://api.x.com/2/oauth2/token", [
+            'headers' => [
+                'Authorization' => 'Basic ' . base64_encode($this->generalOptions->social["twitterAppID"] . ':' . $this->generalOptions->social["twitterAppSecret"]),
+                'Content-Type'  => 'application/x-www-form-urlencoded',
+            ],
+            'body'    => [
+                'grant_type'    => 'authorization_code',
+                'code'          => $code,
+                'redirect_uri'  => $this->createCallBackURL("twitter"),
+                'code_verifier' => $codeVerifier,
+            ],
+        ]);
+        if (is_wp_error($tokenResponse)) {
+            $this->redirect($postID, $tokenResponse->get_error_message());
+        }
+        $tokenData = json_decode(wp_remote_retrieve_body($tokenResponse), true);
+        if (isset($tokenData["error"])) {
+            $this->redirect($postID, isset($tokenData["error_description"]) ? $tokenData["error_description"] : $tokenData["error"]);
+        }
+        $userResponse = wp_remote_get("https://api.x.com/2/users/me?user.fields=id,name,profile_image_url,username", [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenData["access_token"]],
+        ]);
+        if (is_wp_error($userResponse)) {
+            $this->redirect($postID, $userResponse->get_error_message());
+        }
+        $userData = json_decode(wp_remote_retrieve_body($userResponse), true);
+        if (isset($userData["errors"])) {
+            $this->redirect($postID, isset($userData["errors"][0]["message"]) ? $userData["errors"][0]["message"] : esc_html__("X connection failed.", "wpdiscuz"));
+        }
+        $xUser = isset($userData["data"]) ? $userData["data"] : [];
+        if (empty($xUser["id"])) {
+            $this->redirect($postID, esc_html__("X connection failed.", "wpdiscuz"));
+        }
+        $uID = Utils::addUser($xUser, "twitter");
+        if (is_wp_error($uID)) {
+            $this->redirect($postID, $uID->get_error_message());
+        }
+        $this->setCurrentUser($uID);
+        $this->redirect($postID);
     }
 
     //https://id.vk.com/about/business/go/docs/ru/vkid/latest/vk-id/connection/start-integration/auth-without-sdk/auth-without-sdk-web

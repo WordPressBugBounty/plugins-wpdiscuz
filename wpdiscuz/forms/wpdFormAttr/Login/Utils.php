@@ -177,16 +177,17 @@ class Utils {
     }
 
     private static function sanitizeTwitterUser($socialUser) {
+        $username = isset($socialUser["username"]) ? $socialUser["username"] : "x_" . $socialUser["id"];
         $userData = [
-            "user_login"     => self::saitizeUsername($socialUser->screen_name),
-            "first_name"     => $socialUser->name,
+            "user_login"     => self::saitizeUsername($username),
+            "first_name"     => $socialUser["name"],
             "last_name"      => "",
-            "display_name"   => $socialUser->name,
-            "user_url"       => "https://twitter.com/" . $socialUser->screen_name,
-            "user_email"     => isset($socialUser->email) && $socialUser->email ? $socialUser->email : $socialUser->id . "@twitter.com",
+            "display_name"   => $socialUser["name"],
+            "user_url"       => "https://x.com/" . $username,
+            "user_email"     => $socialUser["id"] . "@x.com",
             "provider"       => "twitter",
-            "social_user_id" => $socialUser->id,
-            "avatar"         => str_replace("_normal.", "_bigger.", $socialUser->profile_image_url_https),
+            "social_user_id" => $socialUser["id"],
+            "avatar"         => isset($socialUser["profile_image_url"]) ? str_replace("_normal.", "_bigger.", $socialUser["profile_image_url"]) : "",
         ];
         return $userData;
     }

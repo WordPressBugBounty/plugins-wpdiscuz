@@ -14,13 +14,13 @@ class WpdiscuzCache implements WpDiscuzConstants {
         $this->options      = $options;
         $this->helper       = $helper;
         $this->wpUploadsDir = wp_upload_dir();
-        add_action("admin_post_purgeAllCaches", [&$this, "purgeAllCaches"]);
-        add_action("admin_post_purgePostCaches", [&$this, "purgePostCaches"]);
-        add_action("wpdiscuz_reset_users_cache", [&$this, "resetUsersCache"]);
-        add_action("wpdiscuz_reset_comments_cache", [&$this, "resetCommentsCache"]);
-        add_action("wpdiscuz_reset_comments_extra_cache", [&$this, "resetExtraCache"]);
-        add_action("comment_post", [&$this, "commentPost"], 248, 3);
-        add_action("edit_comment", [&$this, "editComment"], 249, 2);
+        add_action("admin_post_purgeAllCaches", [$this, "purgeAllCaches"]);
+        add_action("admin_post_purgePostCaches", [$this, "purgePostCaches"]);
+        add_action("wpdiscuz_reset_users_cache", [$this, "resetUsersCache"]);
+        add_action("wpdiscuz_reset_comments_cache", [$this, "resetCommentsCache"]);
+        add_action("wpdiscuz_reset_comments_extra_cache", [$this, "resetExtraCache"]);
+        add_action("comment_post", [$this, "commentPost"], 248, 3);
+        add_action("edit_comment", [$this, "editComment"], 249, 2);
     }
 
     public function purgeAllCaches() {

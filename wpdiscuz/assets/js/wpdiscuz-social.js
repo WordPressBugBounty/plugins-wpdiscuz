@@ -1,7 +1,7 @@
 //============================== FACEBOOK API INIT  ========================== //
-if (((!parseInt(wpdiscuzAjaxObj.fbUseOAuth2) && parseInt(wpdiscuzAjaxObj.enableFbLogin)) || parseInt(wpdiscuzAjaxObj.enableFbShare)) && wpdiscuzAjaxObj.facebookAppID) {
+if (((!Number.parseInt(wpdiscuzAjaxObj.fbUseOAuth2) && Number.parseInt(wpdiscuzAjaxObj.enableFbLogin)) || Number.parseInt(wpdiscuzAjaxObj.enableFbShare)) && wpdiscuzAjaxObj.facebookAppID) {
     (function (d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
+        let js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) {
             return;
         }
@@ -45,25 +45,25 @@ jQuery(document).ready(function ($) {
         if (wpdiscuzAjaxObj.enableFbShare != 1) {
             return;
         }
-        var commentID = $(this).parents('.wpd-comment').find('.wpd-comment-right').attr('id');
-        var postUrl = window.location.href;
+        let commentID = $(this).parents('.wpd-comment').find('.wpd-comment-right').attr('id');
+        let postUrl = window.location.href;
         if (postUrl.indexOf('#') !== -1) {
             postUrl = postUrl.substring(0, postUrl.indexOf('#'));
         }
         postUrl += '#' + commentID;
-        var commentContent = $(this).parents('.wpd-comment-right').find('.wpd-comment-text').text();
+        let commentContent = $(this).parents('.wpd-comment-right').find('.wpd-comment-text').text();
         wpcShareCommentFB(postUrl, commentContent);
     });
 
-    var socialLoginProvider = '';
+    let socialLoginProvider = '';
     $('body').on('click', '#wpdcom .wpd-social-login .wpdiscuz-login-button', function () {
-        var socialLoginContainer = $(this).parents('.wpd-social-login');
+        let socialLoginContainer = $(this).parents('.wpd-social-login');
         socialLoginProvider = wpdInitProvider($(this));
         wpdSocialLoginIsConfirmAgreement(socialLoginProvider, socialLoginContainer);
     });
 
     $('body').on('click', '#wpdcom .wpd-agreement-buttons-right .wpd-agreement-button', function () {
-        var socialLoginContainer = $(this).parents('.wpd-form-wrap, .wpd-form').find('.wpd-social-login-agreement').slideUp(700);
+        let socialLoginContainer = $(this).parents('.wpd-form-wrap, .wpd-form').find('.wpd-social-login-agreement').slideUp(700);
         if ($(this).hasClass('wpd-agreement-button-agree')) {
             if (wpdiscuzAjaxObj.isCookiesEnabled) {
                 Cookies.set('socialLoginAgreementConfirmed', 1, {expires: 30, path: '/'});
@@ -73,7 +73,7 @@ jQuery(document).ready(function ($) {
     });
 
     function wpdSocialLoginIsConfirmAgreement(provider, container) {
-        if (parseInt(wpdiscuzAjaxObj.socialLoginAgreementCheckbox) != 1 || Cookies.get('socialLoginAgreementConfirmed') == 1) {
+        if (Number.parseInt(wpdiscuzAjaxObj.socialLoginAgreementCheckbox) !== 1 || Cookies.get('socialLoginAgreementConfirmed') == 1) {
             wpdCallSocialLogin(provider, container);
         } else {
             container.parents('.wpd-form-wrap, .wpd-form').find('.wpd-social-login-agreement').first().slideDown(700);
@@ -83,7 +83,7 @@ jQuery(document).ready(function ($) {
 
 
     function wpdCallSocialLogin(provider, container) {
-        var token, userID = '';
+        let token, userID = '';
         wpdSocialLoginLoadingBar(container, 1);
         Cookies.set('wpdiscuz_scroll_to_comments', 1, {path: '/'});
         if (provider === 'facebook' && wpdiscuzAjaxObj.facebookUseOAuth2 == 0) {
@@ -108,30 +108,24 @@ jQuery(document).ready(function ($) {
     }
 
     function wpdSendRequest(provider, token, userID, container) {
-        var response = '';
-        $.ajax({
-            type: 'POST',
-            url: wpdiscuzAjaxObj.url,
-            data: {
-                action: 'wpd_social_login',
-                provider: provider,
-                token: token,
-                userID: userID,
-                postID: wpdiscuzAjaxObj.wc_post_id
-            }
-        }).done(function (wpdiscuz_response) {
+        let data = new FormData();
+        data.append('action', 'wpd_social_login');
+        data.append('provider', provider);
+        data.append('token', token || '');
+        data.append('userID', userID || '');
+        data.append('postID', wpdiscuzAjaxObj.wc_post_id);
+        wpdiscuzAjaxObj.getAjaxObj(true, false, data).done(function (wpdiscuz_response) {
             wpdHandleResponse(wpdiscuz_response, container);
         });
-        return response;
     }
 
     function wpdHandleResponse(respons, container) {
         try {
-            var obj = $.parseJSON(respons);
-            var code = obj.code;
-            var message = obj.message;
-            var url = obj.url;
-            if (parseInt(code) === 200) {
+            let obj = $.parseJSON(respons);
+            let code = obj.code;
+            let message = obj.message;
+            let url = obj.url;
+            if (Number.parseInt(code) === 200) {
                 location.assign(url);
             } else {
                 wpdiscuzAjaxObj.setCommentMessage(message, 'error');
@@ -143,7 +137,7 @@ jQuery(document).ready(function ($) {
     }
 
     function wpdDisplayErrorMessage() {
-        var errorMessage = Cookies.get('wpdiscuz_social_login_message');
+        let errorMessage = Cookies.get('wpdiscuz_social_login_message');
         if (errorMessage && errorMessage !== 'undefined') {
             Cookies.remove('wpdiscuz_social_login_message');
             wpdiscuzAjaxObj.setCommentMessage(decodeURIComponent(errorMessage.replace(/\+/g, '%20')), 'error');
@@ -151,7 +145,7 @@ jQuery(document).ready(function ($) {
     }
 
     function wpdInitProvider($obj) {
-        var provider = '';
+        let provider = '';
         if ($obj.hasClass('wpdsn-fb')) {
             provider = 'facebook';
         }
@@ -207,14 +201,14 @@ jQuery(document).ready(function ($) {
 
 //============================== TELEGRAM  ========================== //
     function haveTgAuthResult() {
-        var locationHash = '', re = /[#\?\&]tgAuthResult=([A-Za-z0-9\-_=]*)$/, match;
+        let locationHash = '', re = /[#\?\&]tgAuthResult=([A-Za-z0-9\-_=]*)$/, match;
         try {
             locationHash = location.hash.toString();
             if (match = locationHash.match(re)) {
                 location.hash = locationHash.replace(re, '');
-                var data = match[1] || '';
+                let data = match[1] || '';
                 data = data.replace(/-/g, '+').replace(/_/g, '/');
-                var pad = data.length % 4;
+                let pad = data.length % 4;
                 if (pad > 1) {
                     data += new Array(5 - pad).join('=');
                 }
@@ -226,20 +220,14 @@ jQuery(document).ready(function ($) {
         return false;
     }
 
-    var telegramUser = haveTgAuthResult();
+    let telegramUser = haveTgAuthResult();
     if (telegramUser) {
-
         $('#wpdiscuz-loading-bar').show();
-        $.ajax({
-            type: 'POST',
-            url: wpdiscuzAjaxObj.url,
-            data: {
-                action: 'wpd_login_callback',
-                provider: 'telegram',
-                user: telegramUser,
-            }
-        }).done(function (response) {
-            console.log(response);
+        let tgData = new FormData();
+        tgData.append('action', 'wpd_login_callback');
+        tgData.append('provider', 'telegram');
+        tgData.append('user', JSON.stringify(telegramUser));
+        wpdiscuzAjaxObj.getAjaxObj(true, false, tgData).done(function (response) {
             if (response.success) {
                 location.reload();
             } else {

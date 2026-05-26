@@ -14,7 +14,7 @@ class PersonalDataExporter implements wpdFormConst {
     private function __construct($options) {
         $this->generalOptions = $options;
         $this->initFormsFields();
-        add_filter("wp_privacy_personal_data_exporters", [&$this, "wpdiscuzCommentsPersonalDataExport"], 13);
+        add_filter("wp_privacy_personal_data_exporters", [$this, "wpdiscuzCommentsPersonalDataExport"], 13);
     }
 
     private function initFormsFields() {
@@ -34,7 +34,7 @@ class PersonalDataExporter implements wpdFormConst {
     public function wpdiscuzCommentsPersonalDataExport($exporters) {
         $exporters["wpdiscuz"] = [
             "exporter_friendly_name" => esc_html__("wpDiscuz Fields Data", "wpdiscuz"),
-            "callback"               => [&$this, "customFieldsExport"],
+            "callback"               => [$this, "customFieldsExport"],
         ];
         return $exporters;
     }

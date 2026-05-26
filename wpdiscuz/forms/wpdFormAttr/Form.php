@@ -886,7 +886,7 @@ class Form {
                 );
                 ?>
                 >
-                    <?php do_action("comment_form_top"); ?>
+                    <?php do_action("comment_form_top", $postID, $currentUser, $isMain, $uniqueId, $commentsCount); ?>
                     <div class="wpd-field-comment">
                         <div class="wpdiscuz-item wc-field-textarea">
                             <div class="wpdiscuz-textarea-wrap <?php echo $this->wpdOptions->form["richEditor"] === "both" || (!wp_is_mobile() && $this->wpdOptions->form["richEditor"] === "desktop") ? "" : "wpd-txt"; ?>">
@@ -928,7 +928,7 @@ class Form {
                     ?>
                     <input type="hidden" class="wpdiscuz_unique_id" value="<?php echo esc_attr($uniqueId); ?>"
                            name="wpdiscuz_unique_id">
-                    <?php do_action('comment_form', $postID); ?>
+                    <?php do_action('comment_form', $postID, $currentUser, $isMain, $uniqueId, $commentsCount); ?>
                 </form>
                 <?php
             }
@@ -1752,11 +1752,11 @@ class Form {
         if (!$post) {
             $post = get_post($postId);
         }
+        $postId = $post && isset($post->ID) ? $post->ID : $postId;
         $user_can_comment = true;
         $this->initFormMeta();
         if ($currentUser && $currentUser->ID) {
             if ($post->post_author && $post->post_author != $currentUser->ID && $currentUser->roles && is_array($currentUser->roles)) {
-                $postId                                            = $post && isset($post->ID) ? $post->ID : $postId;
                 $this->generalOptions["roles_cannot_comment"]      = isset($this->generalOptions["roles_cannot_comment"]) ? $this->generalOptions["roles_cannot_comment"] : [];
                 $this->generalOptions["roles_cannot_see_comments"] = isset($this->generalOptions["roles_cannot_see_comments"]) ? $this->generalOptions["roles_cannot_see_comments"] : [];
                 foreach ($currentUser->roles as $k => $role) {
@@ -1773,6 +1773,7 @@ class Form {
             $this->generalOptions["guest_can_comment"]      = isset($this->generalOptions["guest_can_comment"]) ? $this->generalOptions["guest_can_comment"] : 1;
             $user_can_comment                               = $this->generalOptions["guest_can_see_comments"] && $this->generalOptions["guest_can_comment"];
         }
+
         if ($user_can_comment && class_exists("WooCommerce") && get_post_type($postId) === "product") {
             if (get_option("woocommerce_review_rating_verification_required") === "no" || wc_customer_bought_product("", get_current_user_id(), $postId)) {
                 $user_can_comment = true;

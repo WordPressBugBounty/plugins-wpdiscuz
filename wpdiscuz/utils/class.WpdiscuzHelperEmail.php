@@ -25,16 +25,16 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         $this->options   = $options;
         $this->dbManager = $dbManager;
         $this->helper    = $helper;
-        add_action("wpdiscuz_init", [&$this, "addSubscriptionRewriteRule"]);
-        add_action("wp_ajax_wpdAddSubscription", [&$this, "addSubscription"]);
-        add_action("wp_ajax_nopriv_wpdAddSubscription", [&$this, "addSubscription"]);
-        add_action("wp_ajax_wpdCheckNotificationType", [&$this, "checkNotificationType"]);
-        add_action("wp_ajax_nopriv_wpdCheckNotificationType", [&$this, "checkNotificationType"]);
-        add_action("wp_ajax_wpdiscuzDeleteDataWithEmail", [&$this, "deleteDataWithEmail"]);
-        add_action("wp_ajax_nopriv_wpdiscuzDeleteDataWithEmail", [&$this, "deleteDataWithEmail"]);
-        add_action("comment_post", [&$this, "notificationFromDashboard"], 10, 2);
-        add_filter("template_include", [&$this, "subscriptionRequestsActions"]);
-        add_filter("query_vars", [&$this, "addQueryVars"]);
+        add_action("wpdiscuz_init", [$this, "addSubscriptionRewriteRule"]);
+        add_action("wp_ajax_wpdAddSubscription", [$this, "addSubscription"]);
+        add_action("wp_ajax_nopriv_wpdAddSubscription", [$this, "addSubscription"]);
+        add_action("wp_ajax_wpdCheckNotificationType", [$this, "checkNotificationType"]);
+        add_action("wp_ajax_nopriv_wpdCheckNotificationType", [$this, "checkNotificationType"]);
+        add_action("wp_ajax_wpdiscuzDeleteDataWithEmail", [$this, "deleteDataWithEmail"]);
+        add_action("wp_ajax_nopriv_wpdiscuzDeleteDataWithEmail", [$this, "deleteDataWithEmail"]);
+        add_action("comment_post", [$this, "notificationFromDashboard"], 10, 2);
+        add_filter("template_include", [$this, "subscriptionRequestsActions"]);
+        add_filter("query_vars", [$this, "addQueryVars"]);
     }
 
     public function addSubscriptionRewriteRule() {
@@ -194,7 +194,8 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
     }
 
     private function emailDeleteLinks() {
-        $this->helper->validateNonce();
+        $urlNonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
+        $this->helper->validateNonce($urlNonce);
         $currentUser      = WpdiscuzHelper::getCurrentUser();
         $currentUserEmail = "";
         $isGuest          = true;
@@ -515,7 +516,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
 
         // ----- COMMENT VALIDATION -----
         $comment   = get_comment($commentId);
-        $commentIp = WpdiscuzHelper::getIp();
+        $commentIp = WpdiscuzHelper::getRealIPAddr();
 
         if (!($comment instanceof WP_Comment)) {
             wp_send_json([

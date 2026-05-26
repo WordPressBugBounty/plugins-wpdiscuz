@@ -289,7 +289,7 @@ _:-ms-lang(x), .wpd-social-login [wpd-tooltip]::before{top: -24px;}
 
 /* Comment Threads */
 #wpdcom #wpd-threads{margin-top: 20px;}
-#wpdcom .wpd-thread-head{width: 100%; border-bottom: 2px solid #cccccc; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: flex-end;}
+#wpdcom .wpd-thread-head{width: 100%; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: flex-end;}
 #wpdcom .wpd-thread-head .wpd-thread-info{ color:#555555; padding:5px 15px 3px 5px; font-weight: 600; margin-bottom: -2px; border-bottom:2px solid #07B290; font-size: 14px; letter-spacing:1px; text-transform: uppercase; text-align: left; line-height: 24px;}
 #wpdcom .wpd-thread-head .wpd-thread-info .wpdtc{font-size: 15px;}
 #wpdcom .wpd-thread-head .wpdiscuz-user-settings{font-size:15px; color:#777777; border-bottom: 2px solid #07B290; cursor: pointer; text-align: center; padding: 5px 10px 6px 12px; margin:0 2px -2px 2px; width: 40px; text-align: center;}
@@ -537,9 +537,10 @@ _:-ms-lang(x), #wpdcom .wpd-comment.wpd-reply .wpd-comment-footer .wpd-vote-down
     100%{transform: translateX(0)}
 }
 
-#wpdcom .wpd-comment-info-bar {display: none; padding: 10px; margin: 20px auto 0 auto; flex-direction: row; justify-content: space-between; border: 1px dashed #39b89a; background:#f7fffc; font-size: 14px; }
+#wpdcom .wpd-filter-container {width: 100%; padding-bottom: 1px;border-bottom: 2px solid #cccccc;}
+#wpdcom .wpd-inline-filter-cta {display: flex; padding: 10px; margin: 20px auto 0 auto; flex-direction: row; justify-content: space-between; border: 1px dashed #39b89a; background:#f7fffc; font-size: 14px; }
 #wpdcom .wpd-current-view{padding: 3px; color: #555;}
-#wpdcom .wpd-comment-info-bar .wpd-current-view i{color: #07B290; margin-right: 6px; font-size: 18px;}
+#wpdcom .wpd-inline-filter-cta .wpd-current-view i{color: #07B290; margin-right: 6px; font-size: 18px;}
 #wpdcom .wpd-filter-view-all{color: #fff;background:#999;padding: 5px 20px;font-size: 13px;cursor: pointer;border-radius: 3px;}
 #wpdcom .wpd-filter-view-all:hover{background: #07B290;}
 

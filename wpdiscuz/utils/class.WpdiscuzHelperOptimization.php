@@ -22,25 +22,25 @@ class WpdiscuzHelperOptimization implements WpDiscuzConstants {
         $this->dbManager   = $dbManager;
         $this->helperEmail = $helperEmail;
         $this->helper      = $helper;
-        add_action("deleted_comment", [&$this, "cleanCommentRelatedRows"], 10, 2);
-        add_action("delete_user", [&$this, "deleteUserRelatedData"], 11);
-        add_action("profile_update", [&$this, "onProfileUpdate"], 10, 2);
-        add_action("admin_post_removeVoteData", [&$this, "removeVoteData"]);
-        add_action("admin_post_removeSocialAvatars", [&$this, "removeSocialAvatars"]);
-        add_action("admin_post_resetPhrases", [&$this, "resetPhrases"]);
-        add_action("transition_comment_status", [&$this, "statusEventHandler"], 10, 3);
-        add_action("edit_comment", [&$this, "commentEdited"], 10, 2);
-        add_action("post_updated", [&$this, "actionsOnUpdatedPost"]);
-        add_action("deleted_post", [&$this, "actionsOnDeletedPost"]);
-        add_action("updated_option", [&$this, "optionUpdated"]);
-        add_action("bp_members_avatar_uploaded", [&$this, "bpAvatarUploaded"]);
-        add_action("wpforo_update_profile_after", [&$this, "wpfProfileUpdate"]);
-        add_action("deactivate_plugin", [&$this, "pluginDeactivated"]);
-        add_action("wpdiscuz_clean_post_cache", [&$this, "cleanPostCache"]);
-        add_action("wpdiscuz_clean_all_caches", [&$this, "cleanAllCaches"]);
+        add_action("deleted_comment", [$this, "cleanCommentRelatedRows"], 10, 2);
+        add_action("delete_user", [$this, "deleteUserRelatedData"], 11);
+        add_action("profile_update", [$this, "onProfileUpdate"], 10, 2);
+        add_action("admin_post_removeVoteData", [$this, "removeVoteData"]);
+        add_action("admin_post_removeSocialAvatars", [$this, "removeSocialAvatars"]);
+        add_action("admin_post_resetPhrases", [$this, "resetPhrases"]);
+        add_action("transition_comment_status", [$this, "statusEventHandler"], 10, 3);
+        add_action("edit_comment", [$this, "commentEdited"], 10, 2);
+        add_action("post_updated", [$this, "actionsOnUpdatedPost"]);
+        add_action("deleted_post", [$this, "actionsOnDeletedPost"]);
+        add_action("updated_option", [$this, "optionUpdated"]);
+        add_action("bp_members_avatar_uploaded", [$this, "bpAvatarUploaded"]);
+        add_action("wpforo_update_profile_after", [$this, "wpfProfileUpdate"]);
+        add_action("deactivate_plugin", [$this, "pluginDeactivated"]);
+        add_action("wpdiscuz_clean_post_cache", [$this, "cleanPostCache"]);
+        add_action("wpdiscuz_clean_all_caches", [$this, "cleanAllCaches"]);
         if ($this->isApplicableToRequest()) {
-            add_filter('comments_pre_query', [&$this, "addCustomVariables"], PHP_INT_MAX, 2);
-            add_filter('the_comments', [&$this, "deleteCustomVariable"], PHP_INT_MIN, 2);
+            add_filter('comments_pre_query', [$this, "addCustomVariables"], PHP_INT_MAX, 2);
+            add_filter('the_comments', [$this, "deleteCustomVariable"], PHP_INT_MIN, 2);
         }
     }
 
