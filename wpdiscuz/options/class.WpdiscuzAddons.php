@@ -478,7 +478,7 @@ class WpdiscuzAddons implements WpDiscuzConstants {
     /* Check addons licenses */
 
     public function addonsCheck() {
-        $this->check();
+        // $this->check();
     }
 
     private function check() {

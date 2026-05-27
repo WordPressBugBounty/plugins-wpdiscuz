@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comments, wordpress comments, ajax comments, live comments, comment form, comment voting, disqus alternative, social comments, frontend comments, comment system
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 7.6.55
+Stable tag: 7.6.56
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -202,6 +202,10 @@ No. wpDiscuz does not remove or modify existing WordPress comments when uninstal
 
 Please remember to delete all caches and purge CDN after the update.
 
+= Comments - wpDiscuz v7.6.56 - 27.05.2026 =
+
+* Fixed: Some addons are deactivated after an update on some sites/hosting providers
+
 = Comments - wpDiscuz v7.6.55 - 26.05.2026 =
 
 * Fixed: An issue with wpDiscuz nonce validation
@@ -219,43 +223,3 @@ Please remember to delete all caches and purge CDN after the update.
 = Comments - wpDiscuz v7.6.51-v7.6.54 - 10.04.2026 =
 
 * Fixed: An issue with wpDiscuz nonce validation
-
-= Comments - wpDiscuz v7.6.50 - 02.04.2026 =
-
-* Fixed: An issue with wpDiscuz nonce validation
-* Added: Load wpDiscuz comments for block themes automatically
-* Added: Support for attachment preview replace (no need to re-upload all attachments anymore)
-
-= Comments - wpDiscuz v7.6.49 - 26.03.2026 =
-
-* Fixed: The images in the comments were displayed twice.
-
-= Comments - wpDiscuz v7.6.48 - 21.03.2026 =
-
-* Added: A new filter hook "wpdiscuz_show_vote" to allow hiding/showing vote buttons for certain comments.
-* Added: A new filter hook "wpdiscuz_post_attachments_as_gallery" to allow controlling whether a post's attachments should be displayed as a gallery or not.
-* Fixed: Prevent adding unnecessary statistics on comment deletion.
-* Fixed: Guests can't vote on guest comments.
-* Fixed: Issue with adding nonce in cookies that leads to an issue with nonce verification.
-
-= Comments - wpDiscuz v7.6.47 - 11.03.2026 =
-
-* Security: Unauth Email Notification Flood via wpdCheckNotificationType
-* Security: Stored XSS in Inline Comment Preview
-* Security: Shortcode Injection via Email Notifications
-* Security: Stored XSS via Malicious Options Import
-* Security: SQL Injection in getAllSubscriptions()
-* Security: Vote Manipulation via Nonce Oracle and IP Rotation
-* Security: IP Spoofing in getIP()
-* Security: Destructive GET Action — Delete All Comments by Email
-* Security: Options Export Leaks OAuth Secrets in Plaintext
-* Security: Unsanitized Cookie Email Used as wp_mail() Recipient
-* Security: XSS via Unescaped Custom CSS in <style> Tag
-* Security: Unescaped Attachment URLs in HTML Output
-* Security: Missing Nonce on wpdGetFollowsPage
-* Security: No Rate Limiting on Subscription Endpoints + LIKE Wildcard Bypass
-
-
-= Comments - wpDiscuz v7.6.46 - 09.02.2026 =
-
-* Added: A new filter hook "wpdiscuz_is_update_nonce_with_ajax" to control nonce ajax requests for guests
