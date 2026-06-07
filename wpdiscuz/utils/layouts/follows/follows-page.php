@@ -2,7 +2,7 @@
 if (!defined("ABSPATH")) {
     exit();
 }
-$action      = isset($_POST["action"]) ? sanitize_text_field($_POST["action"]) : "";
+$action      = isset($_POST["action"]) ? sanitize_text_field(wp_unslash($_POST["action"])) : "";
 $currentUser = self::getCurrentUser();
 if ($action && $currentUser && $currentUser->ID) {
     $currentUserEmail = $currentUser->user_email;

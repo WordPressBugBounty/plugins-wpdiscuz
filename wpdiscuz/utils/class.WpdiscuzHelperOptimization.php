@@ -211,24 +211,30 @@ class WpdiscuzHelperOptimization implements WpDiscuzConstants {
     }
 
     public function removeVoteData() {
-        if (isset($_GET["_wpnonce"]) && wp_verify_nonce($_GET["_wpnonce"], "removeVoteData") && current_user_can("manage_options")) {
+        $nonce = isset($_GET["_wpnonce"]) ? sanitize_text_field(wp_unslash($_GET["_wpnonce"])) : "";
+        if ($nonce && wp_verify_nonce($nonce, "removeVoteData") && current_user_can("manage_options")) {
             $this->dbManager->removeVotes();
             do_action("wpdiscuz_remove_vote_data");
-            wp_redirect(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&wpd_tab=" . self::TAB_GENERAL));
+            wp_safe_redirect(esc_url_raw(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&wpd_tab=" . self::TAB_GENERAL)));
+            exit();
         }
     }
 
     public function removeSocialAvatars() {
-        if (isset($_GET["_wpnonce"]) && wp_verify_nonce($_GET["_wpnonce"], "removeSocialAvatars") && current_user_can("manage_options")) {
+        $nonce = isset($_GET["_wpnonce"]) ? sanitize_text_field(wp_unslash($_GET["_wpnonce"])) : "";
+        if ($nonce && wp_verify_nonce($nonce, "removeSocialAvatars") && current_user_can("manage_options")) {
             $this->dbManager->removeSocialAvatars();
-            wp_redirect(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&wpd_tab=" . self::TAB_GENERAL));
+            wp_safe_redirect(esc_url_raw(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&wpd_tab=" . self::TAB_GENERAL)));
+            exit();
         }
     }
 
     public function resetPhrases() {
-        if (isset($_GET["_wpnonce"]) && wp_verify_nonce($_GET["_wpnonce"], "reset_phrases_nonce") && current_user_can("manage_options")) {
+        $nonce = isset($_GET["_wpnonce"]) ? sanitize_text_field(wp_unslash($_GET["_wpnonce"])) : "";
+        if ($nonce && wp_verify_nonce($nonce, "reset_phrases_nonce") && current_user_can("manage_options")) {
             $this->dbManager->deletePhrases();
-            wp_redirect(admin_url("admin.php?page=" . self::PAGE_PHRASES));
+            wp_safe_redirect(esc_url_raw(admin_url("admin.php?page=" . self::PAGE_PHRASES)));
+            exit();
         }
     }
 
@@ -342,7 +348,8 @@ class WpdiscuzHelperOptimization implements WpDiscuzConstants {
         if (!wp_doing_ajax()) {
             return false;
         }
-        if (!isset($_REQUEST["action"]) || sanitize_text_field($_REQUEST["action"]) !== "wpdLoadMoreComments") {
+        $action = isset($_REQUEST["action"]) ? sanitize_text_field(wp_unslash($_REQUEST["action"])) : "";
+        if ($action !== "wpdLoadMoreComments") {
             return false;
         }
 

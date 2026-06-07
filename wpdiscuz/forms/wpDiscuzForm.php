@@ -522,7 +522,7 @@ class wpDiscuzForm implements wpdFormConst {
         } else {
             wp_die("Permission denied !");
         }
-        wp_redirect(esc_url_raw(admin_url("edit.php?post_type=" . self::WPDISCUZ_FORMS_CONTENT_TYPE)));
+        wp_safe_redirect(esc_url_raw(admin_url("edit.php?post_type=" . self::WPDISCUZ_FORMS_CONTENT_TYPE)));
         exit();
     }
 

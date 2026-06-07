@@ -614,7 +614,7 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         if (!current_user_can('manage_options')) {
             wp_send_json_error("fix_tables_error");
         }
-        $fixTables = isset($_POST["fixTables"]) ? sanitize_textarea_field($_POST["fixTables"]) : "";
+        $fixTables = isset($_POST["fixTables"]) ? sanitize_textarea_field(wp_unslash($_POST["fixTables"])) : "";
         if ($fixTables) {
             parse_str($fixTables, $data);
             $nonce = !empty($data["wpd-fix-tables"]) ? trim($data["wpd-fix-tables"]) : "";
@@ -956,6 +956,11 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         $post_id = WpdiscuzHelper::sanitize(INPUT_POST, "postId", FILTER_SANITIZE_NUMBER_INT, 0);
         $post    = get_post($post_id);
         WpdiscuzHelper::validatePostAccess($post);
+
+        if ($rating < 1 || $rating > 5) {
+            wp_send_json_error("wc_not_allowed_to_rate");
+        }
+
         /**
          * @var $form \wpdFormAttr\Form
          */
@@ -1071,7 +1076,16 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
             </li>
         </ul>
         <?php
-        wp_die(ob_get_clean());
+        $allowedHtml = [
+            "ul"  => [
+                "class" => true,
+            ],
+            "li"  => [],
+            "div" => [
+                "class" => true,
+            ],
+        ];
+        wp_die(wp_kses(ob_get_clean(), $allowedHtml));
     }
 
     public function wpd_stat_graph() {
@@ -1233,7 +1247,14 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
                 }
             }
 
-            wp_die($output);
+            $allowedHtml = [
+                "a" => [
+                    "href"     => true,
+                    "tabindex" => true,
+                    "class"    => true,
+                ],
+            ];
+            wp_die(wp_kses($output, $allowedHtml));
         }
     }
 

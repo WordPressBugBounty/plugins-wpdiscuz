@@ -76,7 +76,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         }
 
         if (isset($_GET["key"]) && in_array($wpDiscuzSubscriptionAction, $allowedDeleteActions)) {
-            $wpDiscuzSubscriptionKey = sanitize_text_field(trim($_GET["key"]));
+            $wpDiscuzSubscriptionKey = sanitize_text_field(trim(wp_unslash($_GET["key"])));
         }
 
 
@@ -86,10 +86,10 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         }
 
         if ($wpDiscuzSubscriptionAction === "confirm" && isset($_GET["wpdiscuzConfirmID"]) && isset($_GET["wpdiscuzConfirmKey"]) && isset($_GET["wpDiscuzComfirm"])) {
-            $this->dbManager->notificationConfirm(sanitize_text_field($_GET["wpdiscuzConfirmID"]), sanitize_text_field($_GET["wpdiscuzConfirmKey"]));
+            $this->dbManager->notificationConfirm(sanitize_text_field(wp_unslash($_GET["wpdiscuzConfirmID"])), sanitize_text_field(wp_unslash($_GET["wpdiscuzConfirmKey"])));
             $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_comfirm_success_message");
         } else if ($wpDiscuzSubscriptionAction === "unsubscribe" && isset($_GET["wpdiscuzSubscribeID"]) && isset($_GET["key"])) {
-            $this->dbManager->unsubscribe(sanitize_text_field($_GET["wpdiscuzSubscribeID"]), sanitize_text_field($_GET["key"]));
+            $this->dbManager->unsubscribe(sanitize_text_field(wp_unslash($_GET["wpdiscuzSubscribeID"])), sanitize_text_field(wp_unslash($_GET["key"])));
             $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_unsubscribe_message");
         } else if ($wpDiscuzSubscriptionAction === "deletecomments" && $wpDiscuzSubscriptionKey) {
             $wpDiscuzSubscriptionMessage = __("comments", "wpdiscuz");
@@ -99,11 +99,12 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
             $wpDiscuzSubscriptionMessage = __("follows", "wpdiscuz");
         } else if ($wpDiscuzSubscriptionAction === "follow") {
             if (isset($_GET["wpdiscuzFollowID"]) && isset($_GET["wpdiscuzFollowKey"]) && isset($_GET["wpDiscuzComfirm"])) {
-                if ($_GET["wpDiscuzComfirm"]) {
-                    $this->dbManager->confirmFollow(sanitize_text_field($_GET["wpdiscuzFollowID"]), sanitize_text_field($_GET["wpdiscuzFollowKey"]));
+                $wpDiscuzConfirm = (bool) sanitize_text_field(wp_unslash($_GET["wpDiscuzComfirm"]));
+                if ($wpDiscuzConfirm) {
+                    $this->dbManager->confirmFollow(sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowID"])), sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowKey"])));
                     $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_follow_confirm_success");
                 } else {
-                    $this->dbManager->cancelFollow(sanitize_text_field($_GET["wpdiscuzFollowID"]), sanitize_text_field($_GET["wpdiscuzFollowKey"]));
+                    $this->dbManager->cancelFollow(sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowID"])), sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowKey"])));
                     $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_follow_cancel_success");
                 }
             }
@@ -488,7 +489,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         $this->helper->validateNonce();
         $postId = (int)WpdiscuzHelper::sanitize(INPUT_POST, "postId", FILTER_SANITIZE_NUMBER_INT, 0);;
         $commentId   = (int)WpdiscuzHelper::sanitize(INPUT_POST, "comment_id", FILTER_SANITIZE_NUMBER_INT, 0);
-        $email       = isset($_POST["email"]) ? sanitize_email(trim($_POST["email"])) : "";
+        $email       = isset($_POST["email"]) ? sanitize_email(trim(wp_unslash($_POST["email"]))) : "";
         $isParent    = WpdiscuzHelper::sanitize(INPUT_POST, "isParent", "FILTER_SANITIZE_STRING");
         $currentUser = WpdiscuzHelper::getCurrentUser();
         if ($currentUser && $currentUser->user_email) {
@@ -686,7 +687,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
      */
     public function notificationFromDashboard($commentId, $approved) {
         $wpdiscuz         = wpDiscuz();
-        $referer          = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "";
+        $referer          = isset($_SERVER["HTTP_REFERER"]) ? esc_url_raw(wp_unslash($_SERVER["HTTP_REFERER"])) : "";
         $comment          = get_comment($commentId);
         $commentsPage     = strpos($referer, "edit-comments.php") !== false;
         $postCommentsPage = (strpos($referer, "post.php") !== false) && (strpos($referer, "action=edit") !== false);

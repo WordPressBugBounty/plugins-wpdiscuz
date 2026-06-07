@@ -2,14 +2,14 @@
 if (!defined("ABSPATH")) {
     exit();
 }
-$action      = isset($_POST["action"]) ? sanitize_text_field($_POST["action"]) : "";
+$action      = isset($_POST["action"]) ? sanitize_text_field(wp_unslash($_POST["action"])) : "";
 $currentUser = self::getCurrentUser();
 if ($currentUser && $currentUser->ID) {
     $currentUserId    = $currentUser->ID;
     $currentUserEmail = $currentUser->user_email;
 } else {
     $currentUserId    = 0;
-    $currentUserEmail = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : "";
+    $currentUserEmail = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? sanitize_email(wp_unslash($_COOKIE["comment_author_email_" . COOKIEHASH])) : "";
 }
 
 if ($action && $currentUserEmail) {

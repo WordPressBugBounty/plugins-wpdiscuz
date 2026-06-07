@@ -1382,7 +1382,7 @@ class SocialLogin {
             setcookie('wpdiscuz_social_login_message', $message, time() + 3600, '/');
         }
         do_action("wpdiscuz_clean_post_cache", $postID, "social_login");
-        wp_redirect($this->getPostLink($postID), 302);
+        wp_safe_redirect(esc_url_raw($this->getPostLink($postID)), 302);
         exit();
     }
 

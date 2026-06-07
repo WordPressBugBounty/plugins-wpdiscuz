@@ -8,7 +8,7 @@ $canDeleteComment = (bool)apply_filters("wpdiscuz_can_delete_comment", true, $it
 $commentLeftStyle = $canDeleteComment ? "" : "width:99%;border-right:none;";
 ?>
 <div class="wpd-item">
-    <div class="wpd-item-left" style="<?php echo $commentLeftStyle; ?>">
+    <div class="wpd-item-left" style="<?php echo esc_attr($commentLeftStyle); ?>">
         <div class="wpd-item-link wpd-comment-meta">
             <i class="fas fa-user"></i>
             <?php echo esc_html($item->comment_author); ?> &nbsp;
@@ -17,7 +17,7 @@ $commentLeftStyle = $canDeleteComment ? "" : "width:99%;border-right:none;";
         </div>
         <div class="wpd-item-link wpd-comment-item-link">
             <a class="wpd-comment-link" href="<?php echo esc_url_raw(get_comment_link($item)); ?>" target="_blank">
-                <?php echo get_comment_excerpt($item->comment_ID); ?>
+                <?php echo wp_kses_post(get_comment_excerpt($item->comment_ID)); ?>
             </a>
         </div>
         <div class="wpd-item-link wpd-post-item-link">

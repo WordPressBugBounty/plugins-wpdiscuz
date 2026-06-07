@@ -613,7 +613,8 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     public function disableAddonsDemo() {
         if (current_user_can("manage_options") && isset($_GET["_wpnonce"]) && wp_verify_nonce($_GET["_wpnonce"], "disableAddonsDemo") && isset($_GET["show"])) {
             update_option(self::OPTION_SLUG_SHOW_DEMO, intval($_GET["show"]));
-            wp_redirect(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS));
+            wp_safe_redirect(esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS)));
+            exit();
         }
     }
 
@@ -678,7 +679,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             $currentUserEmail = $currentUser->user_email;
         } else {
             $currentUserId    = 0;
-            $currentUserEmail = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? sanitize_email($_COOKIE["comment_author_email_" . COOKIEHASH]) : "";
+            $currentUserEmail = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? sanitize_email(wp_unslash($_COOKIE["comment_author_email_" . COOKIEHASH])) : "";
         }
 
         if (is_user_logged_in()) {
@@ -1495,7 +1496,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             $user["profileUrl"]        = in_array($user["user"]->ID, $args["posts_authors"]) ? get_author_posts_url($user["user"]->ID) : "";
             $user["profileUrl"]        = $this->getProfileUrl($user["profileUrl"], $user["user"]);
             if ($this->options->social["displayIconOnAvatar"] && ($socialProvider = get_user_meta($user["user"]->ID, self::WPDISCUZ_SOCIAL_PROVIDER_KEY, true))) {
-                $user["commentWrapClass"][] = "wpd-soc-user-" . $socialProvider;
+                $user["commentWrapClass"][] = "wpd-soc-user-" . sanitize_html_class($socialProvider);
                 if ($socialProvider === "facebook") {
                     $user["socIcon"] = "<i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z'/></svg></i>";
                 } else if ($socialProvider === "instagram") {
@@ -1547,7 +1548,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             ];
             $user["avatar"]            = get_avatar($user["gravatarArgs"]["wpdiscuz_gravatar_field"], $user["gravatarArgs"]["wpdiscuz_gravatar_size"], "", $user["authorName"], $user["gravatarArgs"]);
         }
-        $user["authorNameHtml"] = $user["authorName"];
+        $user["authorNameHtml"] = esc_html($user["authorName"]);
         if ($this->options->login["enableProfileURLs"]) {
             if ($user["profileUrl"]) {
                 $attributes = apply_filters("wpdiscuz_avatar_link_attributes", [
@@ -1558,11 +1559,12 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                 if ($attributes && is_array($attributes)) {
                     $attributesHtml = "";
                     foreach ($attributes as $attribute => $value) {
-                        $attributesHtml .= " $attribute='{$value}'";
+                        $escapedValue = ($attribute === "href") ? esc_url($value) : esc_attr($value);
+                        $attributesHtml .= " " . esc_attr($attribute) . "='{$escapedValue}'";
                     }
                     $user["authorAvatarSprintf"] = "<a" . str_replace("%", "%%", $attributesHtml) . ">%s</a>";
                 } else {
-                    $user["authorAvatarSprintf"] = "<a rel='noreferrer ugc' href='" . str_replace("%", "%%", $user["profileUrl"]) . "' target='_blank'>%s</a>";
+                    $user["authorAvatarSprintf"] = "<a rel='noreferrer ugc' href='" . str_replace("%", "%%", esc_url($user["profileUrl"])) . "' target='_blank'>%s</a>";
                 }
             }
             if ((($href = $user["commentAuthorUrl"]) && $this->options->login["websiteAsProfileUrl"]) || ($href = $user["profileUrl"])) {
@@ -1578,11 +1580,12 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                 if ($attributes && is_array($attributes)) {
                     $attributesHtml = "";
                     foreach ($attributes as $attribute => $value) {
-                        $attributesHtml .= " $attribute='$value'";
+                        $escapedValue = ($attribute === "href") ? esc_url($value) : esc_attr($value);
+                        $attributesHtml .= " " . esc_attr($attribute) . "='{$escapedValue}'";
                     }
                     $user["authorNameHtml"] = "<a$attributesHtml>{$user["authorNameHtml"]}</a>";
                 } else {
-                    $user["authorNameHtml"] = "<a rel='$rel' href='$href' target='_blank'>{$user["authorNameHtml"]}</a>";
+                    $user["authorNameHtml"] = "<a rel='" . esc_attr($rel) . "' href='" . esc_url($href) . "' target='_blank'>{$user["authorNameHtml"]}</a>";
                 }
             }
         }

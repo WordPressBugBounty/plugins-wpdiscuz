@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.56
+ * Version: 7.6.57
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -109,7 +109,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
         $this->helperUpload       = new WpdiscuzHelperUpload($this->options, $this->dbManager, $this->wpdiscuzForm, $this->helper);
         $this->cache              = new WpdiscuzCache($this->options, $this->helper);
 
-        $this->requestUri = !empty($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"] : "";
+        $this->requestUri = !empty($_SERVER["REQUEST_URI"]) ? wp_unslash($_SERVER["REQUEST_URI"]) : "";
 
         do_action("wpdiscuz_init");
 
@@ -360,7 +360,11 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 $commentListArgs["new_loaded_class"] = "wpd-new-loaded-comment";
                 $response                            = ["message" => []];
                 foreach ($newCommentIds as $newCommentId) {
-                    $comment               = get_comment($newCommentId);
+                    $comment = get_comment((int)$newCommentId);
+                    if (empty($comment->comment_ID) || ($comment->comment_post_ID) ||
+                        ((int)$comment->comment_post_ID !== (int)$postId) || ($comment->comment_approved !== "1")) {
+                        continue;
+                    }
                     $commentHtml           = wp_list_comments($commentListArgs, [$comment]);
                     $response["message"][] = [
                         "comment_id"     => $comment->comment_ID,
@@ -484,7 +488,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 if ($closedComment) {
                     add_comment_meta($new_comment_id, self::META_KEY_CLOSED, "1");
                 }
-                $newComment    = get_comment($new_comment_id);
+                $newComment = get_comment($new_comment_id);
 
                 if ($newComment->comment_approved === "trash") {
                     wp_send_json_error("wc_msg_comment_is_trash");
@@ -2020,6 +2024,11 @@ class WpdiscuzCore implements WpDiscuzConstants {
         $commentId = WpdiscuzHelper::sanitize(INPUT_POST, "commentId", FILTER_SANITIZE_NUMBER_INT, 0);
         if ($postId) {
             $comment = get_comment($commentId);
+
+            if (empty($comment) || ((int)$comment->comment_post_ID != (int)$postId)) {
+                wp_send_json_error(esc_html__("Invalid comment", "wpdiscuz"));
+            }
+
             $post    = get_post($comment->comment_post_ID);
             WpdiscuzHelper::validatePostAccess($post);
             $this->isWpdiscuzLoaded = true;

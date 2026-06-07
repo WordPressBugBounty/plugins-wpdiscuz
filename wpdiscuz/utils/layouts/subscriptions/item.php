@@ -10,14 +10,14 @@ if (!defined("ABSPATH")) {
             <i class="fas fa-calendar-alt"></i> <?php echo esc_html($postedDate); ?>
         </div>
         <div class="wpd-item-link wpd-comment-item-link">
-            <a class="wpd-comment-link" href="<?php echo $link; ?>" target="_blank"
+            <a class="wpd-comment-link" href="<?php echo esc_url($link); ?>" target="_blank"
                title="<?php echo esc_attr($content); ?>">
-                <?php echo $content; ?>
+                <?php echo wp_kses_post($content); ?>
             </a>
         </div>
         <div class="wpd-item-link wpd-post-item-link">
             <i class="far fa-bell"></i>
-            <?php echo esc_html($sTypeInfo); ?>
+            <?php echo wp_kses_post($sTypeInfo); ?>
         </div>
     </div>
     <div class="wpd-item-right">

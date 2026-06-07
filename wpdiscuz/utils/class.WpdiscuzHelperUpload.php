@@ -35,7 +35,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         $this->wpdiscuzForm = $wpdiscuzForm;
         $this->helper       = $helper;
 
-        $this->requestUri = isset($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"] : "";
+        $this->requestUri = isset($_SERVER["REQUEST_URI"]) ? sanitize_text_field(wp_unslash($_SERVER["REQUEST_URI"])) : "";
         if ($this->options->content["wmuIsEnabled"]) {
             add_action("wpdiscuz_init", [$this, "initUploadsFolderVars"]);
 
@@ -482,28 +482,39 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
     public function deleteAttachment() {
         $this->helper->validateNonce();
         $response     = ["errorCode" => "", "error" => ""];
-        $attachmentId = isset($_POST["attachmentId"]) ? trim($_POST["attachmentId"]) : 0;
+        $attachmentId = isset($_POST["attachmentId"]) ? trim(sanitize_text_field(wp_unslash($_POST["attachmentId"]))) : 0;
         $attachmentId = self::decrypt($attachmentId);
         $attachment   = get_post($attachmentId);
-        $commentId    = get_post_meta($attachmentId, self::METAKEY_ATTCHMENT_COMMENT_ID, true);
-        $comment      = get_comment($commentId);
-        $post         = get_post($comment->comment_post_ID);
+
+        if (empty($attachment->ID) || $attachment->post_type !== "attachment") {
+            $response["error"] = esc_html__("The attachment does not exist!", "wpdiscuz");
+            wp_send_json_error($response);
+        }
+
+        $commentId = get_post_meta($attachmentId, self::METAKEY_ATTCHMENT_COMMENT_ID, true);
+        $comment   = get_comment($commentId);
+
+        if (empty($comment->comment_ID)) {
+            $response["error"] = esc_html__("Attachment's parent comment does not exist!", "wpdiscuz");
+            wp_send_json_error($response);
+        }
+
+        $post = get_post($comment->comment_post_ID);
         WpdiscuzHelper::validatePostAccess($post);
-        if ($attachment && $comment) {
-            if (empty($this->currentUser->ID)) {
-                $this->setCurrentUser(WpdiscuzHelper::getCurrentUser());
-            }
-            $args = [];
-            if (isset($this->currentUser->user_email)) {
-                $args["comment_author_email"] = $this->currentUser->user_email;
-            }
-            if (current_user_can("moderate_comments") || ($this->helper->isCommentEditable($comment) && $this->helper->canUserEditComment($comment, $this->currentUser, $args))) {
-                wp_delete_attachment($attachmentId, true);
-                do_action("wpdiscuz_reset_comments_extra_cache", $comment->comment_post_ID);
-                wp_send_json_success($response);
-            }
+
+        if (empty($this->currentUser->ID)) {
+            $this->setCurrentUser(WpdiscuzHelper::getCurrentUser());
+        }
+        $args = [];
+        if (isset($this->currentUser->user_email)) {
+            $args["comment_author_email"] = $this->currentUser->user_email;
+        }
+        if (current_user_can("moderate_comments") || ($this->helper->isCommentEditable($comment) && $this->helper->canUserEditComment($comment, $this->currentUser, $args))) {
+            wp_delete_attachment($attachmentId, true);
+            do_action("wpdiscuz_reset_comments_extra_cache", $comment->comment_post_ID);
+            wp_send_json_success($response);
         } else {
-            $response["error"] = esc_html__("The attachment does not exist", "wpdiscuz");
+            $response["error"] = esc_html__("You don't have sufficient permission for this action!", "wpdiscuz");
             wp_send_json_error($response);
         }
     }
@@ -965,7 +976,17 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         $dropdown .= "<option value=''>" . esc_html__("All Media Items", "wpdiscuz") . "</option>";
         $dropdown .= "<option value='wpdiscuz' {$selected}>" . esc_html__("wpDiscuz Media Items", "wpdiscuz") . "</option>";
         $dropdown .= "</select>";
-        echo $dropdown;
+        echo wp_kses($dropdown, [
+            "select" => [
+                "name"  => true,
+                "id"    => true,
+                "class" => true,
+            ],
+            "option" => [
+                "value"    => true,
+                "selected" => true,
+            ],
+        ]);
     }
 
     function getWpdiscuzMedia($query) {
