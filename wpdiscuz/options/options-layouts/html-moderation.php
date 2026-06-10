@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 65px; padding-top: 5px;"/>
         <?php echo sprintf(__("WordPress has already all necessary tools to moderate commends. You can approve, unapprove, mark as spam, delete and do other things with comments in WordPress Dashboard > Comments admin page. <br><br>On front-end you can only edit, close and stick comments. In case you want to have all moderation options on front-end, we recommend checkout %s addon. Besides the comment editing, closing and sticking options, here you can limit users commenting activity. You can set max number of comments per user per post or sitewide, allow them only comment or only reply.", "wpdiscuz"), "<a href='https://gvectors.com/product/wpdiscuz-frontend-moderation/'  target='_blank' style='color:#07B290;'>wpDiscuz Frontend Moderation</a>"); ?>
     </div>

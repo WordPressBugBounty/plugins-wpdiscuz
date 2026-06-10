@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 90px; padding-top: 5px;"/>
         <?php esc_html_e("wpDiscuz comes with built-in social login and share buttons. It includes Facebook, X, Google, Disqus, WordPress.com, VK and OK Social Networks. Here you can configure App IDs and Keys to enable those. Once IDs and Keys are configured you'll see social login buttons on top of the main comment form. Social Login buttons are only available for guests, so make sure you're logged-out before checking those.", "wpdiscuz"); ?>
     </div>
@@ -131,7 +131,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-facebook" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/fb-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/fb-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     Facebook
 </div>
@@ -139,7 +139,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Facebook Login and Share Buttons you should get Facebook Application Key and Secret for your website. Please follow to this", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/facebook-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Valid OAuth Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php?action=wpd_login_callback&provider=facebook")) . "</code>"; ?>
+    <?php echo esc_html__("Valid OAuth Redirect URI", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php?action=wpd_login_callback&provider=facebook")) . "</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -237,7 +237,7 @@ if (!defined("ABSPATH")) {
 
 
 <div class="wpd-social-label wpd-twitter" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/x-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/x-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     X
 </div>
@@ -245,7 +245,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using X Login Button you should get Consumer Key and Secret for your website. Please follow to this", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/twitter-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("X Callback URL", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php")) . "</code>"; ?>
+    <?php echo esc_html__("X Callback URL", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php")) . "</code>"; ?>
 </p>
 
 
@@ -323,7 +323,7 @@ if (!defined("ABSPATH")) {
 
 
 <div class="wpd-social-label wpd-google" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/g-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/g-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     Google
 </div>
@@ -331,7 +331,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Google Login Button you should get Client ID and  Client Secret for your website. Please follow to this", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/google-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Permitted URI redirects", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php")) . "?action=wpd_login_callback&provider=google</code>"; ?>
+    <?php echo esc_html__("Permitted URI redirects", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php")) . "?action=wpd_login_callback&provider=google</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -390,7 +390,7 @@ if (!defined("ABSPATH")) {
 
 
 <div class="wpd-social-label wpd-telegram" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/telegram.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/telegram.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     Telegram
 </div>
@@ -439,7 +439,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-disqus" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/dq-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/dq-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     Disqus
 </div>
@@ -447,7 +447,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Disqus Login Button you should get Public Key and Secret Key. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/disqus-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php")) . "?action=wpd_login_callback&provider=disqus</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php")) . "?action=wpd_login_callback&provider=disqus</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -505,7 +505,7 @@ if (!defined("ABSPATH")) {
 
 
 <div class="wpd-social-label wpd-wordpress" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/wp-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/wp-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     WordPress.com
 </div>
@@ -513,7 +513,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Wordpress.com Login Button you should get Client ID and Client Secret. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/wordpress-com-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(home_url("/")) . "</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(home_url("/")) . "</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -572,7 +572,7 @@ if (!defined("ABSPATH")) {
 </div>
 <!-- Option end -->
 <div class="wpd-social-label wpd-instagram" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/ig-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/ig-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     Instagram
 </div>
@@ -580,7 +580,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Instagram Login Button you should get Client ID and Client Secret. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/instagram-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(site_url('/wpdiscuz_auth/instagram/')) . "</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(site_url('/wpdiscuz_auth/instagram/')) . "</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -638,7 +638,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-linkedin" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/in-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/in-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     LinkedIn
 </div>
@@ -646,7 +646,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Linkedin Login Button you should get Client ID and Client Secret. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/linkedin-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(site_url('/wpdiscuz_auth/linkedin/')) . "</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(site_url('/wpdiscuz_auth/linkedin/')) . "</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -725,7 +725,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-wapp" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/wapp-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/wapp-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     WhatsApp
 </div>
@@ -751,7 +751,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-yandex" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/ya-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/ya-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     Yandex
 </div>
@@ -759,7 +759,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Yandex Login Button you should get Client ID and Client Secret. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/yandex-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php?action=wpd_login_callback&provider=yandex")) . "</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php?action=wpd_login_callback&provider=yandex")) . "</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -816,7 +816,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-vk" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/vk-m.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/vk-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     VK ID
 </div>
@@ -824,7 +824,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using VK ID you should get App ID. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/vk-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php")) . "</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php")) . "</code>"; ?>
 </p>
 
 
@@ -865,7 +865,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-wechat" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/wechat.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/wechat.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     WeChat
 </div>
@@ -873,7 +873,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using WeChat Login Button you should get AppID and Secret. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://janrain-education-center.knowledgeowl.com/home/wechat-social-login-configuration-guide"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php?action=wpd_login_callback&provider=wechat")) . "</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php?action=wpd_login_callback&provider=wechat")) . "</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -930,7 +930,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-weibo" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/weibo.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/weibo.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     Sina Weibo
 </div>
@@ -938,7 +938,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Weibo Login Button you should get App Key and App Secret. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://janrain-education-center.knowledgeowl.com/home/sina-weibo-social-login-configuration-guide"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php?action=wpd_login_callback&provider=weibo")) . "</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php?action=wpd_login_callback&provider=weibo")) . "</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -995,7 +995,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-qq" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/qq.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/qq.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     Tencent QQ
 </div>
@@ -1003,7 +1003,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Tencent QQ Login Button you should get AppID and AppKey. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://janrain-education-center.knowledgeowl.com/home/qq-social-login-configuration-guide" target="_blank"
        style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php?action=wpd_login_callback&provider=qq")) . "</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php?action=wpd_login_callback&provider=qq")) . "</code>"; ?>
 </p>
 
 <!-- Option start -->
@@ -1060,7 +1060,7 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <div class="wpd-social-label wpd-baidu" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/baidu.png")); ?>"
+    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/baidu.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
     Baidu
 </div>
@@ -1068,7 +1068,7 @@ if (!defined("ABSPATH")) {
     <?php esc_html_e("To start using Baidu Login Button you should get Client Id and Client Secret. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://auth0.com/docs/connections/social/baidu" target="_blank"
        style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php?action=wpd_login_callback&provider=baidu")) . "</code>"; ?>
+    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url(admin_url("admin-ajax.php?action=wpd_login_callback&provider=baidu")) . "</code>"; ?>
 </p>
 
 <!-- Option start -->

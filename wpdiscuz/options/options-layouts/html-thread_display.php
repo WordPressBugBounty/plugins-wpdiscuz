@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 70px; padding-top: 5px;"/>
         <?php esc_html_e('Here you can find all necessary options to control comment threads loading, displaying and sorting functions. Using "Comment List Loading Type", "Comments Pagination Type" and "Display only parent comments" options, you can get the highest page loading speed.  Also you can manage comment thread filtering buttons.', "wpdiscuz"); ?>
     </div>

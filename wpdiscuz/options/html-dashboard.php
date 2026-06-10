@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -47,10 +47,10 @@ if (!defined("ABSPATH")) {
         <div class="resp-tabs-container wpdiscuz-news-options">
             <div class="wpd-tab-container">
                 <img class="wpd-news-icon"
-                     src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-feedback.png")); ?>">
+                     src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-feedback.png")); ?>">
                 <h1><?php esc_html_e("Article Inline Feedback", "wpdiscuz"); ?></h1>
                 <p><?php esc_html_e("First time in blog commenting experience we introduce, the Inline Feedback feature. This is an interactive article reading option with questions and feedback. Now article authors can add some questions for readers on certain part of article content and ask for feedback while visitors read it.", "wpdiscuz") ?></p>
-                <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/feedback-form.png")); ?>"
+                <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/feedback-form.png")); ?>"
                      style="float: right;width: 400px; padding: 0px 14px;">
                 <br/>
                 <p style="margin-top: -10px;"><?php esc_html_e("Once a question is added in article editor (backend), on article (front-end), readers will see a small comment icon next to the text part you've selected. This feature engages post readers inviting them comment and leave a feedback without scrolling down and using the standard comment form. Thus they leave reply and react to post content or questions during the reading process.", "wpdiscuz") ?></p>
@@ -58,51 +58,51 @@ if (!defined("ABSPATH")) {
             </div>
             <div class="wpd-tab-container">
                 <img class="wpd-news-icon"
-                     src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-bubble.png")); ?>"
+                     src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-bubble.png")); ?>"
                      style="width: 90px;">
                 <h1><?php esc_html_e("Live Notification / Bubble", "wpdiscuz"); ?></h1>
                 <p><?php esc_html_e(" In wpDiscuz 7 the real-time commenting becomes more live and attractive. It's based on REST API and doesn't overload your server. A specific sticky comment icon on your web pages, called &laquo;Bubble&raquo; keeps article readers and commenters up to date. It can display new comments as pop-up notification or as number in an orange circle.", "wpdiscuz") ?></p>
-                <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/bubble-new-comment-info.png")); ?>"
+                <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/bubble-new-comment-info.png")); ?>"
                      style="float: right;width:45%; max-width: 420px; padding: 0px 14px;">
                 <br/>
                 <p><?php esc_html_e("Once new comment is posted, Bubble shows pop-up message with the new comment excerpt as it's shown on screenshot. The small &laquo;Reply&raquo; button allows to reply that comment immediately or readers can click on the pop-up notification and jump to that comment thread below the article. Just make sure the Bubble Live Update is enabled in wpDiscuz > Settings > Live Commenting and Notifications options.", "wpdiscuz") ?></p>
-                <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/bubble-invite-to-comment.png")); ?>"
+                <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/bubble-invite-to-comment.png")); ?>"
                      style="float: left;width:45%; max-width: 420px; padding: 0px 14px;">
                 <p><?php esc_html_e("If there is no new comments while visitor read the article, in most cases they don't even think about leaving some comment. The Bubble helps here too, it calls article readers to join to the discussion displaying them invite message. This message attracting readers attention and allows them fast and easy jump to comment area. Once page is loaded and visitor has read some content, it reminds about comments and calls to leave a reply.", "wpdiscuz") ?></p>
             </div>
             <div class="wpd-tab-container">
                 <img class="wpd-news-icon"
-                     src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-layouts.png")); ?>"
+                     src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-layouts.png")); ?>"
                      style="width: auto; margin: 10px 5px; ">
                 <h1><?php esc_html_e("Comment Layouts", "wpdiscuz"); ?></h1>
                 <p><?php esc_html_e("wpDiscuz comment system design is totally changed. It comes with three nice layouts. You can even choose different layout for different pages. Three attractive, modern and clean layouts are ready to use. You can choose your proffered layout in wpDiscuz > Forms > Edit Comment Forms screen. Once the layout is changed, don't forget to delete all caches. Comment layouts are called simply &laquo;Layout #1&raquo;, &laquo;Layout #2&raquo;, &laquo;Layout #3&raquo;.", "wpdiscuz") ?></p>
                 <div id="wpd_comment_layouts">
                     <div class="wpd-box-layout">
                         <a href="#img1"><img
-                                src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1s.png")); ?>"
+                                src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1s.png")); ?>"
                                 class="wpd-com-layout-1"/></a>
                         <a href="#_" class="wpd-lightbox" id="img1"><img
-                                src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1.png")); ?>"/></a>
+                                src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1.png")); ?>"/></a>
                         <h4><?php esc_html_e("Comment Layout #1", "wpdiscuz") ?><br>
                             <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                         </h4>
                     </div>
                     <div class="wpd-box-layout">
                         <a href="#img2"><img
-                                src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2s.png")); ?>"
+                                src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2s.png")); ?>"
                                 class="wpd-com-layout-2"/></a>
                         <a href="#_" class="wpd-lightbox" id="img2"><img
-                                src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2.png")); ?>"/></a>
+                                src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2.png")); ?>"/></a>
                         <h4><?php esc_html_e("Comment Layout #2", "wpdiscuz") ?><br>
                             <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                         </h4>
                     </div>
                     <div class="wpd-box-layout">
                         <a href="#img3"><img
-                                src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3s.png")); ?>"
+                                src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3s.png")); ?>"
                                 class="wpd-com-layout-3"/></a>
                         <a href="#_" class="wpd-lightbox" id="img3"><img
-                                src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3.png")); ?>"/></a>
+                                src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3.png")); ?>"/></a>
                         <h4><?php esc_html_e("Comment Layout #3", "wpdiscuz") ?><br>
                             <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                         </h4>
@@ -112,29 +112,29 @@ if (!defined("ABSPATH")) {
             </div>
             <div class="wpd-tab-container">
                 <img class="wpd-news-icon"
-                     src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-social.png")); ?>"
+                     src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-social.png")); ?>"
                      style="width: 95px; margin: 5px 15px;">
                 <h1><?php esc_html_e("Social Login and Commenting", "wpdiscuz"); ?></h1>
                 <p><?php esc_html_e("wpDiscuz comes with built-in social login and share buttons. It includes Facebook, X, Google, Disqus, WordPress.org, VK and OK Social Networks. You can enable those by managing API Keys in wpDiscuz > Settings > Social Login and Share options.", "wpdiscuz") ?></p>
-                <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/social-networks-shadow.png")); ?>"
+                <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/social-networks-shadow.png")); ?>"
                      style="float: right; width: 65%; max-width: 520px; padding: 0px 14px; margin-bottom: -20px; position: relative; z-index: 10;">
                 <div class="wpd-clear"></div>
-                <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/wpDiscuz-Social-Network-icons-on-user-avatars.png")); ?>"
+                <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/wpDiscuz-Social-Network-icons-on-user-avatars.png")); ?>"
                      style="float: left;width:75%; max-width: 580px; padding: 0px 14px;">
                 <div class="wpd-clear"></div>
             </div>
             <div class="wpd-tab-container">
                 <img class="wpd-news-icon"
-                     src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-rating.png")); ?>"
+                     src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/icon-rating.png")); ?>"
                      style="width: auto; margin: 5px;">
                 <h1><?php esc_html_e("Article Rating vs Rating Field", "wpdiscuz"); ?></h1>
                 <p><?php esc_html_e("Before, you had to create a Rating field in comment form to allow users rate article while they post a comment, there was no way to rate without commenting. Now you can allow users rate your articles without leavening a comment. wpDiscuz 7 has a built-in Post Rating system which is not based on comment form custom fields. You can see that on top of comment section like the left one on the screenshot below:", "wpdiscuz") ?></p>
                 <div class="wpd-zoom-image" style="width: 98%; margin: 10px auto;">
                     <a href="#img5"><img
-                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/rating-vs.png")); ?>"
+                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/rating-vs.png")); ?>"
                             style="width: 100%;"/></a>
                     <a href="#_" class="wpd-lightbox" id="img5"><img
-                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/rating-vs-v.png")); ?>"/></a>
+                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/rating-vs-v.png")); ?>"/></a>
                 </div>
             </div>
         </div>
@@ -154,7 +154,7 @@ if (!defined("ABSPATH")) {
             <div class="wpd-stat-box wpd-box wpd-stat-brief-top">
                 <div class="wpd-stat-cell">
                     <div class="wpd-cell-icon"><img
-                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-comment.png")); ?>"
+                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-comment.png")); ?>"
                             width="30"></div>
                     <div class="wpd-cell-text"><span
                             class="wpd-cell-num wpd-stat-brief-all"><strong>0</strong></span><span
@@ -162,7 +162,7 @@ if (!defined("ABSPATH")) {
                 </div>
                 <div class="wpd-stat-cell">
                     <div class="wpd-cell-icon"><img
-                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-comment-inlinepng.png")); ?>"
+                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-comment-inlinepng.png")); ?>"
                             width="36"></div>
                     <div class="wpd-cell-text"><span
                             class="wpd-cell-num wpd-stat-brief-inline"><strong>0</strong></span><span
@@ -170,7 +170,7 @@ if (!defined("ABSPATH")) {
                 </div>
                 <div class="wpd-stat-cell">
                     <div class="wpd-cell-icon"><img
-                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-threads.png")); ?>">
+                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-threads.png")); ?>">
                     </div>
                     <div class="wpd-cell-text"><span
                             class="wpd-cell-num wpd-stat-brief-threads"><strong>0</strong></span><span
@@ -178,7 +178,7 @@ if (!defined("ABSPATH")) {
                 </div>
                 <div class="wpd-stat-cell">
                     <div class="wpd-cell-icon"><img
-                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-replies.png")); ?>"
+                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-replies.png")); ?>"
                             width="30"></div>
                     <div class="wpd-cell-text"><span
                             class="wpd-cell-num wpd-stat-brief-replies"><strong>0</strong></span><span
@@ -188,14 +188,14 @@ if (!defined("ABSPATH")) {
             <div class="wpd-stat-box wpd-box wpd-stat-brief-bottom">
                 <div class="wpd-stat-cell">
                     <div class="wpd-cell-icon"><img
-                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-users.png")); ?>"
+                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-users.png")); ?>"
                             width="24"></div>
                     <div class="wpd-cell-text"><span class="wpd-cell-num wpd-stat-brief-users"><strong>0</strong></span><span
                             class="wpd-cell-label"><?php esc_html_e("User Commenters", "wpdiscuz") ?></span></div>
                 </div>
                 <div class="wpd-stat-cell">
                     <div class="wpd-cell-icon"><img
-                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-guests.png")); ?>"
+                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/icon-guests.png")); ?>"
                             width="24"></div>
                     <div class="wpd-cell-text"><span
                             class="wpd-cell-num wpd-stat-brief-guests"><strong>0</strong></span><span

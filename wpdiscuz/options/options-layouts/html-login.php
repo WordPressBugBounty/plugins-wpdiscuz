@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 80px; padding-top: 5px;"/>
         <?php echo sprintf(esc_html__("Here you can manage commenters authorization and data control related settings. wpDiscuz is focused on user engagement and community building ideas, therefore it's integrated with community builder plugins like wpForo Forum, BuddyPress, etc... With these plugins comment authors are linked to their profile pages. In case you want to display commenters profile and activity information directly on comment list, please be sure to check out the %s addon.", "wpdiscuz"), "<a href='https://gvectors.com/product/wpdiscuz-comment-author-info/'  target='_blank' style='color:#07B290;'>wpDiscuz Comemnt Author Info</a>"); ?>
     </div>
@@ -68,7 +68,7 @@ if (!defined("ABSPATH")) {
     <div class="wpd-opt-input">
         <input type="url" value="<?php echo esc_attr($this->login["loginUrl"]); ?>"
                name="<?php echo esc_attr(WpdiscuzCore::TAB_LOGIN); ?>[loginUrl]" id="loginUrl"
-               placeholder="<?php echo esc_url_raw(home_url("/my-login-page/")) ?>"/>
+               placeholder="<?php echo esc_url(home_url("/my-login-page/")) ?>"/>
     </div>
     <div class="wpd-opt-doc">
         <?php $this->printDocLink($setting["options"]["loginUrl"]["docurl"]) ?>

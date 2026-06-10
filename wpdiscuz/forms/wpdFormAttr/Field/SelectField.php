@@ -34,10 +34,10 @@ class SelectField extends Field {
                     $values .= $value . "\n";
                 }
                 ?>
-                <label for="<?php echo $this->fieldInputName; ?>[values]"><?php esc_html_e("Values", "wpdiscuz"); ?>
+                <label for="<?php echo esc_attr($this->fieldInputName); ?>[values]"><?php esc_html_e("Values", "wpdiscuz"); ?>
                     :</label>
-                <textarea required name="<?php echo $this->fieldInputName; ?>[values]"
-                          id="<?php echo $this->fieldInputName; ?>[values]"><?php echo esc_html($values); ?></textarea>
+                <textarea required name="<?php echo esc_attr($this->fieldInputName); ?>[values]"
+                          id="<?php echo esc_attr($this->fieldInputName); ?>[values]"><?php echo esc_html($values); ?></textarea>
                 <p class="wpd-info"><?php esc_html_e("New value new line", "wpdiscuz"); ?></p>
             </div>
             <div class="wpd-field-option">
@@ -81,7 +81,7 @@ class SelectField extends Field {
                     <div class="wpd-field-option">
                         <label for="<?php echo esc_attr($this->fieldInputName); ?>[meta_key]"><?php esc_html_e("Meta Key", "wpdiscuz"); ?>
                             :</label>
-                        <input type="text" value="<?php echo $this->name; ?>"
+                        <input type="text" value="<?php echo esc_attr($this->name); ?>"
                                name="<?php echo esc_attr($this->fieldInputName); ?>[meta_key]"
                                id="<?php echo esc_attr($this->fieldInputName); ?>[meta_key]" required="required"/>
                     </div>

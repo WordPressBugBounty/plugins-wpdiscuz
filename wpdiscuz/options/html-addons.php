@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 $this->dismissAddonNoteOnPage(); ?>
 <div class="wrap wpdiscuz_addons_page">
     <div style="float:left; width:50px; height:55px; margin:10px 10px 10px 0px;">
-        <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/wpdiscuz-7-logo.png")); ?>"
+        <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/wpdiscuz-7-logo.png")); ?>"
              style="height: 48px;"/>
     </div>
     <h1 style="padding-bottom:20px; padding-top:15px;"><?php esc_html_e("wpDiscuz Addons", "wpdiscuz"); ?></h1>
@@ -47,7 +47,7 @@ $this->dismissAddonNoteOnPage(); ?>
             ?>
             <div class="wpdiscuz-addon-block">
                 <div id="wpdiscuz-addon-<?php echo esc_attr($key); ?>" class="addon-thumb"
-                     style="background:url(<?php echo esc_url_raw($installed ? str_replace(".png", "-off.png", $addon["thumb"]) : $addon["thumb"]); ?>) top center no-repeat;">
+                     style="background:url(<?php echo esc_url($installed ? str_replace(".png", "-off.png", $addon["thumb"]) : $addon["thumb"]); ?>) top center no-repeat;">
                     &nbsp;
                 </div>
                 <div class="contenthover">
@@ -63,11 +63,11 @@ $this->dismissAddonNoteOnPage(); ?>
                             </ul>
                             <?php if ($addon["class"] === "Bundle"): ?>
                                 <a class="button button-primary addon-button"
-                                   href="<?php echo esc_url_raw($addon["url"]); ?>" target="_blank"
+                                   href="<?php echo esc_url($addon["url"]); ?>" target="_blank"
                                    style="font-size:14px;"><?php echo esc_html__("More Info &raquo;", "wpdiscuz"); ?></a>
                             <?php else: ?>
                                 <a class="button button-primary addon-button"
-                                   href="<?php echo esc_url_raw($addon["url"]); ?>" target="_blank"
+                                   href="<?php echo esc_url($addon["url"]); ?>" target="_blank"
                                    style="font-size:14px;"><?php echo esc_html__("Live Preview | Buy", "wpdiscuz"); ?></a>
                             <?php endif; ?>
 
@@ -76,7 +76,7 @@ $this->dismissAddonNoteOnPage(); ?>
                 </div>
                 <div style="clear:both"></div>
                 <div class="addon-info" style="<?php if ($installed) echo "background-color:#bbbbbb"; ?>">
-                    <a href="<?php echo esc_url_raw($addon["url"]); ?>" target="_blank"
+                    <a href="<?php echo esc_url($addon["url"]); ?>" target="_blank"
                        title="<?php esc_attr_e("More information about", "default"); ?> <?php echo esc_attr($addon["title"]); ?> add-on &raquo;">
                         <p class="addon-title"><?php echo esc_html($addon["title"]); ?></p>
                     </a>
@@ -101,7 +101,7 @@ $this->dismissAddonNoteOnPage(); ?>
     <div style="max-width: 83%; padding: 15px; background: #ffffff; margin: 10px 0 15px; box-sizing: border-box;">
         <a href="https://gvectors.com/product/wpdiscuz-addons-bundle/" target="_blank"
            title="<?php esc_attr_e("View wpDiscuz Addons Bundle", "wpdiscuz"); ?>"><img
-                src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/addons/bundle/wpdiscuz-bundle.png")); ?>"
+                src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/addons/bundle/wpdiscuz-bundle.png")); ?>"
                 alt="<?php esc_attr_e("wpDiscuz Addons Bundle", "default"); ?>" style="width: 100%;"/></a>
     </div>
     <h3>&nbsp;</h3>

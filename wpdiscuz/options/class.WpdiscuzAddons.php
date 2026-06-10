@@ -358,7 +358,7 @@ class WpdiscuzAddons implements WpDiscuzConstants {
                         <div style="clear:both;"></div>
                     </div>
                     <p>&nbsp;&nbsp;&nbsp;<a
-                            href="<?php echo esc_url_raw(admin_url("admin.php?page=" . self::PAGE_ADDONS)); ?>"><?php esc_html_e("Go to wpDiscuz Addons subMenu"); ?>
+                            href="<?php echo esc_url(admin_url("admin.php?page=" . self::PAGE_ADDONS)); ?>"><?php esc_html_e("Go to wpDiscuz Addons subMenu"); ?>
                             &raquo;</a></p>
                     <?php wp_nonce_field("dismiss-wpdiscuz-addon-note"); ?>
                 </div>

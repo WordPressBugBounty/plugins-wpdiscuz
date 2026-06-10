@@ -489,7 +489,7 @@ class wpDiscuzForm implements wpdFormConst {
     public function addCloneFormAction($actions, $post) {
         if ($post->post_type === self::WPDISCUZ_FORMS_CONTENT_TYPE && $post->post_status === "publish") {
             $url                             = wp_nonce_url(admin_url("admin-post.php") . "?form_id=" . $post->ID . "&action=cloneWpdiscuzForm", "clone-form_" . $post->ID, "clone_form_nonce");
-            $actions["inline hide-if-no-js"] = "<a href='" . esc_url_raw($url) . "'>" . esc_html__("Clone Form") . "</a>";
+            $actions["inline hide-if-no-js"] = "<a href='" . esc_url($url) . "'>" . esc_html__("Clone Form") . "</a>";
         }
 
         return $actions;
@@ -539,7 +539,7 @@ class wpDiscuzForm implements wpdFormConst {
                 <div class="error" style="padding-top: 5px;padding-bottom: 5px;">
                     <p>
                         <?php esc_html_e("Comment Form is not detected, please navigate to form manager page to create it. ", "wpdiscuz"); ?>
-                        <a href="<?php echo esc_url_raw(admin_url("post-new.php?post_type=" . self::WPDISCUZ_FORMS_CONTENT_TYPE)); ?>"
+                        <a href="<?php echo esc_url(admin_url("post-new.php?post_type=" . self::WPDISCUZ_FORMS_CONTENT_TYPE)); ?>"
                            class="button button-primary"><?php esc_attr_e("Add Comment Form", "wpdiscuz"); ?></a>
                     </p>
                 </div>

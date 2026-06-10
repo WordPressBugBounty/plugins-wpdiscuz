@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 64px; padding-top: 5px;"/>
         <?php echo sprintf(__("wpDiscuz allows users to get all kind of news from your website comment system, such as new comments, new replies, double opt-in subscription, user mentioning, user following and new comments by followed users. You can manage all those options here. All those options are based on email notifications. You can manage email templates in wpDiscuz > Phrases > Email Tab. <br>In wpDiscuz > Dashboard page, you can find a quick overview of user subscriptions. For an advanced subscriptions management tool, please checkout %s addon.", "wpdiscuz"), "<a href='https://gvectors.com/product/wpdiscuz-subscribe-manager/'  target='_blank' style='color:#07B290;'>wpDiscuz Subscription Manager</a>"); ?>
     </div>

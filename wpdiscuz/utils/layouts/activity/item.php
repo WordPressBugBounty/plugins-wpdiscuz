@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -16,13 +16,13 @@ $commentLeftStyle = $canDeleteComment ? "" : "width:99%;border-right:none;";
             <?php echo esc_html($this->getCommentDate($item)); ?>
         </div>
         <div class="wpd-item-link wpd-comment-item-link">
-            <a class="wpd-comment-link" href="<?php echo esc_url_raw(get_comment_link($item)); ?>" target="_blank">
+            <a class="wpd-comment-link" href="<?php echo esc_url(get_comment_link($item)); ?>" target="_blank">
                 <?php echo wp_kses_post(get_comment_excerpt($item->comment_ID)); ?>
             </a>
         </div>
         <div class="wpd-item-link wpd-post-item-link">
             <span><?php echo esc_html($this->options->getPhrase("wc_user_settings_response_to")); ?></span>
-            <a class="wpd-post-link" href="<?php echo esc_url_raw(get_permalink($item->comment_post_ID)); ?>"
+            <a class="wpd-post-link" href="<?php echo esc_url(get_permalink($item->comment_post_ID)); ?>"
                target="_blank" title="<?php echo esc_attr($title); ?>">
                 <?php echo esc_html($title); ?>
             </a>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 65px;"/>
         <?php echo sprintf(esc_html__("Please %s with Google to obtain the Site Key and Secret Key for %s. Then insert those keys in according fields below.", "wpdiscuz"), "<a href='https://www.google.com/recaptcha/admin' target='_blank'>" . esc_html__("register your domain", "wpdiscuz") . "</a>", "<span style='color:#FF0000'>" . esc_html__("reCAPTCHA Version 2", "wpdiscuz") . "</span>"); ?>
         <?php echo sprintf(esc_html__("If you want to use the latest Version 3 - Invisible Google reCAPTCHA with comment form, please checkout %s addon. This will make your commenters life easier, letting them pass through with ease.", "wpdiscuz"), "<a href='https://gvectors.com/product/wpdiscuz-recaptcha/' target='_blank' style='color:#07B290;'>" . "wpDiscuz reCAPTCHA" . "</a>"); ?>

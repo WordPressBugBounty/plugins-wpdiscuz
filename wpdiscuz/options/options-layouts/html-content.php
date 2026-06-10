@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 70px; padding-top: 5px;"/>
         <?php echo sprintf(esc_html__("Here you can manage comment content related options, such as comment text length, comment content breaking, comment image attachment... By default wpDiscuz allows to attach one image with comment. For an advanced media uploading and file attachment options we recommend %s addon.", "wpdiscuz"), "<a href='https://gvectors.com/product/wpdiscuz-media-uploader/' target='_blank' style='color:#07B290;'>wpDiscuz Media Uploader</a>") ?>
     </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,16 +7,16 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 70px; padding-top: 5px;"/>
         <?php esc_html_e("Article Inline Feedback feature is an interactive article reading option with author's questions and readers feedback (comments). Now article authors can add some questions for readers on certain part of article content and ask for feedback while visitors read it.", "wpdiscuz"); ?>
         <?php esc_html_e("You can add Inline Feedback button in post content using &laquo;Comment&raquo; button on post editor toolbar.", "wpdiscuz"); ?>
         <div class="wpd-zoom-image" style="width: 100%;">
             <a href="#img111"><img
-                    src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-toolbar-button.png")); ?>"
+                    src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-toolbar-button.png")); ?>"
                     style="margin-top: 15px; margin-left: 5px; width: 100%;"/></a>
             <a href="#_" class="wpd-lightbox" id="img111"><img
-                    src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-toolbar-button-vertical.png")); ?>"/></a>
+                    src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-toolbar-button-vertical.png")); ?>"/></a>
         </div>
         <div style="padding: 10px 5px;">
             <?php esc_html_e("Once a question is added in article editor (backend), on article (front-end) readers will see a small comment icon next to the text part you've selected. This feature engages post readers inviting them comment and leave a feedback while reading without scrolling down and using the standard comment form.", "wpdiscuz"); ?>

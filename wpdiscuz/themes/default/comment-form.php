@@ -88,7 +88,7 @@ if (!post_password_required($post->ID) && $load) {
                                     $logout   = wp_loginout(get_permalink(), false);
                                     $logout   = preg_replace("!>([^<]+)!is", ">" . esc_html($wpdiscuz->options->getPhrase("wc_log_out")), $logout);
                                     if ($user_url) {
-                                        $logout_text = esc_html($wpdiscuz->options->getPhrase("wc_logged_in_as")) . " <a href='" . esc_url_raw($user_url) . "'>" . esc_html($wpdiscuz->helper->getCurrentUserDisplayName($currentUser)) . "</a> | " . $logout;
+                                        $logout_text = esc_html($wpdiscuz->options->getPhrase("wc_logged_in_as")) . " <a href='" . esc_url($user_url) . "'>" . esc_html($wpdiscuz->helper->getCurrentUserDisplayName($currentUser)) . "</a> | " . $logout;
                                     } else {
                                         $logout_text = esc_html($wpdiscuz->options->getPhrase("wc_logged_in_as")) . " " . esc_html($wpdiscuz->helper->getCurrentUserDisplayName($currentUser)) . " | " . $logout;
                                     }
@@ -97,7 +97,7 @@ if (!post_password_required($post->ID) && $load) {
                             } else if ($wpdiscuz->options->login["showLoginLinkForGuests"]) {
                                 if ($wpdiscuz->options->login["loginUrl"]) {
                                     $login = str_replace("[REDIRECT_URL]", get_permalink(), $wpdiscuz->options->login["loginUrl"]);
-                                    $login = "<a href='" . esc_url_raw($login) . "'><i class='fas fa-sign-in-alt'></i> " . esc_html($wpdiscuz->options->getPhrase("wc_log_in")) . "</a>";
+                                    $login = "<a href='" . esc_url($login) . "'><i class='fas fa-sign-in-alt'></i> " . esc_html($wpdiscuz->options->getPhrase("wc_log_in")) . "</a>";
                                 } else {
                                     $login = preg_replace("!>([^<]+)!is", "><i class='fas fa-sign-in-alt'></i> " . esc_html($wpdiscuz->options->getPhrase("wc_log_in")), wp_loginout(get_permalink(), false));
                                 }
@@ -127,7 +127,7 @@ if (!post_password_required($post->ID) && $load) {
                         <?php
                         if ($subscriptionType !== WpdiscuzCore::SUBSCRIPTION_POST) {
                             ?>
-                            <form action="<?php echo esc_url_raw(admin_url("admin-ajax.php") . "?action=wpdAddSubscription"); ?>"
+                            <form action="<?php echo esc_url(admin_url("admin-ajax.php") . "?action=wpdAddSubscription"); ?>"
                                   method="post" id="wpdiscuz-subscribe-form">
                                 <div class="wpdiscuz-subscribe-form-intro"><?php esc_html_e($wpdiscuz->options->getPhrase("wc_notify_of")); ?> </div>
                                 <div class="wpdiscuz-subscribe-form-option"
@@ -411,7 +411,7 @@ if (!post_password_required($post->ID) && $load) {
                     <span id="awpdiscuz"
                           onclick='document.getElementById("bywpdiscuz").style.display = "inline"; document.getElementById("awpdiscuz").style.display = "none";'>
                         <img alt="wpdiscuz"
-                             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/plugin-icon/icon_info.png")); ?>"
+                             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/plugin-icon/icon_info.png")); ?>"
                              align="absmiddle" class="wpdimg"/>
                     </span>&nbsp;
                     <a href="https://wpdiscuz.com/" target="_blank" rel='noreferrer' id="bywpdiscuz"

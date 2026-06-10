@@ -1,17 +1,17 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
 ?>
 <div class="wrap wpdiscuz_options_page">
     <div style="float:left; width:50px; height:55px; margin:10px 10px 10px 0px;">
-        <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/wpdiscuz-7-logo.png")); ?>"
+        <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/wpdiscuz-7-logo.png")); ?>"
              style="height: 48px;"/>
     </div>
     <h1 style="padding-bottom:20px; padding-top:15px;"><?php esc_html_e("wpDiscuz Front-end Phrases", "wpdiscuz"); ?></h1>
     <br style="clear:both"/>
     <?php settings_errors("wpdiscuz"); ?>
-    <form action="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_PHRASES)); ?>" method="post"
+    <form action="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_PHRASES)); ?>" method="post"
           name="<?php echo esc_attr(WpdiscuzCore::PAGE_PHRASES); ?>" class="wc-phrases-settings-form wc-form">
         <?php
         wp_nonce_field("wc_phrases_form");
@@ -75,7 +75,7 @@ if (!defined("ABSPATH")) {
                     <p class="submit">
                         <?php $resetPhrasesUrl = admin_url("admin-post.php?action=resetPhrases"); ?>
                         <a id="wpdiscuz-reset-phrases"
-                           href="<?php echo esc_url_raw(wp_nonce_url($resetPhrasesUrl, "reset_phrases_nonce")); ?>"
+                           href="<?php echo esc_url(wp_nonce_url($resetPhrasesUrl, "reset_phrases_nonce")); ?>"
                            class="button button-secondary"
                            style="margin-left: 5px;"><?php esc_html_e("Reset Phrases", "wpdiscuz"); ?></a>
                         <input type="submit" class="button button-primary" name="wc_submit_phrases"

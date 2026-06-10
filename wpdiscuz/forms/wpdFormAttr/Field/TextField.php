@@ -80,7 +80,7 @@ class TextField extends Field {
                     <div class="wpd-field-option">
                         <label for="<?php echo esc_attr($this->fieldInputName); ?>[meta_key]"><?php esc_html_e("Meta Key", "wpdiscuz"); ?>
                             :</label>
-                        <input type="text" value="<?php echo $this->name; ?>"
+                        <input type="text" value="<?php echo esc_attr($this->name); ?>"
                                name="<?php echo esc_attr($this->fieldInputName); ?>[meta_key]"
                                id="<?php echo esc_attr($this->fieldInputName); ?>[meta_key]" required="required"/>
                     </div>

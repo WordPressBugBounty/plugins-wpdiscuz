@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 70px; padding-top: 5px;"/>
         <?php esc_html_e("In wpDiscuz 7 the real-time commenting becomes more live and attractive. It's based on REST API and doesn't overload your server. A specific sticky comment icon on your web pages, called &laquo;Bubble&raquo; keeps article readers and commenters up to date. It displays new comments as pop-up information or as a number in an orange circle.", "wpdiscuz"); ?>
         <?php esc_html_e("This Bubble is also designed to invite article readers to comment. It displays invite message allowing them fast and easy jump to comment area.", "wpdiscuz"); ?>
@@ -124,7 +124,7 @@ if (!defined("ABSPATH")) {
     <div class="wpd-opt-name">
         <label><?php echo esc_html($setting["options"]["bubbleShowNewCommentMessage"]["label"]) ?></label>
         <div style="width: 76%; margin-top: 5px;"><img
-                src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-new-comment-info.png")); ?>"
+                src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-new-comment-info.png")); ?>"
                 style="width: 100%;"/></div>
         <p class="wpd-desc"><?php echo esc_html($setting["options"]["bubbleShowNewCommentMessage"]["description"]) ?></p>
     </div>
@@ -153,7 +153,7 @@ if (!defined("ABSPATH")) {
     <div class="wpd-opt-name">
         <label for="bubbleHintTimeout"><?php echo esc_html($setting["options"]["bubbleHintTimeout"]["label"]) ?></label>
         <div style="width: 77%; margin-top: 5px;"><img
-                src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-invite-to-comment.png")); ?>"
+                src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-invite-to-comment.png")); ?>"
                 style="width: 100%"/></div>
         <p class="wpd-desc"><?php echo esc_html($setting["options"]["bubbleHintTimeout"]["description"]) ?></p>
     </div>

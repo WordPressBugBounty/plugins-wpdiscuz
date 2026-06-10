@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 56px; padding-top: 5px;"/>
         <?php echo sprintf(__("User Labels are small rectangles with specific background colors indicating comment author role, such as Guest, Member, Author, Admin, etc... These labels can be enabled and disabled for certain user role. Also you can change label colors using according options below.<br> Besides labels you can enable User Reputation, Badges and Ranks based on user activity, using %s addon. This addon integrates wpDiscuz comment system with an adaptive user points management plugin %s.", "wpdiscuz"), "<a href='https://gvectors.com/product/wpdiscuz-mycred/'  target='_blank' style='color:#07B290;'>wpDiscuz myCRED Integration</a>", "<a href='https://wordpress.org/plugins/mycred/' target='_blank'>myCRED</a>"); ?>
     </div>

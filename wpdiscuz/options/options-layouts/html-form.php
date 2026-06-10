@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,9 +7,9 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 56px; padding-top: 5px;"/>
-        <?php echo sprintf(esc_html__("wpDiscuz allows you to customize comment form layout and fields. You can create as much comment forms as you want and attach those to certain post type or page. Please navigate to %s page to manage comment form specific settings.", "wpdiscuz"), "<a href='" . esc_url_raw(admin_url("edit.php?post_type=wpdiscuz_form")) . "'>" . esc_html__("Comment Form Manager", "wpdiscuz") . "</a>"); ?>
+        <?php echo sprintf(esc_html__("wpDiscuz allows you to customize comment form layout and fields. You can create as much comment forms as you want and attach those to certain post type or page. Please navigate to %s page to manage comment form specific settings.", "wpdiscuz"), "<a href='" . esc_url(admin_url("edit.php?post_type=wpdiscuz_form")) . "'>" . esc_html__("Comment Form Manager", "wpdiscuz") . "</a>"); ?>
     </div>
     <div class="wpd-opt-doc" style="padding-top: 10px;">
         <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/comment-form/"
@@ -163,7 +163,7 @@ if (!defined("ABSPATH")) {
                  style="color: #41ABAB;display:<?php echo $this->showEditorToolbar() ? "none" : "block"; ?>;"><?php esc_html_e("Enable formatting toolbar", "wpdiscuz"); ?></div>
 
             <div style="flex-basis: 2%;">&nbsp;</div>
-            <a href="<?php echo esc_url_raw(admin_url("admin.php?page=wpdiscuz_options_page&wpd_tab=content#wmuIsEnabled")); ?>"
+            <a href="<?php echo esc_url(admin_url("admin.php?page=wpdiscuz_options_page&wpd_tab=content#wmuIsEnabled")); ?>"
                title="<?php echo esc_html__('Go to "Comment Content and Media" admin page to manage image attachment settings', 'wpdiscuz') ?>"><span
                     class="wpd-editor-attachment"></span></a>
         </div>

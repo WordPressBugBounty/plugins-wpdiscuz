@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 58px; padding-top: 5px;"/>
         <?php echo sprintf(esc_html__("You have two ways to add Post Rating for your blog posts and articles. The first, comment independent type is enabled by default and appears on top of comment section. It allows people rate your articles without leaving comments. ", "wpdiscuz") . "<br><br>" . esc_html__('The second type, is the old, comment depended way. You should create a "Rating" custom field in comment form allowing people to rate while they leave a comment. If you\'ve already configured the second type (Rating comment field) in comment form, the first type will be automatically disabled. Both types of ratings can be managed in %s', "wpdiscuz"), "<a href='" . admin_url("edit.php?post_type=wpdiscuz_form") . "'>" . esc_html__("Comment Form Manager &raquo;", "wpdiscuz") . "</a>"); ?>
     </div>

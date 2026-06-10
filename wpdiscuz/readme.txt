@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comments, wordpress comments, ajax comments, live comments, comment form, comment voting, disqus alternative, social comments, frontend comments, comment system
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 7.6.57
+Stable tag: 7.6.58
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -202,6 +202,11 @@ No. wpDiscuz does not remove or modify existing WordPress comments when uninstal
 
 Please remember to delete all caches and purge CDN after the update.
 
+= Comments - wpDiscuz v7.6.58 - 10.06.2026 =
+
+* Fixed: Missing escaping issues
+* Fixed: Internal images were missing in the combined version of the CSS
+
 = Comments - wpDiscuz v7.6.57 - 07.06.2026 =
 
 * Fixed: Low-severity security issues
@@ -213,21 +218,3 @@ Please remember to delete all caches and purge CDN after the update.
 = Comments - wpDiscuz v7.6.56 - 27.05.2026 =
 
 * Fixed: Some addons are deactivated after an update on some sites/hosting providers
-
-= Comments - wpDiscuz v7.6.55 - 26.05.2026 =
-
-* Fixed: An issue with wpDiscuz nonce validation
-* Fixed: An issue with WooCommerce integration (The form was not rendered even if the user has bought a product)
-* Fixed: An issue with wpDiscuz Ratings regeneration in the tools page
-* Fixed: The issues with wpDiscuz tools
-* Fixed: An issue with email notifications checking - wc_msg_ip_mismatch
-* Fixed: An issue when a comment was approved after editing
-* Added: A new jQuery event 'wpdiscuz_before_send_comment' before ajax request is sent
-* Added: A new jQuery event 'wpdiscuz_comment_post_success' ajax request is sent, and comment is added
-* Added: A new jQuery event 'wpdiscuz_comment_post_error' ajax request is sent, but comment adding failed
-* Added: A new jQuery event 'wpdiscuz_comment_post_failed' ajax request is sent, but unknown error occurred (System Fail, Network Fail, etc)
-* Added: A new jQuery event 'wpdiscuz comment _post complete' ajax request is sent and complete (This does not state if the comment was added or not, it just fires when the request is complete)
-
-= Comments - wpDiscuz v7.6.51-v7.6.54 - 10.04.2026 =
-
-* Fixed: An issue with wpDiscuz nonce validation

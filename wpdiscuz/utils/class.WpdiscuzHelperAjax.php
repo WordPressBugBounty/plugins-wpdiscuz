@@ -313,7 +313,7 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
 
     public function guestAction() {
         $this->helper->validateNonce();
-        $guestEmail  = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : "";
+        $guestEmail  = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? sanitize_email(wp_unslash( $_COOKIE["comment_author_email_" . COOKIEHASH] ) ) : "";
         $guestAction = WpdiscuzHelper::sanitize(INPUT_POST, "guestAction", "FILTER_SANITIZE_STRING");
         $postId      = WpdiscuzHelper::sanitize(INPUT_POST, "postId", FILTER_SANITIZE_NUMBER_INT);
         $post        = get_post($postId);
@@ -352,7 +352,7 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
                 $response["code"]    = 1;
                 $parts               = explode("@", $guestEmail);
                 $guestEmail          = substr($parts[0], 0, min(1, strlen($parts[0]) - 1)) . str_repeat("*", max(1, strlen($parts[0]) - 1)) . "@" . $parts[1];
-                $response["message"] = "<div class='wpd-guest-action-message wpd-guest-action-success'>" . esc_html($this->options->getPhrase("wc_user_settings_check_email")) . " ($guestEmail)" . "</div>";
+                $response["message"] = "<div class='wpd-guest-action-message wpd-guest-action-success'>" . esc_html($this->options->getPhrase("wc_user_settings_check_email")) . " (" . esc_html($guestEmail) . ")" . "</div>";
             }
         }
         wp_die(json_encode($response));

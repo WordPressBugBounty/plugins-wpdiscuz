@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.57
+ * Version: 7.6.58
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -1860,8 +1860,8 @@ class WpdiscuzCore implements WpDiscuzConstants {
 
     // Add settings link on plugin page
     public function addPluginSettingsLink($links) {
-        $links[] = "<a href='" . esc_url_raw(admin_url("admin.php?page=" . self::PAGE_SETTINGS)) . "'>" . esc_html__("Settings", "wpdiscuz") . "</a>";
-        $links[] = "<a href='" . esc_url_raw(wp_nonce_url(admin_url("plugins.php?action=wpdiscuz-uninstall"), "wpdiscuz_uninstall")) . "' style='color:#b32d2e;' onclick='return confirm(\"" . esc_js("IMPORTANT! Uninstall is not a simple deactivation action. This action will permanently remove all data added by wpDiscuz (comment subscriptions, attachments, like/dislikes, and all other data that do not exist in the native comment system...) from database. Please backup database before this action. If you are sure that you want to delete all wpDiscuz data please confirm. If not, just cancel it, then you can deactivate this plugin.", "wpdiscuz") . "\")'>" . esc_html__("Uninstall", "wpdiscuz") . "</a>";
+        $links[] = "<a href='" . esc_url(admin_url("admin.php?page=" . self::PAGE_SETTINGS)) . "'>" . esc_html__("Settings", "wpdiscuz") . "</a>";
+        $links[] = "<a href='" . esc_url(wp_nonce_url(admin_url("plugins.php?action=wpdiscuz-uninstall"), "wpdiscuz_uninstall")) . "' style='color:#b32d2e;' onclick='return confirm(\"" . esc_js("IMPORTANT! Uninstall is not a simple deactivation action. This action will permanently remove all data added by wpDiscuz (comment subscriptions, attachments, like/dislikes, and all other data that do not exist in the native comment system...) from database. Please backup database before this action. If you are sure that you want to delete all wpDiscuz data please confirm. If not, just cancel it, then you can deactivate this plugin.", "wpdiscuz") . "\")'>" . esc_html__("Uninstall", "wpdiscuz") . "</a>";
 
         return $links;
     }
@@ -2429,7 +2429,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                                         <?php esc_html_e("CLOSED", "wpdiscuz") ?>
                                     </label>
                                 </div>
-                                <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-closed.png")) ?>"
+                                <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-closed.png")) ?>"
                                      class="wpd-fbs-screen">
                             </td>
                             <td style="width: 50%">
@@ -2439,7 +2439,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                                         <?php esc_html_e("OPENED", "wpdiscuz") ?>
                                     </label>
                                 </div>
-                                <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-opened.png")) ?>"
+                                <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-opened.png")) ?>"
                                      class="wpd-fbs-screen">
                             </td>
                         </tr>

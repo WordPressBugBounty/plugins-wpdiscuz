@@ -2051,7 +2051,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             <div class='notice notice-warning'>
                 <p style="font-size: 14px; font-weight: 600;">
                     <?php esc_html_e("Please complete required steps to start using wpDiscuz 7", "wpdiscuz"); ?> &nbsp;
-                    <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&wpd_wizard=1")); ?>"
+                    <a href="<?php echo esc_url(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&wpd_wizard=1")); ?>"
                        class="button button-primary"><?php intval(get_option(self::OPTION_SLUG_WIZARD_AFTER_UPDATE)) ? esc_html_e("Go to Update Wizard &raquo;", "wpdiscuz") : esc_html_e("Go to Installation Wizard &raquo;", "wpdiscuz"); ?></a>
                 </p>
             </div>
@@ -2071,7 +2071,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             <div class='notice notice-warning'>
                 <p>
                     <?php esc_html_e("Comment votes meta data need to be regenerated", "wpdiscuz"); ?>&nbsp;
-                    <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-regenerate")); ?>"
+                    <a href="<?php echo esc_url(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-regenerate")); ?>"
                        class="button button-primary"><?php esc_html_e("Regenerate Vote Metas", "wpdiscuz"); ?></a>
                 </p>
             </div>
@@ -2082,7 +2082,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             <div class='notice notice-warning'>
                 <p>
                     <?php esc_html_e("Closed Comments data need be regenerated", "wpdiscuz"); ?>&nbsp;
-                    <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-regenerate")); ?>"
+                    <a href="<?php echo esc_url(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-regenerate")); ?>"
                        class="button button-primary"><?php esc_html_e("Regenerate Closed Comments", "wpdiscuz"); ?></a>
                 </p>
             </div>
@@ -2093,7 +2093,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             <div class='notice notice-warning'>
                 <p>
                     <?php esc_html_e("Comments votes data need to be regenerated", "wpdiscuz"); ?>&nbsp;
-                    <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-regenerate")); ?>"
+                    <a href="<?php echo esc_url(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-regenerate")); ?>"
                        class="button button-primary"><?php esc_html_e("Regenerate Vote Data", "wpdiscuz"); ?></a>
                 </p>
             </div>
@@ -2105,7 +2105,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 <p>
                     <?php esc_html_e("Please synchronize comment data for the best performance and fastest experience", "wpdiscuz"); ?>
                     &nbsp;
-                    <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-regenerate")); ?>"
+                    <a href="<?php echo esc_url(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-regenerate")); ?>"
                        class="button button-primary"><?php esc_html_e("Synchronize Commenters Data", "wpdiscuz"); ?></a>
                 </p>
             </div>
@@ -2117,7 +2117,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 <p>
                     <?php esc_html_e("Please rebuild ratings for the best performance and fastest experience", "wpdiscuz"); ?>
                     &nbsp;
-                    <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-ratings")); ?>"
+                    <a href="<?php echo esc_url(admin_url("admin.php?page=" . self::PAGE_TOOLS . "#wpdtool-ratings")); ?>"
                        class="button button-primary"><?php esc_html_e("Rebuild Ratings", "wpdiscuz"); ?></a>
                 </p>
             </div>
@@ -2618,7 +2618,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
 
     public function printDocLink($docUrl) {
         if ($docUrl && $docUrl !== "#") {
-            echo "<a href='" . esc_url_raw($docUrl) . "' title='" . esc_attr("Read the documentation", "wpdiscuz") . "' target='_blank'><i class='far fa-question-circle'></i></a>";
+            echo "<a href='" . esc_url($docUrl) . "' title='" . esc_attr("Read the documentation", "wpdiscuz") . "' target='_blank'><i class='far fa-question-circle'></i></a>";
         }
     }
 

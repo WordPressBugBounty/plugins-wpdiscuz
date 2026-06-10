@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row" style="border-bottom: none;">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 65px; padding-top: 5px;"/>
         <?php esc_html_e("Here you can manage comment layout components. You can display/hide certain button or information on comment threads, as well as commenters' avatars and comment voting options.", "wpdiscuz"); ?>
         <br>
@@ -15,36 +15,36 @@ if (!defined("ABSPATH")) {
         <div id="wpd_comment_layouts">
             <div class="wpd-box-layout">
                 <a href="#img1"><img
-                        src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1s.png")); ?>"
+                        src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1s.png")); ?>"
                         class="wpd-com-layout-1"/></a>
                 <a href="#_" class="wpd-lightbox" id="img1"><img
-                        src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1.png")); ?>"/></a>
+                        src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1.png")); ?>"/></a>
                 <h4><?php esc_html_e("Comment Thread Layout #1", "wpdiscuz") ?><br>
                     <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                 </h4>
             </div>
             <div class="wpd-box-layout">
                 <a href="#img2"><img
-                        src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2s.png")); ?>"
+                        src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2s.png")); ?>"
                         class="wpd-com-layout-2"/></a>
                 <a href="#_" class="wpd-lightbox" id="img2"><img
-                        src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2.png")); ?>"/></a>
+                        src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2.png")); ?>"/></a>
                 <h4><?php esc_html_e("Comment Thread Layout #2", "wpdiscuz") ?><br>
                     <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                 </h4>
             </div>
             <div class="wpd-box-layout">
                 <a href="#img3"><img
-                        src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3s.png")); ?>"
+                        src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3s.png")); ?>"
                         class="wpd-com-layout-3"/></a>
                 <a href="#_" class="wpd-lightbox" id="img3"><img
-                        src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3.png")); ?>"/></a>
+                        src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3.png")); ?>"/></a>
                 <h4><?php esc_html_e("Comment Thread Layout #3", "wpdiscuz") ?><br>
                     <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                 </h4>
             </div>
         </div>
-        <?php echo sprintf(esc_html__("You can select different comment thread layout for different comment forms in %s", "wpdiscuz"), "<a href='" . esc_url_raw(admin_url("edit.php?post_type=wpdiscuz_form")) . "'>" . esc_html__("Comment Form Manager &raquo;", "wpdiscuz") . "</a>"); ?>
+        <?php echo sprintf(esc_html__("You can select different comment thread layout for different comment forms in %s", "wpdiscuz"), "<a href='" . esc_url(admin_url("edit.php?post_type=wpdiscuz_form")) . "'>" . esc_html__("Comment Form Manager &raquo;", "wpdiscuz") . "</a>"); ?>
     </div>
     <div class="wpd-opt-doc" style="padding-top: 10px;">
         <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/comment-thread-features/"

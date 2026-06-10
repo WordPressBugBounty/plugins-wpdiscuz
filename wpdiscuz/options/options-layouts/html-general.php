@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -266,7 +266,7 @@ if (!defined("ABSPATH")) {
     </div>
     <div class="wpd-opt-input">
         <?php $voteUrl = admin_url("admin-post.php?action=removeVoteData"); ?>
-        <a id="wpdiscuz-remove-votes" href="<?php echo esc_url_raw(wp_nonce_url($voteUrl, "removeVoteData")); ?>"
+        <a id="wpdiscuz-remove-votes" href="<?php echo esc_url(wp_nonce_url($voteUrl, "removeVoteData")); ?>"
            class="button button-secondary"
            style="text-decoration: none;"><?php esc_html_e("Remove vote data", "wpdiscuz"); ?></a>
     </div>
@@ -284,7 +284,7 @@ if (!defined("ABSPATH")) {
     <div class="wpd-opt-input">
         <?php $voteUrl = admin_url("admin-post.php?action=removeSocialAvatars"); ?>
         <a id="wpdiscuz-remove-social-avatars"
-           href="<?php echo esc_url_raw(wp_nonce_url($voteUrl, "removeSocialAvatars")); ?>"
+           href="<?php echo esc_url(wp_nonce_url($voteUrl, "removeSocialAvatars")); ?>"
            class="button button-secondary"
            style="text-decoration: none;"><?php esc_html_e("Remove Social Avatars", "wpdiscuz"); ?></a>
     </div>
@@ -301,7 +301,7 @@ if (!defined("ABSPATH")) {
     </div>
     <div class="wpd-opt-input">
         <?php $allCacheUrl = admin_url("admin-post.php?action=purgeAllCaches"); ?>
-        <a id="wpdiscuz-purge-cache" href="<?php echo esc_url_raw(wp_nonce_url($allCacheUrl, "purgeAllCaches")); ?>"
+        <a id="wpdiscuz-purge-cache" href="<?php echo esc_url(wp_nonce_url($allCacheUrl, "purgeAllCaches")); ?>"
            class="button button-secondary"
            style="text-decoration: none;"><?php esc_html_e("Purge comments and users caches", "wpdiscuz"); ?></a>
     </div>

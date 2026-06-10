@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined("ABSPATH")) {
     exit();
 }
@@ -7,7 +7,7 @@ if (!defined("ABSPATH")) {
 <div class="wpd-opt-row">
     <div class="wpd-opt-intro">
         <img class="wpd-opt-img"
-             src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+             src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
              style="height: 90px; padding-top: 5px;"/>
         <?php esc_html_e("Here you can manage comment thread styles, custom colors and add custom CSS. By default wpDiscuz comes with &laquo;Light&raquo; style. If your theme style is dark, we recommend choose the &laquo;Dark&raquo; option for comments too. In case you want to totally customize comment style or create it from scratch, we recommend choose the &laquo;Off&raquo; option to stop loading wpDiscuz core CSS. In this case only basic CSS code will be loaded allowing you add your custom style easier.", "wpdiscuz"); ?>
     </div>

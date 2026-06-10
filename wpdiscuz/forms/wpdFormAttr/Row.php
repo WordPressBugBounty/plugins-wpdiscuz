@@ -15,12 +15,12 @@ class Row {
         $columnType  = $data["column_type"];
         $rowOrder    = $data["row_order"];
         ?>
-        <div class="wpd-form-row-wrap" id="<?php echo $id; ?>">
+        <div class="wpd-form-row-wrap" id="<?php echo esc_attr($id); ?>">
             <input type="hidden"
-                   name="<?php echo esc_attr(wpdFormConst::WPDISCUZ_META_FORMS_STRUCTURE); ?>[<?php echo $id; ?>][column_type]"
+                   name="<?php echo esc_attr(wpdFormConst::WPDISCUZ_META_FORMS_STRUCTURE); ?>[<?php echo esc_attr($id); ?>][column_type]"
                    class="column_type" value="<?php echo esc_attr($columnType); ?>"/>
             <input type="hidden"
-                   name="<?php echo esc_attr(wpdFormConst::WPDISCUZ_META_FORMS_STRUCTURE); ?>[<?php echo $id; ?>][row_order]"
+                   name="<?php echo esc_attr(wpdFormConst::WPDISCUZ_META_FORMS_STRUCTURE); ?>[<?php echo esc_attr($id); ?>][row_order]"
                    class="row_order" value="<?php echo esc_attr($rowOrder); ?>"/>
             <div class="wpd-form-row-head">
                 <div class="wpd-form-row-actions">

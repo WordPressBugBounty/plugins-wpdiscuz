@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once WPDISCUZ_DIR_PATH . "/forms/wpdFormAttr/html/default-fields.php";
 
 $wpdiscuzCustomFields = apply_filters("wpdiscuz_form_custom_fields", []);
@@ -20,7 +20,7 @@ $wpdiscuzCustomFields = apply_filters("wpdiscuz_form_custom_fields", []);
         <?php
         foreach ($wpdiscuzCustomFields as $k => $wpdiscuzCustomField) {
             ?>
-            <a href="<?php echo esc_url_raw(admin_url("admin-ajax.php?action=getCustomFieldHtml&fieldType=" . $wpdiscuzCustomField["type"] . "&width=700&height=400")); ?>"
+            <a href="<?php echo esc_url(admin_url("admin-ajax.php?action=getCustomFieldHtml&fieldType=" . $wpdiscuzCustomField["type"] . "&width=700&height=400")); ?>"
                class="button thickbox"
                title="<?php echo esc_attr($wpdiscuzCustomField["title"]); ?>"><?php echo esc_html($wpdiscuzCustomField["title"]); ?></a>
             <?php

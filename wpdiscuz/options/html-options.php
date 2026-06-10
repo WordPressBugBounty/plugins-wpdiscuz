@@ -15,7 +15,7 @@ $settings      = $this->settingsArray();
     <!-- wpd-setbox-head start -->
     <div class="wpd-setbox-head">
         <div class="wpd-head-logo">
-            <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/wpdiscuz-7-logo.png")); ?>"/>
+            <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/wpdiscuz-7-logo.png")); ?>"/>
         </div>
         <div class="wpd-head-title">
             <?php esc_html_e("wpDiscuz", "wpdiscuz") ?>
@@ -354,7 +354,7 @@ $settings      = $this->settingsArray();
                                 <!-- Wizard Note - start -->
                                 <div class="wpd-wizard-note">
                                     <h3>
-                                        <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/warning.png")); ?>"/> <?php esc_html_e("Custom wpDiscuz template files are detected!", "wpdiscuz"); ?>
+                                        <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/warning.png")); ?>"/> <?php esc_html_e("Custom wpDiscuz template files are detected!", "wpdiscuz"); ?>
                                     </h3>
                                     <p>
                                         <span class="dashicons dashicons-welcome-comments"></span>
@@ -368,7 +368,7 @@ $settings      = $this->settingsArray();
                                         <?php esc_html_e("Use FTP client or hosting service cPanel > File Manager tool. WordPress theme folders are located in /wp-content/themes/ directory. The active theme folder can be detected by name.", "wpdiscuz"); ?>
                                     </p>
                                     <p style="text-align: right; margin-top: -10px;"><a
-                                            href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS)) . "&wpd_wizard=1&wpd_addon_fix=" . $wpd_addon_fix ?>"
+                                            href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_wizard=1&wpd_addon_fix=" . $wpd_addon_fix)); ?>"
                                             class="button"
                                             style="text-decoration: none;"><?php esc_html_e('Mark as solved', 'wpdiscuz') ?></a>
                                     </p>
@@ -382,7 +382,7 @@ $settings      = $this->settingsArray();
                                 <!-- Wizard Note - start -->
                                 <div class="wpd-wizard-note">
                                     <h3>
-                                        <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/warning.png")); ?>"/> <?php esc_html_e("All wpDiscuz Addons are Deactivated!", "wpdiscuz"); ?>
+                                        <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/warning.png")); ?>"/> <?php esc_html_e("All wpDiscuz Addons are Deactivated!", "wpdiscuz"); ?>
                                     </h3>
                                     <p>
                                         <span class="dashicons dashicons-welcome-comments"></span>
@@ -396,7 +396,7 @@ $settings      = $this->settingsArray();
                                         <?php esc_html_e("Prior to the wpDiscuz 7 release, we've released new versions of all wpDiscuz addons. If you've already using the latest versions, just activate those back. If your license key is expired and you cannot update, please renew those addons at gVectors Store with 30% discount applied automatically at checkout page. Just make sure you're logged-in in the store with your customer account.", "wpdiscuz"); ?>
                                     </p>
                                     <p style="text-align: right; margin-top: -10px;"><a
-                                            href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS)) . "&wpd_wizard=1&wpd_addon_fix=1" ?>"
+                                            href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_wizard=1&wpd_addon_fix=1")); ?>"
                                             class="button"
                                             style="text-decoration: none;"><?php esc_html_e('Ok, I understood', 'wpdiscuz') ?></a>
                                     </p>
@@ -410,7 +410,7 @@ $settings      = $this->settingsArray();
                                 <!-- Wizard Note - start -->
                                 <div class="wpd-wizard-note">
                                     <h3>
-                                        <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/warning.png")); ?>"/> <?php esc_html_e("Jetpack comments is active, please deactivate!", "wpdiscuz"); ?>
+                                        <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/warning.png")); ?>"/> <?php esc_html_e("Jetpack comments is active, please deactivate!", "wpdiscuz"); ?>
                                     </h3>
                                     <p>
                                         <span class="dashicons dashicons-welcome-comments"></span>
@@ -423,7 +423,7 @@ $settings      = $this->settingsArray();
                                         <?php esc_html_e('Use the "Deactivate" button located next to the "Learn More" button. Just click on this button and Jetpack Comments will be deactivated. Once it\'s disabled, please delete all caches.', "wpdiscuz") ?>
                                     </p>
                                     <p style="text-align: right; margin-top: -10px;"><a
-                                            href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS)) . "&wpd_wizard=&wpd_addon_fix=" . $wpd_addon_fix ?>"
+                                            href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_wizard=&wpd_addon_fix=" . $wpd_addon_fix)); ?>"
                                             class="button"
                                             style="text-decoration: none;"><?php esc_html_e('Mark as solved', 'wpdiscuz') ?></a>
                                     </p>
@@ -437,13 +437,13 @@ $settings      = $this->settingsArray();
                                 <div class="wpd-wizard-help">
                                     <div style="width: 50%; padding: 20px; box-sizing: border-box;">
                                         <h3>
-                                            <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/solved.png")); ?>"/> <?php esc_html_e("I can't resolve the problems!", "wpdiscuz"); ?>
+                                            <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/solved.png")); ?>"/> <?php esc_html_e("I can't resolve the problems!", "wpdiscuz"); ?>
                                         </h3>
                                         <p><?php esc_html_e("All problems displayed above have fixing tips in the same boxes. If, for some reason you can't solve those problems, we're ready to help you and fix those as soon as possible. Please open a support topic at gVectors support forum or contact as via support@gvectors.com email address. Our support team works from 6am till 6pm in GMT+0 timezone. Please be patient when you open a new support topic or when contacting us via email. We'll get back to you within 3-12 hours.", "wpdiscuz") ?></p>
                                     </div>
                                     <div style="width: 50%; padding: 20px; box-sizing: border-box;">
                                         <h3>
-                                            <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/cancel.png")); ?>"/> <?php esc_html_e("I want to downgrade to previous 5.x version!", "wpdiscuz"); ?>
+                                            <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/cancel.png")); ?>"/> <?php esc_html_e("I want to downgrade to previous 5.x version!", "wpdiscuz"); ?>
                                         </h3>
                                         <p><?php esc_html_e("To downgrade wpDiscuz, you should deactivate and delete wpDiscuz 7 plugin. Then download the previous 5.3.2 version ZIP file from wpDiscuz plugin page (use dropdown menu under statistic graphics). And install the ZIP file in Dashboard > Plugins > Add Plugin admin page. The downgrading is only recommended to gain a time to do template customizations or wait for help from our support team. Once the issues are resolved, you should update to latest wpDiscuz version.", "wpdiscuz") ?></p>
                                     </div>
@@ -497,30 +497,30 @@ $settings      = $this->settingsArray();
                             <div id="wpd_comment_layouts" style="width: 80%; margin: 15px auto 0 auto">
                                 <div class="wpd-box-layout">
                                     <a href="#img1"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1s.png")); ?>"
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1s.png")); ?>"
                                             class="wpd-com-layout-1"/></a>
                                     <a href="#_" class="wpd-lightbox" id="img1"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1.png")); ?>"/></a>
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-1.png")); ?>"/></a>
                                     <h4><?php esc_html_e("Comments Layout #1", "wpdiscuz") ?><br>
                                         <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                                     </h4>
                                 </div>
                                 <div class="wpd-box-layout">
                                     <a href="#img2"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2s.png")); ?>"
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2s.png")); ?>"
                                             class="wpd-com-layout-2"/></a>
                                     <a href="#_" class="wpd-lightbox" id="img2"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2.png")); ?>"/></a>
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-2.png")); ?>"/></a>
                                     <h4><?php esc_html_e("Comments Layout #2", "wpdiscuz") ?><br>
                                         <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                                     </h4>
                                 </div>
                                 <div class="wpd-box-layout">
                                     <a href="#img3"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3s.png")); ?>"
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3s.png")); ?>"
                                             class="wpd-com-layout-3"/></a>
                                     <a href="#_" class="wpd-lightbox" id="img3"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3.png")); ?>"/></a>
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/layout-3.png")); ?>"/></a>
                                     <h4><?php esc_html_e("Comments Layout #3", "wpdiscuz") ?><br>
                                         <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                                     </h4>
@@ -535,7 +535,7 @@ $settings      = $this->settingsArray();
 
                             <div class="wpd-wizard-opt wpd-wizard-section">
                                 <img class="wpd-opt-img"
-                                     src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/box-bubble.png")); ?>"
+                                     src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/box-bubble.png")); ?>"
                                      style="height: 70px; padding: 0px 30px 5px 10px;"/>
                                 <?php esc_html_e("Comment Bubble is a sticky comment icon on your web pages. It keeps article readers and commenters up to date. It displays new comments as pop-up information or as a number in an orange circle.", "wpdiscuz"); ?>
                                 <?php esc_html_e("The Bubble is also designed to invite article readers to comment. It displays invite message allowing them fast and easy jump to comment area.", "wpdiscuz"); ?>
@@ -596,30 +596,30 @@ $settings      = $this->settingsArray();
                             <div id="wpd_comment_layouts" style="width: 60%; margin: 15px auto 0 auto;">
                                 <div class="wpd-box-layout">
                                     <a href="#img11"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-side.png")); ?>"
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-side.png")); ?>"
                                             class="wpd-com-layout-1"/></a>
                                     <a href="#_" class="wpd-lightbox" id="img11"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-side.png")); ?>"/></a>
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-side.png")); ?>"/></a>
                                     <h4><?php esc_html_e("Content Left", "wpdiscuz") ?><br>
                                         <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                                     </h4>
                                 </div>
                                 <div class="wpd-box-layout">
                                     <a href="#img22"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-left.png")); ?>"
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-left.png")); ?>"
                                             class="wpd-com-layout-2"/></a>
                                     <a href="#_" class="wpd-lightbox" id="img22"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-left.png")); ?>"/></a>
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-left.png")); ?>"/></a>
                                     <h4><?php esc_html_e("Left Corner", "wpdiscuz") ?><br>
                                         <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                                     </h4>
                                 </div>
                                 <div class="wpd-box-layout">
                                     <a href="#img33"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-right.png")); ?>"
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-right.png")); ?>"
                                             class="wpd-com-layout-3"/></a>
                                     <a href="#_" class="wpd-lightbox" id="img33"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-right.png")); ?>"/></a>
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/bubble-location-right.png")); ?>"/></a>
                                     <h4><?php esc_html_e("Right Corner", "wpdiscuz") ?><br>
                                         <hr style="width: 30%; margin-top: 10px; border-bottom: 1px dashed #07B290;">
                                     </h4>
@@ -639,16 +639,16 @@ $settings      = $this->settingsArray();
                                     <?php esc_html_e("Ask questions to readers and discuss directly on article content!", "wpdiscuz"); ?>
                                 </p>
                                 <img class="wpd-opt-img"
-                                     src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/box-feedback.png")); ?>"
+                                     src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/box-feedback.png")); ?>"
                                      style="height: 60px;  padding: 0px 30px 5px 10px; float: left; "/>
                                 <?php esc_html_e("Great News! Now you can add questions for readers on certain part of article content and ask for feedback while visitors read it.", "wpdiscuz"); ?>
                                 <?php esc_html_e("Select a part of text, add inline commenting form in post content using the green &laquo;Comment&raquo; button on post editor toolbar. Once it's added in article editor (backend), on article (front-end) readers will see a small comment icon next to the text part you've selected.", "wpdiscuz"); ?>
                                 <div class="wpd-zoom-image" style="width: 60%; margin: 0px auto;">
                                     <a href="#img_inline"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-toolbar-button.png")); ?>"
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-toolbar-button.png")); ?>"
                                             style="margin-top: 15px; margin-left: 5px; width: 100%;"/></a>
                                     <a href="#_" class="wpd-lightbox" id="img_inline"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-toolbar-button-vertical.png")); ?>"/></a>
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/inline-feedback-toolbar-button-vertical.png")); ?>"/></a>
                                 </div>
                             </div>
 
@@ -674,15 +674,15 @@ $settings      = $this->settingsArray();
                             </div>
                             <div class="wpd-wizard-section" style="border-bottom: 2px solid #eee;">
                                 <img class="wpd-news-icon"
-                                     src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/rating.png")); ?>"
+                                     src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/rating.png")); ?>"
                                      style="height: 50px;  padding: 5px 30px 15px 10px; float: left; ">
                                 <?php esc_html_e("Before, you had to create a Rating field in comment form to allow users rate article while they post a comment, there was no way to rate without commenting. Now you can allow users rate your articles without leaving a comment. wpDiscuz 7 has a built-in Article Rating system which is not based on comment form custom fields and appears on top of comment section, under the article content.", "wpdiscuz") ?>
                                 <div class="wpd-zoom-image" style="width: 70%; margin: 10px auto;">
                                     <a href="#img55"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/rating-vs.png")); ?>"
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/rating-vs.png")); ?>"
                                             style="width: 100%;"/></a>
                                     <a href="#_" class="wpd-lightbox" id="img55"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/rating-vs-v.png")); ?>"/></a>
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/news/rating-vs-v.png")); ?>"/></a>
                                 </div>
                             </div>
                             <!-- Step 3 - Display Comments - END -->
@@ -708,7 +708,7 @@ $settings      = $this->settingsArray();
                 <div class="wpd-wizard-foot">
                     <div class="wpd-wizard-buttons">
                         <a class="wpd-wizard-button"
-                           href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS)); ?>"><?php esc_html_e("Start Using wpDiscuz", "wpdiscuz"); ?></a>
+                           href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS)); ?>"><?php esc_html_e("Start Using wpDiscuz", "wpdiscuz"); ?></a>
                     </div>
                 </div>
                 <?php
@@ -741,24 +741,24 @@ $settings      = $this->settingsArray();
                         <!-- Settings start -->
                         <div class="wpd-box">
                             <div class="wpd-box-info wpd-<?php echo esc_attr($setting["status"]); ?>">
-                                <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["status"] . ".png")); ?>"/>
+                                <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["status"] . ".png")); ?>"/>
                             </div>
                             <div class="wpd-box-head">
-                                <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"
+                                <a href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"
                                    title="<?php esc_attr_e("Open Settings", "wpdiscuz") ?>">
-                                    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
+                                    <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
                                          style="height: <?php echo $setting["icon-height"] ?>;"/>
                                 </a>
                             </div>
                             <div class="wpd-box-foot">
                                 <div class="wpd-box-title">
-                                    <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"
+                                    <a href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"
                                        title="<?php esc_attr_e("Open Settings", "wpdiscuz") ?>"><?php echo $setting["title"] ?></a>
                                 </div>
                                 <div class="wpd-box-arrow">
-                                    <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&&wpd_tab=" . $tab_key)); ?>"
+                                    <a href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&&wpd_tab=" . $tab_key)); ?>"
                                        title="<?php esc_attr_e("Open Settings", "wpdiscuz") ?>"><img
-                                            src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/arrow-right.png")); ?>"/></a>
+                                            src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/arrow-right.png")); ?>"/></a>
                                 </div>
                             </div>
                         </div>
@@ -783,14 +783,14 @@ $settings      = $this->settingsArray();
                                 <div class="wpd-body">
                                     <div class="wpd-icon">
                                         <?php $iconSrc = !empty($addon["icon"]) ? $addon["icon"] : plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/addon.png"); ?>
-                                        <img src="<?php echo esc_url_raw($iconSrc); ?>"/>
+                                        <img src="<?php echo esc_url($iconSrc); ?>"/>
                                     </div>
                                     <div class="wpd-title">
-                                        <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key)); ?>" title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>"><span
+                                        <a href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key)); ?>" title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>"><span
                                                 class="wpd-addon-title-text"><?php echo esc_html($addon["title"]); ?></span></a>
                                     </div>
                                     <div class="wpd-more">
-                                        <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/dots.png")); ?>"
+                                        <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/dots.png")); ?>"
                                              style="height: 18px; padding-top: 2px;"/>
                                     </div>
                                 </div>
@@ -820,10 +820,10 @@ $settings      = $this->settingsArray();
                                 <div class="wpd-body">
                                     <div class="wpd-icon">
                                         <?php $iconSrc = !empty($addon["icon"]) ? $addon["icon"] : plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/addon.png"); ?>
-                                        <img src="<?php echo esc_url_raw($iconSrc); ?>"/>
+                                        <img src="<?php echo esc_url($iconSrc); ?>"/>
                                     </div>
                                     <div class="wpd-title">
-                                        <a href="<?php echo esc_url_raw($cardHref); ?>" title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>">
+                                        <a href="<?php echo esc_url($cardHref); ?>" title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>">
                                             <?php if (!empty($addon["is_new"])): ?>
                                                 <span class="wpd-new-badge"><?php esc_html_e("NEW", "wpdiscuz"); ?></span>
                                             <?php endif; ?>
@@ -831,7 +831,7 @@ $settings      = $this->settingsArray();
                                         </a>
                                     </div>
                                     <div class="wpd-more">
-                                        <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/dots.png")); ?>"
+                                        <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/dots.png")); ?>"
                                              style="height: 18px; padding-top: 2px;"/>
                                     </div>
                                 </div>
@@ -856,12 +856,12 @@ $settings      = $this->settingsArray();
                         <div class="wpd-setcon-head">
                             <?php echo esc_html($setting["title"]); ?>
                             <a class="wpd-back"
-                               href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS)); ?>"><span
+                               href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS)); ?>"><span
                                     class="dashicons dashicons-arrow-left-alt2"></span><?php esc_html_e("Back", "wpdiscuz") ?>
                             </a>
                         </div>
                         <div class="wpd-setcon-body">
-                            <form action="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab)); ?>"
+                            <form action="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab)); ?>"
                                   method="post" name="<?php echo esc_attr($tab); ?>"
                                   class="wc-main-settings-form wc-form" enctype="multipart/form-data">
                                 <?php
@@ -883,10 +883,10 @@ $settings      = $this->settingsArray();
                                     <div>
                                         <a id="wpdiscuz-reset-options" style="text-decoration:none;"
                                            class="button button-secondary"
-                                           href="<?php echo esc_url_raw($resetOptionsUrl); ?>"><?php esc_html_e("Reset Tab Options", "wpdiscuz"); ?></a>
+                                           href="<?php echo esc_url($resetOptionsUrl); ?>"><?php esc_html_e("Reset Tab Options", "wpdiscuz"); ?></a>
                                         <a id="wpdiscuz-reset-all-options" style="text-decoration:none;"
                                            class="button button-secondary"
-                                           href="<?php echo esc_url_raw($resetAllTabs); ?>"><?php esc_html_e("Reset All Options", "wpdiscuz"); ?></a>
+                                           href="<?php echo esc_url($resetAllTabs); ?>"><?php esc_html_e("Reset All Options", "wpdiscuz"); ?></a>
                                     </div>
                                     <input style="float: right;" type="submit" class="button button-primary"
                                            name="wc_submit_options"
@@ -906,7 +906,7 @@ $settings      = $this->settingsArray();
                             foreach ($settings["core"] as $tab_key => $setting) {
                                 ?>
                                 <li<?php if ($tab === $tab_key) echo " class='wpd-active'"; ?>><a
-                                        href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"
+                                        href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"
                                         title="<?php echo esc_attr("wpDiscuz - " . $setting["title_original"]); ?>"><span
                                             class="dashicons dashicons-arrow-left-alt2"></span><span class="wpd-menu-title-text"> <?php echo esc_html($setting["title"]); ?></span>
                                     </a></li>
@@ -924,7 +924,7 @@ $settings      = $this->settingsArray();
                                 foreach ($settings["addons"] as $addon_key => $addon) {
                                     ?>
                                     <li<?php if ($tab === $addon_key) echo " class='wpd-active'"; ?>><a
-                                            href="<?php echo esc_url_raw(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key)); ?>"
+                                            href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $addon_key)); ?>"
                                             title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>"><span
                                                 class="dashicons dashicons-arrow-left-alt2"></span><span class="wpd-menu-title-text"> <?php echo esc_html($addon["title"]); ?></span>
                                         </a></li>
@@ -950,7 +950,7 @@ $settings      = $this->settingsArray();
                                     }
                                     ?>
                                     <li class="wpd-pro-teaser-menu-item <?php echo $is_active; ?>">
-                                        <a href="<?php echo esc_url_raw($teaserHref); ?>"
+                                        <a href="<?php echo esc_url($teaserHref); ?>"
                                            title="<?php echo esc_attr("wpDiscuz - " . $addon["title_original"]); ?>">
                                             <span class="dashicons dashicons-arrow-left-alt2"></span>
                                             <span class="wpd-menu-title-wrap">

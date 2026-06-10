@@ -16,7 +16,7 @@ class Captcha extends Field {
     protected function dashboardForm() {
         ?>
         <div class="wpd-field-body" style="display: <?php echo esc_attr($this->display); ?>">
-            <a href="<?php echo esc_url_raw(admin_url("admin.php?page=" . \WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . \WpdiscuzCore::TAB_RECAPTCHA)); ?>"><?php esc_html_e("reCAPTCHA Settings", "wpdiscuz"); ?></a>
+            <a href="<?php echo esc_url(admin_url("admin.php?page=" . \WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . \WpdiscuzCore::TAB_RECAPTCHA)); ?>"><?php esc_html_e("reCAPTCHA Settings", "wpdiscuz"); ?></a>
             <input class="wpd-field-type" type="hidden" value="<?php echo esc_attr($this->type); ?>"
                    name="<?php echo esc_attr($this->fieldInputName); ?>[type]"/>
             <div style="clear:both;"></div>

@@ -44,7 +44,7 @@ if (wp_is_block_theme()) {
         <br>
         <?php
         $currentUser = WpdiscuzHelper::getCurrentUser();
-        $userEmail   = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : "";
+        $userEmail   = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? sanitize_email(wp_unslash($_COOKIE["comment_author_email_" . COOKIEHASH])) : "";
         if ($currentUser->exists()) {
             $userEmail = $currentUser->user_email;
         }
@@ -70,8 +70,8 @@ if (wp_is_block_theme()) {
                 try {
                     const wpdcUnsubscriptionAction = this.getAttribute("data-action");
                     const wpdcUnsubscriptionKey = this.getAttribute("data-key");
-                    const wpdcUnsubscriptionDeleteUrl = '<?php echo admin_url('admin-ajax.php'); ?>';
-                    const wpdiscuzNonce = '<?php echo $wpdiscuz->helper->generateNonce(); ?>';
+                    const wpdcUnsubscriptionDeleteUrl = '<?php echo esc_js(esc_url(admin_url('admin-ajax.php'))); ?>';
+                    const wpdiscuzNonce = '<?php echo esc_js($wpdiscuz->helper->generateNonce()); ?>';
 
                     const wpdcUnsubscriptionData = new FormData();
                     wpdcUnsubscriptionData.append('action', 'wpdiscuzDeleteDataWithEmail');
