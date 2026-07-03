@@ -485,7 +485,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             $wpdiscuzStyleURL = get_stylesheet_directory_uri() . "/wpdiscuz/$fileName.css";
         } elseif (file_exists(get_template_directory() . "/wpdiscuz/$fileName.css")) {
             $wpdiscuzStyleURL = get_template_directory_uri() . "/wpdiscuz/$fileName.css";
-        } else if (file_exists($theme . "/$fileName.css")) {
+        } else if (!empty($themes[$theme]) && file_exists($theme . "/$fileName.css")) {
             $wpdiscuzStyleURL = $themes[$theme]["url"] . "/$fileName.css";
         }
         if ($wpdiscuzStyleURL) {

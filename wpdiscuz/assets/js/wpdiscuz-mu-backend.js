@@ -25,6 +25,9 @@ jQuery(document).ready(function ($) {
             var attachmentId = clicked.data('wmu-attachment');
             data.append('action', 'wmuDeleteAttachment');
             data.append('attachmentId', attachmentId);
+            if (wpdiscuzMUJsObj.nonceName) {
+                data.append(wpdiscuzMUJsObj.nonceName, wpdiscuzMUJsObj.nonce);
+            }
             var ajax = wmuGetAjaxObj(data);
             ajax.done(function (r) {
                 if (r.success) {

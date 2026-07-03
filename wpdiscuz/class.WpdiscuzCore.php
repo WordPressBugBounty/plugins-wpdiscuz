@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.58
+ * Version: 7.6.59
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -1294,6 +1294,8 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 "wmuMsgConfirmAttachmentDelete" => esc_html__("Do you really want to delete this attachment?", "wpdiscuz"),
                 "msgConfirmPurgeCache"          => esc_html__("Do you really want to delete comments and users cache?", "wpdiscuz"),
                 "wpdOptionNonce"                => wp_create_nonce("wpd-option-nonce"),
+                "nonceName"                     => WpdiscuzHelper::GLOBAL_NONCE_NAME,
+                "nonce"                         => $this->helper->generateNonce(),
                 "postAttachmentsAsGallery"      => (bool)apply_filters("wpdiscuz_post_attachments_as_gallery", false),
             ];
             // Media Upload Lightbox
