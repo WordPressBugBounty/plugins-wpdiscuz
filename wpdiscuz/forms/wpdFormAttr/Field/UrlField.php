@@ -154,7 +154,7 @@ class UrlField extends Field {
         }
         $html  = "<div class='wpd-custom-field wpd-cf-text'>";
         $value = apply_filters("wpdiscuz_custom_field_url", $value, $args);
-        $html  .= "<div class='wpd-cf-label'>" . esc_html($args["name"]) . "</div> <div class='wpd-cf-value'> <a href='" . esc_url_raw($value) . "' target='_blank'>" . esc_url_raw($value) . "</a></div>";
+        $html  .= "<div class='wpd-cf-label'>" . esc_html($args["name"]) . "</div> <div class='wpd-cf-value'> <a href='" . esc_url($value) . "' target='_blank'>" . esc_url($value) . "</a></div>";
         $html  .= "</div>";
         return $html;
     }

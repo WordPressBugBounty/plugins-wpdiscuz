@@ -302,7 +302,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             $rel .= " nofollow";
         }
 
-        return apply_filters("wpdiscuz_source_to_image_conversion", "<a rel='$rel' target='_blank' href='" . esc_url_raw($url) . "'><img alt='comment image' src='" . esc_url_raw($url) . "' /></a>", $url);
+        return apply_filters("wpdiscuz_source_to_image_conversion", "<a rel='" . esc_attr($rel) . "' target='_blank' href='" . esc_url($url) . "'><img alt='comment image' src='" . esc_url($url) . "' /></a>", $url);
     }
 
     /**
@@ -1050,13 +1050,12 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                             'type'    => 'full',
                         ));
                 }
-                xdebug_var_dump($url);
                 if (!$url) {
                     $url = $nameAndEmail["isUser"] ? $this->options->thread_layouts["defaultAvatarUrlForUser"] : $this->options->thread_layouts["defaultAvatarUrlForGuest"];
                 }
 
                 $url2x  = $url;
-                $avatar = sprintf("<img alt='%s' src='%s' srcset='%s' class='%s' height='%d' width='%d' %s/>", esc_attr($args["alt"]), esc_url_raw($url), esc_attr("$url2x 2x"), esc_attr(implode(" ", $class)), esc_attr((int)$args["height"]), esc_attr((int)$args["width"]), $args["extra_attr"]);
+                $avatar = sprintf("<img alt='%s' src='%s' srcset='%s' class='%s' height='%d' width='%d' %s/>", esc_attr($args["alt"]), esc_url($url), esc_attr("$url2x 2x"), esc_attr(implode(" ", $class)), esc_attr((int)$args["height"]), esc_attr((int)$args["width"]), $args["extra_attr"]);
             }
         }
         return $avatar;
@@ -1064,7 +1063,6 @@ class WpdiscuzHelper implements WpDiscuzConstants {
 
     public function preGetDefaultAvatarForUser($avatar, $idOrEmail, $args) {
         if ($this->options->thread_layouts["changeAvatarsEverywhere"] || isset($args["wpdiscuz_gravatar_user_email"])) {
-//            xdebug_var_dump($args['url']);
             $nameAndEmail = $this->getUserNameAndEmail($idOrEmail);
             if ($nameAndEmail["isUser"]) {
                 $valid = true;
@@ -1093,8 +1091,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                     }
 
                     $url2x  = $url;
-                    $avatar = sprintf("<img alt='%s' src='%s' srcset='%s' class='%s' height='%d' width='%d' %s/>", esc_attr($args["alt"]), esc_url_raw($url), esc_attr("$url2x 2x"), esc_attr(implode(" ", $class)), esc_attr((int)$args["height"]), esc_attr((int)$args["width"]), $args["extra_attr"]);
-//                    xdebug_var_dump($url);
+                    $avatar = sprintf("<img alt='%s' src='%s' srcset='%s' class='%s' height='%d' width='%d' %s/>", esc_attr($args["alt"]), esc_url($url), esc_attr("$url2x 2x"), esc_attr(implode(" ", $class)), esc_attr((int)$args["height"]), esc_attr((int)$args["width"]), $args["extra_attr"]);
                 }
             }
         }
