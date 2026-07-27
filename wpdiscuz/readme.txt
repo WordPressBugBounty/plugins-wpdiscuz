@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comments, wordpress comments, ajax comments, live comments, comment form, comment voting, disqus alternative, social comments, frontend comments, comment system
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 7.6.60
+Stable tag: 7.6.61
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -202,9 +202,9 @@ No. wpDiscuz does not remove or modify existing WordPress comments when uninstal
 
 Please remember to delete all caches and purge CDN after the update.
 
-= Comments - wpDiscuz v7.6.60 - 26.07.2026 =
+= Comments - wpDiscuz v7.6.60/v7.6.61 - 27.07.2026 =
 
-* Fixed: Stored XSS vulnerability in the comment image URL conversion. Image URLs are now escaped for HTML attribute output.
+* Fixed: Stored XSS vulnerability in the comment image URL conversion. Image URLs are now escaped for HTML attribute output. Thanks to hieus for responsibly reporting the issue.
 * Fixed: Missing escaping on the custom URL field value and the default avatar image URL.
 * Fixed: A leftover debug function call in the default avatar handler.
 
