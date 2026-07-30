@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comments, wordpress comments, ajax comments, live comments, comment form, comment voting, disqus alternative, social comments, frontend comments, comment system
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 7.6.61
+Stable tag: 7.6.62
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -201,6 +201,12 @@ No. wpDiscuz does not remove or modify existing WordPress comments when uninstal
 **IMPORTANT!**
 
 Please remember to delete all caches and purge CDN after the update.
+
+= Comments - wpDiscuz v7.6.62 - 30.07.2026 =
+
+* Improved: Additional HTML tag escaping when comment editor phrases are printed into inline JavaScript.
+* Fixed: Imported phrase files were not sanitized on upload, unlike phrases saved from the Phrases settings page.
+* Fixed: The comments block editor preview could be triggered on the front-end without an editing capability check.
 
 = Comments - wpDiscuz v7.6.60/v7.6.61 - 27.07.2026 =
 

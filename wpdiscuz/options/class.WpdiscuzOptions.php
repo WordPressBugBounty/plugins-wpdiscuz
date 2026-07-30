@@ -1307,8 +1307,8 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         },
         <?php do_action("wpdiscuz_editor_modules"); ?>
         },
-        wc_be_the_first_text: <?php echo json_encode($this->getPhrase("wc_be_the_first_text", ["unique_id" => "0_0"])); ?>,
-        wc_comment_join_text: <?php echo json_encode($this->getPhrase("wc_comment_join_text", ["unique_id" => "0_0"])); ?>,
+        wc_be_the_first_text: <?php echo json_encode($this->getPhrase("wc_be_the_first_text", ["unique_id" => "0_0"]), JSON_HEX_TAG); ?>,
+        wc_comment_join_text: <?php echo json_encode($this->getPhrase("wc_comment_join_text", ["unique_id" => "0_0"]), JSON_HEX_TAG); ?>,
         theme: 'snow',
         debug: '<?php echo $this->general["loadComboVersion"] || $this->general["loadMinVersion"] ? 'error' : 'warn'; ?>'
         };
@@ -1979,6 +1979,42 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         }
     }
 
+    /**
+     * Sanitizes an imported phrases array the same way savePhrases() sanitizes the
+     * phrases form, so a phrase file can't store markup the settings form would strip.
+     */
+    private function sanitizePhrases($phrases) {
+        $htmlPhrases = [
+            "wc_email_message",
+            "wc_all_comment_new_reply_message",
+            "wc_new_reply_email_message",
+            "wc_confirm_email_message",
+            "wc_comment_approved_email_message",
+            "wc_social_login_agreement_desc",
+            "wc_user_settings_delete_all_comments_message",
+            "wc_user_settings_delete_all_subscriptions_message",
+            "wc_user_settings_delete_all_follows_message",
+            "wc_follow_confirm_email_message",
+            "wc_follow_email_message",
+            "wc_mentioned_email_message",
+        ];
+
+        $sanitized = [];
+        foreach ($phrases as $key => $value) {
+            if (!is_scalar($value)) {
+                continue;
+            }
+            $value = (string)$value;
+            if (in_array($key, $htmlPhrases, true)) {
+                $sanitized[$key] = wp_kses($value, wp_kses_allowed_html("post"));
+            } else {
+                $sanitized[$key] = sanitize_textarea_field($value);
+            }
+        }
+
+        return $sanitized;
+    }
+
     public function tools() {
         if (current_user_can("manage_options")) {
             if (isset($_POST["tools-action"])) {
@@ -2008,7 +2044,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                         if ($data = file_get_contents($file["tmp_name"])) {
                             $phrases = json_decode($data, true);
                             if ($phrases && is_array($phrases)) {
-                                $this->dbManager->updatePhrases($phrases);
+                                $this->dbManager->updatePhrases($this->sanitizePhrases($phrases));
                                 add_settings_error("wpdiscuz", "settings_updated", esc_html__("Phrases Imported Successfully!", "wpdiscuz"), "updated");
                             } else {
                                 add_settings_error("wpdiscuz", "settings_error", esc_html__("Error occured! File content is empty or data is not valid!", "wpdiscuz"), "error");

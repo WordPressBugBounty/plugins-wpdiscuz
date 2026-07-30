@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.61
+ * Version: 7.6.62
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -2809,7 +2809,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
             return $preRender;
         }
         $context = isset($_GET['context']) ? $_GET['context'] : '';
-        if ($context === 'edit') {
+        if ($context === 'edit' && current_user_can('edit_posts')) {
             WP_Block_Supports::$block_to_render = $parsedBlock;
             $result                             = $this->renderBlockWpdiscuz([], '', $block);
             WP_Block_Supports::$block_to_render = null;
@@ -2848,7 +2848,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
             $post_id = $post->ID;
         }
         ob_start();
-        if ($context === 'edit') {
+        if ($context === 'edit' && current_user_can('edit_posts')) {
             $editBlockNotice = wp_kses_post(__('This is just a demo of wpDiscuz comment section.<br>
             Further customization can be done in the Dashboard > wpDiscuz > Settings admin page.<br>
             The comment form layout can be customized in the Dashboard > wpDiscuz > Forms admin page.', 'wpdiscuz'));
