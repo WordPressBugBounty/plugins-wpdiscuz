@@ -1556,7 +1556,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                 if ($attributes && is_array($attributes)) {
                     $attributesHtml = "";
                     foreach ($attributes as $attribute => $value) {
-                        $escapedValue = ($attribute === "href") ? esc_url($value) : esc_attr($value);
+                        $escapedValue   = ($attribute === "href") ? esc_url($value) : esc_attr($value);
                         $attributesHtml .= " " . esc_attr($attribute) . "='{$escapedValue}'";
                     }
                     $user["authorAvatarSprintf"] = "<a" . str_replace("%", "%%", $attributesHtml) . ">%s</a>";
@@ -1577,7 +1577,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                 if ($attributes && is_array($attributes)) {
                     $attributesHtml = "";
                     foreach ($attributes as $attribute => $value) {
-                        $escapedValue = ($attribute === "href") ? esc_url($value) : esc_attr($value);
+                        $escapedValue   = ($attribute === "href") ? esc_url($value) : esc_attr($value);
                         $attributesHtml .= " " . esc_attr($attribute) . "='{$escapedValue}'";
                     }
                     $user["authorNameHtml"] = "<a$attributesHtml>{$user["authorNameHtml"]}</a>";
@@ -2025,7 +2025,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
 
         $status_obj = get_post_status_object($status);
 
-        if (!comments_open($comment_post_id)) {
+        if (!current_user_can('moderate_comments') && !comments_open($comment_post_id)) {
 
             do_action("comment_closed", $comment_post_id);
 

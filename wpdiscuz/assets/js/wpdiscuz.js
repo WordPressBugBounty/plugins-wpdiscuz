@@ -1,8 +1,9 @@
 ;
-var wpdiscuzLoadRichEditor = parseInt(wpdiscuzAjaxObj.loadRichEditor, 10);
-if (wpdiscuzLoadRichEditor && document.querySelector('.wpdiscuz-textarea-wrap')) {
+let wpdiscuzLoadRichEditor = parseInt(wpdiscuzAjaxObj.loadRichEditor, 10);
+if (wpdiscuzLoadRichEditor) {
     var wpDiscuzEditor = new WpdEditor();
 }
+
 
 function wpdMessagesOnInit(message, type) {
     wpdiscuzAjaxObj.setCommentMessage(message, type);
