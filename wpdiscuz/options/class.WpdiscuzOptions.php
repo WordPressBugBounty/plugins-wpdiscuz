@@ -1126,10 +1126,14 @@ class WpdiscuzOptions implements WpDiscuzConstants {
     }
 
     public function initPhrasesOnLoad() {
+        $this->initPhrases();
         if (!$this->general["isUsePoMo"] && $this->dbManager->isPhraseExists("wc_be_the_first_text")) {
-            $this->phrases = $this->dbManager->getPhrases();
-        } else {
-            $this->initPhrases();
+            // Saved phrases win over the defaults, but they're merged instead of
+            // replacing them: phrases added by a plugin update stay in the array
+            // even when the table hasn't been backfilled yet. addNewPhrases()
+            // only runs on admin_init, so a site updated without ever opening
+            // wp-admin would otherwise render those keys as empty strings.
+            $this->phrases = array_merge($this->phrases, $this->dbManager->getPhrases());
         }
         do_action("wpdiscuz_phrases_loaded", $this->phrases);
     }
@@ -3657,6 +3661,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email subject",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Subscription Type: Post new comment", "wpdiscuz"),
+                            "section_original"     => "Subscription Type: Post new comment",
+                            "accordion"            => "wpd-subscription-templates",
                             "docurl"               => "",
                         ],
                         "emailContentPostComment"              => [
@@ -3664,6 +3671,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email content",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Subscription Type: Post new comment", "wpdiscuz"),
+                            "section_original"     => "Subscription Type: Post new comment",
+                            "accordion"            => "wpd-subscription-templates",
                             "docurl"               => "",
                         ],
                         "emailSubjectAllCommentReply"          => [
@@ -3671,6 +3681,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email subject",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Subscription Type: Subscriber's comments", "wpdiscuz"),
+                            "section_original"     => "Subscription Type: Subscriber's comments",
+                            "accordion"            => "wpd-subscription-templates",
                             "docurl"               => "",
                         ],
                         "emailContentAllCommentReply"          => [
@@ -3678,6 +3691,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email content",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Subscription Type: Subscriber's comments", "wpdiscuz"),
+                            "section_original"     => "Subscription Type: Subscriber's comments",
+                            "accordion"            => "wpd-subscription-templates",
                             "docurl"               => "",
                         ],
                         "emailSubjectCommentReply"             => [
@@ -3685,6 +3701,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email subject",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Subscription Type: Subscriber's specific comment", "wpdiscuz"),
+                            "section_original"     => "Subscription Type: Subscriber's specific comment",
+                            "accordion"            => "wpd-subscription-templates",
                             "docurl"               => "",
                         ],
                         "emailContentCommentReply"             => [
@@ -3692,6 +3711,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email content",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Subscription Type: Subscriber's specific comment", "wpdiscuz"),
+                            "section_original"     => "Subscription Type: Subscriber's specific comment",
+                            "accordion"            => "wpd-subscription-templates",
                             "docurl"               => "",
                         ],
                         "emailSubjectSubscriptionConfirmation" => [
@@ -3699,6 +3721,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email subject",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Subscription confirmation", "wpdiscuz"),
+                            "section_original"     => "Subscription confirmation",
+                            "accordion"            => "wpd-subscription-templates",
                             "docurl"               => "",
                         ],
                         "emailContentSubscriptionConfirmation" => [
@@ -3706,6 +3731,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email content",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Subscription confirmation", "wpdiscuz"),
+                            "section_original"     => "Subscription confirmation",
+                            "accordion"            => "wpd-subscription-templates",
                             "docurl"               => "",
                         ],
                         "emailSubjectCommentApproved"          => [
@@ -3713,6 +3741,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email subject",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Approved", "wpdiscuz"),
+                            "section_original"     => "Approved",
+                            "accordion"            => "wpd-comment-status-templates",
                             "docurl"               => "",
                         ],
                         "emailContentCommentApproved"          => [
@@ -3720,6 +3751,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email content",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Approved", "wpdiscuz"),
+                            "section_original"     => "Approved",
+                            "accordion"            => "wpd-comment-status-templates",
                             "docurl"               => "",
                         ],
                         "emailSubjectUserMentioned"            => [
@@ -3727,6 +3761,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email subject",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("A user have been mentioned", "wpdiscuz"),
+                            "section_original"     => "A user have been mentioned",
+                            "accordion"            => "wpd-user-mentioned-templates",
                             "docurl"               => "",
                         ],
                         "emailContentUserMentioned"            => [
@@ -3734,6 +3771,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email content",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("A user have been mentioned", "wpdiscuz"),
+                            "section_original"     => "A user have been mentioned",
+                            "accordion"            => "wpd-user-mentioned-templates",
                             "docurl"               => "",
                         ],
                         "emailSubjectFollowConfirmation"       => [
@@ -3741,6 +3781,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email subject",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Follow confirmation", "wpdiscuz"),
+                            "section_original"     => "Follow confirmation",
+                            "accordion"            => "wpd-follow-templates",
                             "docurl"               => "",
                         ],
                         "emailContentFollowConfirmation"       => [
@@ -3748,6 +3791,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email content",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Follow confirmation", "wpdiscuz"),
+                            "section_original"     => "Follow confirmation",
+                            "accordion"            => "wpd-follow-templates",
                             "docurl"               => "",
                         ],
                         "emailSubjectFollowComment"            => [
@@ -3755,6 +3801,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email subject",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Following comment", "wpdiscuz"),
+                            "section_original"     => "Following comment",
+                            "accordion"            => "wpd-follow-templates",
                             "docurl"               => "",
                         ],
                         "emailContentFollowComment"            => [
@@ -3762,6 +3811,9 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Email content",
                             "description"          => "",
                             "description_original" => "",
+                            "section"              => __("Following comment", "wpdiscuz"),
+                            "section_original"     => "Following comment",
+                            "accordion"            => "wpd-follow-templates",
                             "docurl"               => "",
                         ],
                     ],

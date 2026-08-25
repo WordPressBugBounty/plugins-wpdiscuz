@@ -1224,17 +1224,24 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
                             (isset($val["description"]) && stripos($val["description"], $search) !== false) ||
                             (isset($val["label_original"]) && stripos($val["label_original"], $search) !== false) ||
                             (isset($val["description_original"]) && stripos($val["description_original"], $search) !== false) ||
+                            (isset($val["section"]) && stripos($val["section"], $search) !== false) ||
+                            (isset($val["section_original"]) && stripos($val["section_original"], $search) !== false) ||
                             stripos($optKey, $search)) {
 
                             $fragment = empty($val["accordion"]) ? "wpd_tab={$tabKey}#wpdOpt-{$optKey}" : "&wpd_tab={$tabKey}#{$val["accordion"]}#wpdOpt-{$optKey}";
 
+                            $optLabel = esc_html($val["label"]);
+                            if (!empty($val["section"])) {
+                                $optLabel .= " <span class='wpd-opt-search-section'>" . esc_html($val["section"]) . "</span>";
+                            }
+
                             if (isset($result[$tabKey])) {
-                                $result[$tabKey][$optKey] = "<a href='" . esc_url_raw(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&" . $fragment)) . "' tabindex='" . esc_attr($tabKey . "-" . $optKey) . "' class='wpd-opt-search-taboption'>" . esc_html($val["label"]) . "</a>";
+                                $result[$tabKey][$optKey] = "<a href='" . esc_url_raw(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&" . $fragment)) . "' tabindex='" . esc_attr($tabKey . "-" . $optKey) . "' class='wpd-opt-search-taboption'>" . $optLabel . "</a>";
                             } else {
                                 $result[$tabKey] = ["<a href='" . esc_url_raw(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&wpd_tab=" . $tabKey)) . "' tabindex='" . esc_attr($tab["title"]) . "' class='wpd-opt-search-tabtitle'>" . esc_html($tab["title"]) . "</a>"];
 
                                 if (!isset($result[$tabKey][$optKey])) {
-                                    $result[$tabKey][$optKey] = "<a href='" . esc_url_raw(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&" . $fragment)) . "' tabindex='" . esc_attr($tabKey . "-" . $optKey) . "' class='wpd-opt-search-taboption'>" . esc_html($val["label"]) . "</a>";
+                                    $result[$tabKey][$optKey] = "<a href='" . esc_url_raw(admin_url("admin.php?page=" . self::PAGE_SETTINGS . "&" . $fragment)) . "' tabindex='" . esc_attr($tabKey . "-" . $optKey) . "' class='wpd-opt-search-taboption'>" . $optLabel . "</a>";
                                 }
                             }
                         }
@@ -1251,10 +1258,13 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
             }
 
             $allowedHtml = [
-                "a" => [
+                "a"    => [
                     "href"     => true,
                     "tabindex" => true,
                     "class"    => true,
+                ],
+                "span" => [
+                    "class" => true,
                 ],
             ];
             wp_die(wp_kses($output, $allowedHtml));

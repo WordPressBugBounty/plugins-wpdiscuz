@@ -299,7 +299,12 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         if ($currentUser && $currentUser->ID) {
             $email = $currentUser->user_email;
         } else {
-            $email = WpdiscuzHelper::sanitize(INPUT_POST, "wpdiscuzSubscriptionEmail", "FILTER_SANITIZE_STRING");
+            // An apostrophe is valid in an email local part and WordPress
+            // slashes $_POST, so "it's@example.com" arrives with a backslash
+            // before the quote and the FILTER_VALIDATE_EMAIL check below rejects
+            // it. Unslash here: the address is only validated and then handed to
+            // $wpdb, which does not unslash for us.
+            $email = wp_unslash(WpdiscuzHelper::sanitize(INPUT_POST, "wpdiscuzSubscriptionEmail", "FILTER_SANITIZE_STRING"));
         }
         if (!$currentUser->exists() && $form->isShowSubscriptionBarAgreement() && !$showSubscriptionBarAgreement && ($subscriptionType === WpdiscuzCore::SUBSCRIPTION_POST || $subscriptionType === WpdiscuzCore::SUBSCRIPTION_ALL_COMMENT)) {
             $email = "";

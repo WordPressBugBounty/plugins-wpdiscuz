@@ -704,6 +704,25 @@ $defaultExcludedTaxonomies = [
                     </div>
                     <!-- Option end -->
 
+                    <!-- Option start: allowGuestReviews -->
+                    <div class="wpd-opt-row" data-wpd-opt="allowGuestReviews">
+                        <div class="wpd-opt-name">
+                            <label><?php esc_html_e("Allow guest reviews", "wpdiscuz"); ?></label>
+                            <p class="wpd-desc">
+                                <?php esc_html_e("Let visitors who are not logged in submit reviews. The allowed post types and taxonomy rules below still apply; the allowed roles and minimum comment count do not, because a guest has neither.", "wpdiscuz"); ?>
+                                <span class="wr-note wr-warning"><?php esc_html_e("Guest reviews always wait for approval, whatever the review gate is set to. An email address is self-asserted, so a repeat submission from the same address is refused as a convenience, but nothing stops the same person reviewing again from another address.", "wpdiscuz"); ?></span>
+                            </p>
+                        </div>
+                        <div class="wpd-opt-input">
+                            <div class="wpd-switcher">
+                                <input type="checkbox" id="wr-pro-allowGuestReviews" disabled value="1"/>
+                                <label for="wr-pro-allowGuestReviews"></label>
+                            </div>
+                        </div>
+                        <div class="wpd-opt-doc"></div>
+                    </div>
+                    <!-- Option end -->
+
                     <!-- Option start: allowedPostTypes -->
                     <div class="wpd-opt-row" data-wpd-opt="allowedPostTypes">
                         <div class="wpd-opt-name">
@@ -726,7 +745,7 @@ $defaultExcludedTaxonomies = [
                     <div class="wpd-opt-row" data-wpd-opt="reviewGate">
                         <div class="wpd-opt-name">
                             <label><?php esc_html_e("Review gate", "wpdiscuz"); ?></label>
-                            <p class="wpd-desc"><?php esc_html_e("Restrict who can leave a review per post type. \"Require approval\" means only users approved by the admin can submit.", "wpdiscuz"); ?></p>
+                            <p class="wpd-desc"><?php esc_html_e("Set a submission gate per post type. \"Require approval\" forces all reviews to pending regardless of WordPress moderation settings.", "wpdiscuz"); ?></p>
                         </div>
                         <div class="wpd-opt-input">
                             <table class="wr-gate-posttypes-table">
@@ -927,8 +946,7 @@ $defaultExcludedTaxonomies = [
                         <div class="wpd-opt-name">
                             <label><?php esc_html_e("Sync WooCommerce's Ratings", "wpdiscuz"); ?></label>
                             <p class="wpd-desc">
-                                <?php esc_html_e("Imports existing WooCommerce product reviews into the addon.", "wpdiscuz"); ?>
-                                <span class="wr-note wr-error"><?php esc_html_e("Guest reviews and reviews already imported are skipped.", "wpdiscuz"); ?></span>
+                                <?php esc_html_e("Imports existing approved WooCommerce product reviews into the addon, including guest reviews. Reviews already imported are skipped.", "wpdiscuz"); ?>
                             </p>
                         </div>
                         <div class="wpd-opt-input">

@@ -678,8 +678,9 @@ jQuery(document).ready(function ($) {
     //========================= /DASHBOARD =====================//
     //========================= SETTING SEARCH =====================//
     var searchAjax = null;
-    window.onhashchange = scrollToOption;
-    scrollToOption();
+    // scrollToOption() is invoked further down, after the accordion that may contain the
+    // target option has been opened - see the urlHash block. Scrolling first measured a
+    // display:none element, whose offset is 0, and sent the page to the top instead.
     function scrollToOption() {
         var matches = location.href.match(/#wpdOpt\-(\w+)/);
         if (matches !== null) {
@@ -699,6 +700,12 @@ jQuery(document).ready(function ($) {
             }
         }
     }
+
+    // Exposed for addons that render their options inside an accordion of their own. Those
+    // open in a separate ready handler, so they have to trigger the scroll themselves once
+    // the option is actually visible - measuring a display:none row gives offset 0, which
+    // sends the page to the top instead of to the option.
+    window.wpdScrollToOption = scrollToOption;
     $('body').on('keydown', '#wpd-opt-search-field, #wpd-opt-search-results', function (e) {
         var keycode = e.which;
         if (keycode == 27) {
@@ -931,8 +938,11 @@ jQuery(document).ready(function ($) {
 
     if (urlHash != null) {
         accordionitem = $('.wpd-accordion-title[data-wpd-selector="' + urlHash[1] + '"');
-        wpdAccordion(accordionitem);
+        if (!accordionitem.parent().hasClass('wpd-accordion-current')) {
+            wpdAccordion(accordionitem);
+        }
     }
+    scrollToOption();
 
     $('body').on('click', '.wpd-accordion-title', function (e) {
         e.preventDefault();
@@ -977,8 +987,11 @@ jQuery(document).ready(function ($) {
         urlHash = location.href.match(hashRegex);
         if (urlHash != null) {
             accordionitem = $('.wpd-accordion-title[data-wpd-selector="' + urlHash[1] + '"');
-            wpdAccordion(accordionitem);
+            if (!accordionitem.parent().hasClass('wpd-accordion-current')) {
+                wpdAccordion(accordionitem);
+            }
         }
+        scrollToOption();
     }
 
     /*=== EMAIL TEMPLATES ACCORDION START ===*/

@@ -404,9 +404,13 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
 
         $lastEdited = "";
         if ($this->options->moderation["displayEditingInfo"] && isset($commentMetas[self::META_KEY_LAST_EDITED_AT]) && isset($commentMetas[self::META_KEY_LAST_EDITED_BY])) {
-            $lastEditUser = get_user_by(is_numeric($commentMetas[self::META_KEY_LAST_EDITED_BY][0]) ? "id" : "email", $commentMetas[self::META_KEY_LAST_EDITED_BY][0]);
-            $username     = $lastEditUser ? $lastEditUser->display_name : $comment->comment_author;
-            $lastEdited   = "<div class='wpd-comment-last-edited'><i class='far fa-edit'></i>" . esc_html(sprintf($this->options->getPhrase("wc_last_edited", ["comment" => $comment]), $this->helper->dateDiff($commentMetas[self::META_KEY_LAST_EDITED_AT][0]), $username)) . "</div>";
+            $lastEditUser   = get_user_by(is_numeric($commentMetas[self::META_KEY_LAST_EDITED_BY][0]) ? "id" : "email", $commentMetas[self::META_KEY_LAST_EDITED_BY][0]);
+            $username       = $lastEditUser ? $lastEditUser->display_name : $comment->comment_author;
+            $lastEditedInfo = esc_html(sprintf($this->options->getPhrase("wc_last_edited", ["comment" => $comment, "default" => ""]), $this->helper->dateDiff($commentMetas[self::META_KEY_LAST_EDITED_AT][0]), $username));
+            // an icon on its own tells nobody who edited the comment or when
+            if ($lastEditedInfo) {
+                $lastEdited = "<div class='wpd-comment-last-edited'><i class='far fa-edit'></i>" . $lastEditedInfo . "</div>";
+            }
         }
 
         $commentWrapClass = array_merge($commentWrapClass, $user["commentWrapClass"], $user["commentWrapRoleClass"]);

@@ -41,17 +41,6 @@ if (!defined("ABSPATH")) {
                                    name="wc_share_whatsapp" id="wc_share_whatsapp"/></td>
         </tr>
         <tr valign="top">
-            <th scope="row"><label for="wc_share_vk"><?php esc_html_e("Share On VKontakte", "wpdiscuz"); ?></label></th>
-            <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_share_vk"]); ?>"
-                                   name="wc_share_vk" id="wc_share_vk"/></td>
-        </tr>
-        <tr valign="top">
-            <th scope="row"><label for="wc_share_ok"><?php esc_html_e("Share On Odnoklassniki", "wpdiscuz"); ?></label>
-            </th>
-            <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_share_ok"]); ?>"
-                                   name="wc_share_ok" id="wc_share_ok"/></td>
-        </tr>
-        <tr valign="top">
             <th scope="row"><label for="wc_hide_replies_text"><?php esc_html_e("Hide Replies", "wpdiscuz"); ?></label>
             </th>
             <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_hide_replies_text"]); ?>"

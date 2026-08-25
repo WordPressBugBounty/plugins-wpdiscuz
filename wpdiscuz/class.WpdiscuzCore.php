@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.64
+ * Version: 7.6.65
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -678,8 +678,12 @@ class WpdiscuzCore implements WpDiscuzConstants {
                             } else {
                                 $lastEditedBy = get_user_by("email", $currentUser->comment_author_email);
                             }
-                            $username               = $lastEditedBy ? $lastEditedBy->display_name : $comment->comment_author;
-                            $response["lastEdited"] = "<div class='wpd-comment-last-edited'><i class='far fa-edit'></i>" . esc_html(sprintf($this->options->getPhrase("wc_last_edited", ["comment" => $comment]), $this->helper->dateDiff($lastEditedAt), $username)) . "</div>";
+                            $username       = $lastEditedBy ? $lastEditedBy->display_name : $comment->comment_author;
+                            $lastEditedInfo = esc_html(sprintf($this->options->getPhrase("wc_last_edited", ["comment" => $comment, "default" => ""]), $this->helper->dateDiff($lastEditedAt), $username));
+                            // an icon on its own tells nobody who edited the comment or when
+                            if ($lastEditedInfo) {
+                                $response["lastEdited"] = "<div class='wpd-comment-last-edited'><i class='far fa-edit'></i>" . $lastEditedInfo . "</div>";
+                            }
                         }
                         do_action("wpdiscuz_clean_post_cache", $comment->comment_post_ID, "comment_edited");
                         do_action("wpdiscuz_reset_comments_cache", $comment->comment_post_ID);

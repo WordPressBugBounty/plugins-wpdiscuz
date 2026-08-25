@@ -245,7 +245,7 @@ if (!defined("ABSPATH")) {
         <div class="wpd-accordion-content">
 
             <div class="wpd-subtitle wpd-subtitle" style="margin-top: 20px;">
-                <?php esc_html_e("Subscription Type: Post new comment", "wpdiscuz"); ?>
+                <?php echo esc_html($setting["options"]["emailSubjectPostComment"]["section"]); ?>
             </div>
 
             <!-- Option start -->
@@ -307,7 +307,7 @@ if (!defined("ABSPATH")) {
             <!-- Option end -->
 
             <div class="wpd-subtitle wpd-subtitle" style="margin-top: 20px;">
-                <?php esc_html_e("Subscription Type: Subscriber's comments", "wpdiscuz"); ?>
+                <?php echo esc_html($setting["options"]["emailSubjectAllCommentReply"]["section"]); ?>
             </div>
 
             <!-- Option start -->
@@ -369,7 +369,7 @@ if (!defined("ABSPATH")) {
             <!-- Option end -->
 
             <div class="wpd-subtitle wpd-subtitle" style="margin-top: 20px;">
-                <?php esc_html_e("Subscription Type: Subscriber's specific comment", "wpdiscuz"); ?>
+                <?php echo esc_html($setting["options"]["emailSubjectCommentReply"]["section"]); ?>
             </div>
 
             <!-- Option start -->
@@ -431,7 +431,7 @@ if (!defined("ABSPATH")) {
             <!-- Option end -->
 
             <div class="wpd-subtitle wpd-subtitle" style="margin-top: 20px;">
-                <?php esc_html_e("Subscription confirmation", "wpdiscuz"); ?>
+                <?php echo esc_html($setting["options"]["emailSubjectSubscriptionConfirmation"]["section"]); ?>
             </div>
 
             <!-- Option start -->
@@ -501,7 +501,7 @@ if (!defined("ABSPATH")) {
         <div class="wpd-accordion-content">
 
             <div class="wpd-subtitle wpd-subtitle" style="margin-top: 20px;">
-                <?php esc_html_e("Approved", "wpdiscuz"); ?>
+                <?php echo esc_html($setting["options"]["emailSubjectCommentApproved"]["section"]); ?>
             </div>
 
             <!-- Option start -->
@@ -570,7 +570,7 @@ if (!defined("ABSPATH")) {
         <div class="wpd-accordion-content">
 
             <div class="wpd-subtitle wpd-subtitle" style="margin-top: 20px;">
-                <?php esc_html_e("A user have been mentioned", "wpdiscuz"); ?>
+                <?php echo esc_html($setting["options"]["emailSubjectUserMentioned"]["section"]); ?>
             </div>
 
             <!-- Option start -->
@@ -640,7 +640,7 @@ if (!defined("ABSPATH")) {
         <div class="wpd-accordion-content">
 
             <div class="wpd-subtitle wpd-subtitle" style="margin-top: 20px;">
-                <?php esc_html_e("Follow confirmation", "wpdiscuz"); ?>
+                <?php echo esc_html($setting["options"]["emailSubjectFollowConfirmation"]["section"]); ?>
             </div>
 
             <!-- Option start -->
@@ -697,7 +697,7 @@ if (!defined("ABSPATH")) {
             <!-- Option end -->
 
             <div class="wpd-subtitle wpd-subtitle" style="margin-top: 20px;">
-                <?php esc_html_e("Following comment", "wpdiscuz"); ?>
+                <?php echo esc_html($setting["options"]["emailSubjectFollowComment"]["section"]); ?>
             </div>
 
             <!-- Option start -->

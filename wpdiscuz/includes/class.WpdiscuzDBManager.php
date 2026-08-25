@@ -325,7 +325,10 @@ class WpdiscuzDBManager implements WpDiscuzConstants {
      * delete comment thread subscriptions if new subscription type is post
      */
     public function deleteCommentNotifications($post_id, $email) {
-        $sql = $this->db->prepare("DELETE FROM `{$this->emailNotification}` WHERE `subscribtion_type` != %s AND `post_id` = %d AND `email` LIKE %s;", self::SUBSCRIPTION_POST, $post_id, $email);
+        // Exact match, not LIKE: % and _ are legal in an email local part and
+        // prepare() does not escape them for LIKE, so a crafted address such as
+        // "%@gmail.com" would match every other subscriber on this post.
+        $sql = $this->db->prepare("DELETE FROM `{$this->emailNotification}` WHERE `subscribtion_type` != %s AND `post_id` = %d AND `email` = %s;", self::SUBSCRIPTION_POST, $post_id, $email);
         $this->db->query($sql);
     }
 
@@ -342,7 +345,10 @@ class WpdiscuzDBManager implements WpDiscuzConstants {
     }
 
     public function getUnsubscribeLinkParams($postID, $email) {
-        $sql_subscriber_data = $this->db->prepare("SELECT `id`, `post_id`, `activation_key` FROM `{$this->emailNotification}` WHERE  `post_id` = %d  AND `email` LIKE %s", $postID, $email);
+        // Exact match, not LIKE: % and _ are legal in an email local part and
+        // prepare() does not escape them for LIKE, so a crafted address such as
+        // "%@gmail.com" would match every other subscriber on this post.
+        $sql_subscriber_data = $this->db->prepare("SELECT `id`, `post_id`, `activation_key` FROM `{$this->emailNotification}` WHERE  `post_id` = %d  AND `email` = %s", $postID, $email);
 
         return $this->db->get_row($sql_subscriber_data, ARRAY_A);
     }

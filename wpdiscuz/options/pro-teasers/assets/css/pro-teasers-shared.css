@@ -785,6 +785,9 @@ body.rtl .wpd-pro-teaser-body .wsm-pro-td-label {
   display: block;
   margin-top: 4px;
 }
+.wpd-pro-teaser-body .wr-note.wr-warning {
+  color: #dba617;
+}
 .wpd-pro-teaser-body .wr-note.wr-error {
   color: #b32d2e;
 }

@@ -2,8 +2,8 @@
 Contributors: gVectors Team
 Tags: comments, wordpress comments, ajax comments, live comments, comment form, comment voting, disqus alternative, social comments, frontend comments, comment system
 Requires at least: 6.0
-Tested up to: 7.0
-Stable tag: 7.6.64
+Tested up to: 7.1
+Stable tag: 7.6.65
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -201,6 +201,24 @@ No. wpDiscuz does not remove or modify existing WordPress comments when uninstal
 **IMPORTANT!**
 
 Please remember to delete all caches and purge CDN after the update.
+
+= Comments - wpDiscuz v7.6.65 - 25.08.2026 =
+
+* Added: The Reviews add-on teaser lists the new "Allow guest reviews" option.
+* Improved: The settings search shows which email a result belongs to. Eight options are labelled "Email subject" and eight "Email content", so a search for "email" returned an indistinguishable list; every result now carries its section, such as "Subscription Type: Post new comment".
+* Improved: The settings search also matches those section names, so searching for "mentioned" or "follow confirmation" finds the email templates belonging to them.
+* Improved: A settings search result for one of the email templates now opens the accordion holding it, instead of leaving the option hidden behind a collapsed panel.
+* Fixed: A settings search result for an option inside a collapsed accordion scrolled to the top of the page instead of to the option, because the scroll measured the option row while it was still hidden and a hidden row reports a position of zero.
+* Fixed: Clicking a second settings search result belonging to an accordion that was already open closed it, because the accordion was toggled rather than opened.
+* Fixed: The Reviews add-on teaser said the WooCommerce ratings import skips guest reviews. The import includes them.
+* Fixed: The Reviews add-on teaser described the review gate as limiting who may submit a review. It sets submitted reviews to pending and does not vet users.
+* Added: wpdScrollToOption() is exposed on the window object, so an add-on whose options sit in an accordion of its own can scroll to an option once it has opened it.
+* Fixed: The comment editing information printed only the edit icon, without the name of the editor and the time of the edit, on websites whose phrases table does not contain the "Last edited %1$s by %2$s" phrase.
+* Improved: Saved phrases are now merged into the default phrases instead of replacing them. Phrases introduced by a plugin update are no longer printed empty on websites where the phrases table has not been filled with them yet, which happens when the plugin is updated without the WordPress dashboard ever being opened.
+* Improved: The comment editing information is not printed at all when its phrase is empty, instead of printing a lone edit icon which tells nothing about who edited the comment and when.
+* Removed: The Phrases settings page had fields for the VKontakte and Odnoklassniki share button titles. Those share buttons are no longer part of wpDiscuz and the two phrases behind the fields were neither defined nor saved anywhere, so the page raised an "Undefined array key" warning on every load.
+* Fixed: Visitors whose email address contains an apostrophe could not subscribe to comments. The address was checked for validity before the backslash WordPress puts in front of the apostrophe was removed, so the subscription form rejected it and reported nothing.
+* Fixed: Comment subscriptions were looked up by matching the email address as a SQL pattern instead of comparing it exactly. Since the % and _ characters are allowed in an email address, a subscriber using such an address matched the other subscribers of the same post, received their unsubscribe link, and removed their comment thread subscriptions.
 
 = Comments - wpDiscuz v7.6.64 - 07.08.2026 =
 

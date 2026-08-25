@@ -4,6 +4,19 @@ namespace wpdFormAttr\Tools;
 
 class Sanitizer {
 
+    /**
+     * Reads one request variable and sanitizes it.
+     *
+     * The returned value is still slashed, exactly as WordPress stored it in
+     * $_POST/$_GET. That is deliberate and must not be "fixed" inside this
+     * helper: most callers hand the value to update_comment_meta() or
+     * wp_new_comment(), and both unslash their own input, so unslashing here
+     * would strip a level of backslashes off every stored value
+     * (C:\path becomes C:path).
+     *
+     * Wrap the call in wp_unslash() at the call site instead, whenever the
+     * value is compared, displayed, or written straight through $wpdb.
+     */
     public static function sanitize($action, $variable_name, $filter, $default = "") {
         if ($filter === "FILTER_SANITIZE_STRING" || $filter === "FILTER_SANITIZE_TEXTAREA") {
             $glob = INPUT_POST === $action ? $_POST : $_GET;

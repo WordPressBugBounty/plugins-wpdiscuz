@@ -190,6 +190,10 @@
         display: block;
         margin-top: 4px;
 
+        &.wr-warning {
+            color: #dba617;
+        }
+
         &.wr-error {
             color: #b32d2e;
         }
