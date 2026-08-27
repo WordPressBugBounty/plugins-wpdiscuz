@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.65
+ * Version: 7.6.66
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -817,7 +817,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
     public function loadMoreComments() {
         $this->helper->validateNonce();
         $postId       = WpdiscuzHelper::sanitize(INPUT_POST, "postId", FILTER_SANITIZE_NUMBER_INT, 0);
-        $lastParentId = WpdiscuzHelper::sanitize(INPUT_POST, "lastParentId", FILTER_SANITIZE_NUMBER_INT, 0);
+        $lastParentId = (int) WpdiscuzHelper::sanitize(INPUT_POST, "lastParentId", FILTER_SANITIZE_NUMBER_INT, 0);
         if ($lastParentId >= 0 && $postId) {
             $post = get_post($postId);
             WpdiscuzHelper::validatePostAccess($post);
@@ -905,6 +905,13 @@ class WpdiscuzCore implements WpDiscuzConstants {
         $postId             = isset($args["post_id"]) ? $args["post_id"] : $post->ID;
         $defaults           = $this->getDefaultCommentsArgs($postId);
         $this->commentsArgs = wp_parse_args($args, $defaults);
+        // Security: canonicalize the comment cursor to an integer before it is
+        // used as a cache key or built into the comments SQL clause. This runs
+        // after wp_parse_args() (so it also covers any value injected through
+        // the "wpdiscuz_filter_args" filter) and before the cache lookup below,
+        // so a poisoned value can neither be stored under a tainted cache key
+        // nor reach commentsClauses().
+        $this->commentsArgs["last_parent_id"] = (int) $this->commentsArgs["last_parent_id"];
         $commentListArgs    = $this->getCommentListArgs($postId);
         do_action("wpdiscuz_before_getcomments", $this->commentsArgs, $commentListArgs["current_user"], $args);
         $commentData = [];
@@ -1178,7 +1185,12 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 $args["join"] .= " LEFT JOIN " . $wpdb->commentmeta . " AS `cm` ON " . $wpdb->comments . ".comment_ID = `cm`.comment_id  AND (`cm`.meta_key = '" . self::META_KEY_VOTES . "')";
                 $orderby      = " IFNULL(`cm`.meta_value,0)+0 DESC, ";
             } else if ($this->commentsArgs["last_parent_id"] && empty($this->commentsArgs["sticky"])) {
-                $args["where"] = $wpdb->comments . ".`comment_ID`" . ($this->commentsArgs["order"] === 'desc' ? " < " : " > ") . $this->commentsArgs["last_parent_id"] . ($args["where"] ? " AND " : "") . $args["where"];
+                // Defensive cast, then bind via %d, so the cursor can never
+                // carry a SQL comment token into the WHERE clause. The operator
+                // is a fixed literal chosen by the ternary, not user input.
+                $lastParentId  = (int) $this->commentsArgs["last_parent_id"];
+                $operator      = $this->commentsArgs["order"] === 'desc' ? "<" : ">";
+                $args["where"] = $wpdb->prepare($wpdb->comments . ".`comment_ID` {$operator} %d", $lastParentId) . ($args["where"] ? " AND " : "") . $args["where"];
             }
             $args["orderby"] = $orderby . $wpdb->comments . ".`{$this->options->thread_display["orderCommentsBy"]}` ";
             $args["orderby"] .= isset($args["order"]) ? "" : $this->commentsArgs["order"];
@@ -1626,6 +1638,17 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 $this->addNewOptions($options);
             }
             $this->addNewPhrases();
+
+            // Security (7.6.66): comment caches produced by affected versions
+            // (7.3.2 through 7.6.65) may have been generated from an untrusted
+            // comment-loading query. Purge the comment caches once when
+            // upgrading from that range so no pre-fix cached response survives.
+            // Purge before stamping the new version, so a mid-request failure
+            // retries on the next load instead of being skipped permanently.
+            if (version_compare($this->version, "7.3.2", ">=") && version_compare($this->version, "7.6.66", "<")) {
+                do_action("wpdiscuz_reset_comments_cache");
+            }
+
             update_option(self::OPTION_SLUG_VERSION, $pluginData["Version"]);
 
             if (version_compare($this->version, "2.1.2", "<=") && version_compare($this->version, "1.0.0", "!=")) {
