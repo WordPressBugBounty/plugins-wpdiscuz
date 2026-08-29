@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comments, wordpress comments, ajax comments, live comments, comment form, comment voting, disqus alternative, social comments, frontend comments, comment system
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 7.6.66
+Stable tag: 7.6.67
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -202,6 +202,16 @@ No. wpDiscuz does not remove or modify existing WordPress comments when uninstal
 
 Please remember to delete all caches and purge CDN after the update.
 
+= Comments - wpDiscuz v7.6.67 - 29.08.2026 =
+
+* Fixed: Registered users can vote independently when they share an IP address, while registered authors are still blocked from voting on their own comments with the correct message.
+* Fixed: Guests no longer fall into one shared voting identity when privacy software removes visitor IP addresses. Affected guests must log in to vote even when guest voting is enabled.
+* Added: The `wpdiscuz_deny_vote_from_same_ip` filter lets site owners show voting buttons and allow votes for same-IP guest comments without changing registered-user voting. Guests on that IP still share one voting identity.
+* Fixed: Vote totals remain visible when voting buttons are hidden by self-vote restrictions, and `wpdiscuz_show_vote` can now reliably hide other eligible voting components.
+* Fixed: Disabling comment voting now blocks the vote action through both native WordPress AJAX and the custom wpDiscuz AJAX endpoint.
+* Improved: The voting settings now explain the global request gate and IP-based guest identity, including shared-IP behavior and the login requirement when no visitor IP is available.
+* Note: Existing vote records and totals are preserved; this update changes future voting behavior and does not recalculate historical votes.
+
 = Comments - wpDiscuz v7.6.66 - 27.08.2026 =
 
 * Security: Fixed an unauthenticated comment disclosure vulnerability in AJAX comment loading. Reported by Jakub Herman via WPScan.
@@ -241,27 +251,3 @@ Fixed: An issue with comment editing( current_user_can('moderate_comments') ) wh
 * Improved: Additional HTML tag escaping when comment editor phrases are printed into inline JavaScript.
 * Fixed: Imported phrase files were not sanitized on upload, unlike phrases saved from the Phrases settings page.
 * Fixed: The comments block editor preview could be triggered on the front-end without an editing capability check.
-
-= Comments - wpDiscuz v7.6.60/v7.6.61 - 27.07.2026 =
-
-* Fixed: Stored XSS vulnerability in the comment image URL conversion. Image URLs are now escaped for HTML attribute output. Thanks to hieus for responsibly reporting the issue.
-* Fixed: Missing escaping on the custom URL field value and the default avatar image URL.
-* Fixed: A leftover debug function call in the default avatar handler.
-
-= Comments - wpDiscuz v7.6.59 - 03.07.2026 =
-
-* Fixed: An issue preventing the proper deletion of attachments.
-* Fixed: An Undefined index warning triggered during the active theme file validation check.
-
-= Comments - wpDiscuz v7.6.58 - 10.06.2026 =
-
-* Fixed: Missing escaping issues
-* Fixed: Internal images were missing in the combined version of the CSS
-
-= Comments - wpDiscuz v7.6.57 - 07.06.2026 =
-
-* Fixed: Low-severity security issues
-* Fixed: Attachment delete AJAX dereferences a missing comment before validation
-* Fixed: Bubble live-update AJAX renders arbitrary comment IDs without per-comment authorization
-* Fixed: Post-rating AJAX accepts ratings outside the five-star range
-* Fixed: Show-replies AJAX dereferences an invalid comment ID without validation

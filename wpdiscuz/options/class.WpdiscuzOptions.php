@@ -3457,8 +3457,8 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                         "showVotingButtons"        => [
                             "label"                => esc_html__("Show Voting Buttons", "wpdiscuz"),
                             "label_original"       => "Show Voting Buttons",
-                            "description"          => "",
-                            "description_original" => "",
+                            "description"          => esc_html__("Controls whether comment voting is available. Disabling this option hides the voting controls and blocks vote requests.", "wpdiscuz"),
+                            "description_original" => "Controls whether comment voting is available. Disabling this option hides the voting controls and blocks vote requests.",
                             "docurl"               => "https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/comment-thread-features/#voting-liking-buttons",
                         ],
                         "votingButtonsIcon"        => [
@@ -3485,8 +3485,8 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                         "isGuestCanVote"           => [
                             "label"                => esc_html__("Allow Guests to Vote for Comments", "wpdiscuz"),
                             "label_original"       => "Allow Guests to Vote for Comments",
-                            "description"          => "",
-                            "description_original" => "",
+                            "description"          => esc_html__("Guest votes are identified by IP address, so guests sharing an IP also share one voting identity. If the visitor IP is unavailable, guests must log in to vote even when this option is enabled.", "wpdiscuz"),
+                            "description_original" => "Guest votes are identified by IP address, so guests sharing an IP also share one voting identity. If the visitor IP is unavailable, guests must log in to vote even when this option is enabled.",
                             "docurl"               => "https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/comment-thread-features/#voting-liking-buttons",
                         ],
                         "highlightVotingButtons"   => [

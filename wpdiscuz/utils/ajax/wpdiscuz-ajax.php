@@ -37,7 +37,6 @@ $allowedActions       = [
     "wpdGetActivityPage"         => ["object" => $helper, "callback" => "getActivityPage", "for" => "all"],
     "wpdGetSubscriptionsPage"    => ["object" => $helper, "callback" => "getSubscriptionsPage", "for" => "all"],
     "wpdGetFollowsPage"          => ["object" => $helper, "callback" => "getFollowsPage", "for" => "all"],
-    "wpdVoteOnComment"           => ["object" => $helperAjax, "callback" => "voteOnComment", "for" => "all"],
     "wpdRedirect"                => ["object" => $helperAjax, "callback" => "redirect", "for" => "all"],
     "wpdEditComment"             => ["object" => $helperAjax, "callback" => "editComment", "for" => "all"],
     "wpdReadMore"                => ["object" => $helperAjax, "callback" => "readMore", "for" => "all"],
@@ -61,6 +60,20 @@ $allowedActions       = [
     "wmuDeleteAttachment"        => ["object" => $helperUpload, "callback" => "deleteAttachment", "for" => "all"],
 ];
 
+if ($wpdiscuz->options->thread_layouts["showVotingButtons"]) {
+    $allowedActions["wpdVoteOnComment"] = ["object" => $helperAjax, "callback" => "voteOnComment", "for" => "all"];
+}
+
+/**
+ * Filters actions registered by the custom wpDiscuz AJAX dispatcher.
+ *
+ * The built-in vote action is omitted when comment voting is globally disabled.
+ * An integration that owns its voting UI and policy may deliberately add the custom
+ * action here. This does not register native WordPress AJAX actions or restore the
+ * core voting controls.
+ *
+ * @param array $allowedActions The custom AJAX action definitions.
+ */
 $allowedActions = apply_filters("wpdiscuz_custom_ajax_allowed_actions", $allowedActions);
 
 foreach ($allowedActions as $action => $data) {

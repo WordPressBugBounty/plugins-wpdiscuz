@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.66
+ * Version: 7.6.67
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -795,13 +795,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                     if ($parentComment) {
                         $commentListArgs["isSingle"]         = true;
                         $commentListArgs["new_loaded_class"] = "wpd-new-loaded-comment";
-                        if ($comments && $this->options->thread_layouts["highlightVotingButtons"]) {
-                            if (!empty($commentListArgs['current_user']->ID)) {
-                                $commentListArgs['user_votes'] = $this->dbManager->getUserVotes($comments, $commentListArgs['current_user']->ID);
-                            } else {
-                                $commentListArgs['user_votes'] = $this->dbManager->getUserVotes($comments, md5(WpdiscuzHelper::getRealIPAddr()));
-                            }
-                        }
+                        $this->setCommentListUserVotes($comments, $commentListArgs);
                         $response                      = [];
                         $response["message"]           = wp_list_comments($commentListArgs, $comments);
                         $response["parentCommentID"]   = $parentComment->comment_ID;
@@ -919,13 +913,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
         if ($commentCache = $this->cache->getCommentsCache($this->commentsArgs)) {
             $commentList = $commentCache["commentList"];
             $commentData = $commentCache["commentData"];
-            if ($commentList && $this->options->thread_layouts["highlightVotingButtons"]) {
-                if (!empty($commentListArgs["current_user"]->ID)) {
-                    $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, $commentListArgs['current_user']->ID);
-                } else {
-                    $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, md5(WpdiscuzHelper::getRealIPAddr()));
-                }
-            }
+            $this->setCommentListUserVotes($commentList, $commentListArgs);
             if ($this->options->wp["isPaginate"]) {
                 $commentListArgs["page"]              = 0;
                 $commentListArgs["per_page"]          = 0;
@@ -1085,13 +1073,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 $commentListArgs["last_parent_id"] = $commentData["last_parent_id"];
             }
         }
-        if ($commentList && $this->options->thread_layouts["highlightVotingButtons"]) {
-            if (!empty($commentListArgs["current_user"]->ID)) {
-                $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, $commentListArgs['current_user']->ID);
-            } else {
-                $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, md5(WpdiscuzHelper::getRealIPAddr()));
-            }
-        }
+        $this->setCommentListUserVotes($commentList, $commentListArgs);
 
         return apply_filters("comments_array", $commentList, $this->commentsArgs["post_id"]);
     }
@@ -1948,6 +1930,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
             ],
         ];
         $currentUser      = WpdiscuzHelper::getCurrentUser();
+        $currentUserIP    = "";
         $currentUserEmail = "";
         $isUserLoggedIn   = false;
         if (!empty($currentUser->ID)) {
@@ -1955,6 +1938,9 @@ class WpdiscuzCore implements WpDiscuzConstants {
             $isUserLoggedIn   = true;
         } else if (!empty($_COOKIE["comment_author_email_" . COOKIEHASH])) {
             $currentUserEmail = urldecode(sanitize_email($_COOKIE["comment_author_email_" . COOKIEHASH]));
+        }
+        if (!$isUserLoggedIn && $this->options->thread_layouts["showVotingButtons"]) {
+            $currentUserIP = (string)WpdiscuzHelper::getRealIPAddr();
         }
         $this->form         = $this->wpdiscuzForm->getForm($postId);
         $high_level_user    = current_user_can("moderate_comments");
@@ -1981,6 +1967,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
             "can_stick_or_close"           => $can_stick_or_close,
             "user_follows"                 => $this->dbManager->getUserFollows($currentUserEmail),
             "current_user"                 => $currentUser,
+            "current_user_ip"              => $currentUserIP,
             "current_user_email"           => $currentUserEmail,
             "is_share_enabled"             => $this->options->isShareEnabled(),
             "post_permalink"               => $post_permalink,
@@ -2009,6 +1996,23 @@ class WpdiscuzCore implements WpDiscuzConstants {
         }
 
         return apply_filters("wpdiscuz_comment_list_args", $args);
+    }
+
+    private function setCommentListUserVotes($commentList, &$commentListArgs) {
+        if (!$commentList || !$this->options->thread_layouts["highlightVotingButtons"]) {
+            return;
+        }
+
+        if (!empty($commentListArgs["current_user"]->ID)) {
+            $userIdOrIp = $commentListArgs["current_user"]->ID;
+        } else {
+            $currentUserIP = isset($commentListArgs["current_user_ip"]) ? (string)$commentListArgs["current_user_ip"] : "";
+            $userIdOrIp    = trim($currentUserIP) !== "" ? md5($currentUserIP) : "";
+        }
+
+        if ($userIdOrIp !== "") {
+            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, $userIdOrIp);
+        }
     }
 
     public function addNewRoles() {
@@ -2087,13 +2091,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 $comments                                                        = array_merge([$comment], $children);
                 if ($comments) {
                     $response = [];
-                    if ($this->options->thread_layouts["highlightVotingButtons"]) {
-                        if (!empty($commentListArgs["current_user"]->ID)) {
-                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, $commentListArgs['current_user']->ID);
-                        } else {
-                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, md5(WpdiscuzHelper::getRealIPAddr()));
-                        }
-                    }
+                    $this->setCommentListUserVotes($comments, $commentListArgs);
                     do_action("wpdiscuz_before_show_replies", $this->commentsArgs, $commentListArgs["current_user"]);
                     $response["comment_list"] = wp_list_comments($commentListArgs, $comments);
                     do_action("wpdiscuz_after_show_replies", $this->commentsArgs, $commentListArgs["current_user"]);
@@ -2138,13 +2136,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                     $commentListArgs["isSingle"]         = true;
                     $commentListArgs["new_loaded_class"] = "wpd-new-loaded-comment";
                     $response                            = [];
-                    if ($comments && $this->options->thread_layouts["highlightVotingButtons"]) {
-                        if (!empty($commentListArgs['current_user']->ID)) {
-                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, $commentListArgs['current_user']->ID);
-                        } else {
-                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, md5(WpdiscuzHelper::getRealIPAddr()));
-                        }
-                    }
+                    $this->setCommentListUserVotes($comments, $commentListArgs);
                     $response["message"]           = wp_list_comments($commentListArgs, $comments);
                     $response["commentId"]         = $commentId;
                     $response["parentCommentID"]   = $parentComment->comment_ID;
@@ -2201,13 +2193,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                     $commentListArgs["isSingle"]         = true;
                     $commentListArgs["new_loaded_class"] = "wpd-new-loaded-comment";
                     $response                            = [];
-                    if ($comments && $this->options->thread_layouts["highlightVotingButtons"]) {
-                        if (!empty($commentListArgs['current_user']->ID)) {
-                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, $commentListArgs['current_user']->ID);
-                        } else {
-                            $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($comments, md5(WpdiscuzHelper::getRealIPAddr()));
-                        }
-                    }
+                    $this->setCommentListUserVotes($comments, $commentListArgs);
                     $response["message"]           = wp_list_comments($commentListArgs, $comments);
                     $response["commentId"]         = $hottestCommentId;
                     $response["callbackFunctions"] = [];

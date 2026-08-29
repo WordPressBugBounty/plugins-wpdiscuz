@@ -365,6 +365,27 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         return apply_filters("pre_comment_user_ip", ($_SERVER["REMOTE_ADDR"] ?? ""));
     }
 
+    public static function shouldDenyGuestVoteFromSameIP($comment, $userIP) {
+        $userIP = (string)$userIP;
+        if (trim($userIP) === "" || $comment->comment_author_IP !== $userIP) {
+            return false;
+        }
+
+        /**
+         * Filters whether a guest using the comment author's IP should be denied voting.
+         *
+         * This filter runs both while vote controls are rendered and when a vote request
+         * is handled. Returning false makes the controls eligible for display and allows
+         * the request. It does not give guests on the same IP separate voting identities.
+         * Callbacks should return the same value in both contexts.
+         *
+         * @param bool       $denyVote Whether to deny the vote.
+         * @param WP_Comment $comment  The comment receiving the vote.
+         * @param string     $userIP   The current guest's filtered IP address.
+         */
+        return (bool)apply_filters("wpdiscuz_deny_vote_from_same_ip", true, $comment, $userIP);
+    }
+
     public function getUIDData($uid) {
         $id_strings = explode("_", $uid);
 

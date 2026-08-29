@@ -510,6 +510,8 @@ _:-ms-lang(x), .wpd-social-login [wpd-tooltip]::before{top: -24px;}
 #wpdcom .wpd-comment-footer .wpd-vote-up,
 #wpdcom .wpd-comment-footer .wpd-vote-down{ width: 16px; height: 16px; opacity:0.7; cursor: pointer;}
 #wpdcom .wpd-comment-footer .wpd-vote-down.wpd-dislike-hidden{display:none!important;}
+#wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-readonly .wpd-vote-up,
+#wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-readonly .wpd-vote-down{display:none!important;}
 #wpdcom .wpd-comment-footer .wpd-vote-up svg,
 #wpdcom .wpd-comment-footer .wpd-vote-down svg{ fill: #888888; cursor: pointer;}
 #wpdcom .wpd-comment-footer .wpd-vote-result{padding:0 8px; font-size: 14px; text-align: center; color: #999999;}

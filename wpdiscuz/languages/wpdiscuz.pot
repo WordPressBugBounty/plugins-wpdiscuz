@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: wpDiscuz\n"
-"POT-Creation-Date: 2026-08-27 17:49+0400\n"
+"POT-Creation-Date: 2026-08-28 22:43+0400\n"
 "PO-Revision-Date: 2026-08-27 17:49+0400\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -30,11 +30,11 @@ msgstr ""
 msgid "Spam"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2024 options/phrases-layouts/phrases-comment.php:61
+#: class.WpdiscuzCore.php:2028 options/phrases-layouts/phrases-comment.php:61
 msgid "Admin"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2027 class.WpdiscuzCore.php:2040
+#: class.WpdiscuzCore.php:2031 class.WpdiscuzCore.php:2044
 #: options/phrases-layouts/phrases-comment.php:63
 #: options/pro-teasers/templates/wpdiscuz-comment-search.php:414
 #: options/pro-teasers/templates/wpdiscuz-comment-search.php:417
@@ -42,17 +42,17 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2030 options/phrases-layouts/phrases-comment.php:65
+#: class.WpdiscuzCore.php:2034 options/phrases-layouts/phrases-comment.php:65
 msgid "Editor"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2033 options/phrases-layouts/phrases-comment.php:69
+#: class.WpdiscuzCore.php:2037 options/phrases-layouts/phrases-comment.php:69
 #: options/pro-teasers/templates/wpdiscuz-advanced-likers.php:133
 #: options/pro-teasers/templates/wpdiscuz-mycred-integration.php:88
 msgid "Member"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2041 options/phrases-layouts/phrases-comment.php:67
+#: class.WpdiscuzCore.php:2045 options/phrases-layouts/phrases-comment.php:67
 #: options/pro-teasers/templates/wpdiscuz-buddypress-integration.php:181
 #: options/pro-teasers/templates/wpdiscuz-buddypress-integration.php:184
 #: options/pro-teasers/templates/wpdiscuz-giphy-integration.php:133
@@ -60,38 +60,38 @@ msgstr ""
 msgid "Guest"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2061
+#: class.WpdiscuzCore.php:2065
 msgid "Invalid comment"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2431
+#: class.WpdiscuzCore.php:2417
 msgid "Selected Text"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2433
+#: class.WpdiscuzCore.php:2419
 msgid "No text is selected. Please select a part of text from post content."
 msgstr ""
 
-#: class.WpdiscuzCore.php:2438
+#: class.WpdiscuzCore.php:2424
 msgid "Your Question to Readers"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2440
+#: class.WpdiscuzCore.php:2426
 msgid ""
 "A simple question or a call to leave a feedback on the selected part of "
 "text. Something like &quot;By the way. Do you agree with this?&quot; or "
 "&quot;Would love your thoughts, please comment on this.&quot;"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2446
+#: class.WpdiscuzCore.php:2432
 msgid "e.g: Any thoughts on this?"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2451
+#: class.WpdiscuzCore.php:2437
 msgid "Feedback Button Display Type"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2453
+#: class.WpdiscuzCore.php:2439
 msgid ""
 "By default the inline feedback form is closed and only the button is "
 "displayed. Once reader scrolled and reached to the selected text part, this "
@@ -101,54 +101,54 @@ msgid ""
 "Readers can close it using [x] button."
 msgstr ""
 
-#: class.WpdiscuzCore.php:2461
+#: class.WpdiscuzCore.php:2447
 msgid "CLOSED"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2471
+#: class.WpdiscuzCore.php:2457
 msgid "OPENED"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2482
+#: class.WpdiscuzCore.php:2468
 msgid "Add Inline Feedback Button"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2733 class.WpdiscuzCore.php:2736
+#: class.WpdiscuzCore.php:2719 class.WpdiscuzCore.php:2722
 msgid "Dashboard"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2743 class.WpdiscuzCore.php:2746
+#: class.WpdiscuzCore.php:2729 class.WpdiscuzCore.php:2732
 #: options/html-options.php:724 options/html-options.php:903
 #: options/pro-teasers/templates/wpdiscuz-buddypress-integration.php:257
 msgid "Settings"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2754 class.WpdiscuzCore.php:2757
+#: class.WpdiscuzCore.php:2740 class.WpdiscuzCore.php:2743
 #: options/pro-teasers/templates/wpdiscuz-comment-author-info.php:205
 msgid "Phrases"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2765 class.WpdiscuzCore.php:2768
+#: class.WpdiscuzCore.php:2751 class.WpdiscuzCore.php:2754
 #: options/pro-teasers/templates/wpdiscuz-reviews.php:924
 msgid "Tools"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2775 class.WpdiscuzCore.php:2778
+#: class.WpdiscuzCore.php:2761 class.WpdiscuzCore.php:2764
 #: options/class.WpdiscuzAddons.php:37 options/class.WpdiscuzAddons.php:38
 #: options/html-options.php:29
 msgid "Addons"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2786 class.WpdiscuzCore.php:2789
-#: class.WpdiscuzCore.php:2800
+#: class.WpdiscuzCore.php:2772 class.WpdiscuzCore.php:2775
+#: class.WpdiscuzCore.php:2786
 msgid "Purge All Caches"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2797
+#: class.WpdiscuzCore.php:2783
 msgid "Purge This Url Caches"
 msgstr ""
 
-#: class.WpdiscuzCore.php:2882
+#: class.WpdiscuzCore.php:2868
 msgid ""
 "This is just a demo of wpDiscuz comment section.<br>\n"
 "            Further customization can be done in the Dashboard > wpDiscuz > "
@@ -157,19 +157,19 @@ msgid ""
 "wpDiscuz > Forms admin page."
 msgstr ""
 
-#: class.WpdiscuzCore.php:2891
+#: class.WpdiscuzCore.php:2877
 msgid "wpDiscuz is not loaded for the following reason."
 msgstr ""
 
-#: class.WpdiscuzCore.php:2893
+#: class.WpdiscuzCore.php:2879
 msgid "The post type doesn't support comments."
 msgstr ""
 
-#: class.WpdiscuzCore.php:2895
+#: class.WpdiscuzCore.php:2881
 msgid "The comments are closed for the post."
 msgstr ""
 
-#: class.WpdiscuzCore.php:2897
+#: class.WpdiscuzCore.php:2883
 msgid ""
 "The post type is not enabled in the \"Display comment form for post types\" "
 "section."
@@ -314,7 +314,7 @@ msgstr ""
 #: options/pro-teasers/templates/wpdiscuz-comment-author-info.php:344
 #: options/pro-teasers/templates/wpdiscuz-comment-author-info.php:347
 #: options/pro-teasers/templates/wpdiscuz-user-comment-mentioning.php:261
-#: utils/class.WpdiscuzHelperAjax.php:1143
+#: utils/class.WpdiscuzHelperAjax.php:1152
 msgid "Comments"
 msgstr ""
 
@@ -1188,7 +1188,7 @@ msgstr ""
 msgid "Advanced Likers"
 msgstr ""
 
-#: options/addons/cai/title.php:8 utils/class.WpdiscuzHelperAjax.php:1139
+#: options/addons/cai/title.php:8 utils/class.WpdiscuzHelperAjax.php:1148
 msgid "Comment Author"
 msgstr ""
 
@@ -1883,7 +1883,7 @@ msgstr ""
 msgid "You've not made any changes"
 msgstr ""
 
-#: options/class.WpdiscuzOptions.php:466 utils/class.WpdiscuzHelper.php:1921
+#: options/class.WpdiscuzOptions.php:466 utils/class.WpdiscuzHelper.php:1942
 msgid "Save"
 msgstr ""
 
@@ -2025,7 +2025,7 @@ msgstr ""
 #: options/pro-teasers/templates/wpdiscuz-comment-author-info.php:246
 #: options/pro-teasers/templates/wpdiscuz-subscription-manager.php:52
 #: options/pro-teasers/templates/wpdiscuz-subscription-manager.php:61
-#: utils/class.WpdiscuzHelperAjax.php:1148
+#: utils/class.WpdiscuzHelperAjax.php:1157
 msgid "Subscriptions"
 msgstr ""
 
@@ -3159,6 +3159,12 @@ msgstr ""
 msgid "Show Voting Buttons"
 msgstr ""
 
+#: options/class.WpdiscuzOptions.php:3460
+msgid ""
+"Controls whether comment voting is available. Disabling this option hides "
+"the voting controls and blocks vote requests."
+msgstr ""
+
 #: options/class.WpdiscuzOptions.php:3465
 msgid "Voting Buttons Icon"
 msgstr ""
@@ -3173,6 +3179,13 @@ msgstr ""
 
 #: options/class.WpdiscuzOptions.php:3486
 msgid "Allow Guests to Vote for Comments"
+msgstr ""
+
+#: options/class.WpdiscuzOptions.php:3488
+msgid ""
+"Guest votes are identified by IP address, so guests sharing an IP also share "
+"one voting identity. If the visitor IP is unavailable, guests must log in to "
+"vote even when this option is enabled."
 msgstr ""
 
 #: options/class.WpdiscuzOptions.php:3493
@@ -6289,16 +6302,16 @@ msgstr ""
 
 #: options/pro-teasers/templates/wpdiscuz-buddypress-integration.php:80
 #: options/pro-teasers/templates/wpdiscuz-buddypress-integration.php:162
-#: utils/class.WpdiscuzHelperAjax.php:1074
-#: utils/class.WpdiscuzHelperAjax.php:1153
+#: utils/class.WpdiscuzHelperAjax.php:1083
+#: utils/class.WpdiscuzHelperAjax.php:1162
 msgid "Following"
 msgstr ""
 
 #: options/pro-teasers/templates/wpdiscuz-buddypress-integration.php:84
 #: options/pro-teasers/templates/wpdiscuz-buddypress-integration.php:173
 #: options/pro-teasers/templates/wpdiscuz-subscription-manager.php:357
-#: utils/class.WpdiscuzHelperAjax.php:1070
-#: utils/class.WpdiscuzHelperAjax.php:1158
+#: utils/class.WpdiscuzHelperAjax.php:1079
+#: utils/class.WpdiscuzHelperAjax.php:1167
 msgid "Followers"
 msgstr ""
 
@@ -6840,7 +6853,7 @@ msgid "Unblock"
 msgstr ""
 
 #: options/pro-teasers/templates/wpdiscuz-comment-author-info.php:333
-#: utils/class.WpdiscuzHelperAjax.php:1163
+#: utils/class.WpdiscuzHelperAjax.php:1172
 msgid "Last Activity"
 msgstr ""
 
@@ -9134,7 +9147,7 @@ msgid "All Subscriptions"
 msgstr ""
 
 #: options/pro-teasers/templates/wpdiscuz-subscription-manager.php:219
-#: utils/class.WpdiscuzHelperAjax.php:1054
+#: utils/class.WpdiscuzHelperAjax.php:1063
 msgid "Subscribers"
 msgstr ""
 
@@ -10240,65 +10253,65 @@ msgstr ""
 msgid "%sK"
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:587
+#: utils/class.WpdiscuzHelper.php:608
 msgid "Sticky"
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:1745
+#: utils/class.WpdiscuzHelper.php:1766
 msgid "Are you sure you want to reset fields ratings?"
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:1775
+#: utils/class.WpdiscuzHelper.php:1796
 msgid "Reset Fields Ratings"
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:1777
+#: utils/class.WpdiscuzHelper.php:1798
 msgid "Working..."
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:1779
+#: utils/class.WpdiscuzHelper.php:1800
 msgid "Done"
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:1920
+#: utils/class.WpdiscuzHelper.php:1941
 msgid "Enter link:"
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:2004 utils/class.WpdiscuzHelper.php:2010
-#: utils/class.WpdiscuzHelper.php:2036 utils/class.WpdiscuzHelper.php:2042
-#: utils/class.WpdiscuzHelper.php:2056 utils/class.WpdiscuzHelper.php:2064
+#: utils/class.WpdiscuzHelper.php:2025 utils/class.WpdiscuzHelper.php:2031
+#: utils/class.WpdiscuzHelper.php:2057 utils/class.WpdiscuzHelper.php:2063
+#: utils/class.WpdiscuzHelper.php:2077 utils/class.WpdiscuzHelper.php:2085
 msgid "Current post doesn't found."
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:2027
+#: utils/class.WpdiscuzHelper.php:2048
 msgid "Sorry, replies to unapproved comments are not allowed."
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:2051
+#: utils/class.WpdiscuzHelper.php:2072
 msgid "Sorry, comments are closed for this item."
 msgstr ""
 
-#: utils/class.WpdiscuzHelper.php:2062 utils/class.WpdiscuzHelper.php:2070
+#: utils/class.WpdiscuzHelper.php:2083 utils/class.WpdiscuzHelper.php:2091
 msgid "Sorry, comments are not allowed for this item."
 msgstr ""
 
-#: utils/class.WpdiscuzHelperAjax.php:893
+#: utils/class.WpdiscuzHelperAjax.php:902
 msgid "Read More"
 msgstr ""
 
-#: utils/class.WpdiscuzHelperAjax.php:1058
+#: utils/class.WpdiscuzHelperAjax.php:1067
 msgid "Subscription - posts"
 msgstr ""
 
-#: utils/class.WpdiscuzHelperAjax.php:1062
+#: utils/class.WpdiscuzHelperAjax.php:1071
 msgid "Subscription - all comments"
 msgstr ""
 
-#: utils/class.WpdiscuzHelperAjax.php:1066
+#: utils/class.WpdiscuzHelperAjax.php:1075
 msgid "Subscription - comment"
 msgstr ""
 
-#: utils/class.WpdiscuzHelperAjax.php:1197
+#: utils/class.WpdiscuzHelperAjax.php:1206
 msgid "Something is wrong"
 msgstr ""
 

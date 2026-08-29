@@ -299,8 +299,26 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
             $replace[] = $commentLinkIcon;
         }
 
-        $showVote = apply_filters("wpdiscuz_show_vote", false, $comment, $user["user"], $args["current_user"]);
-        if ($this->options->thread_layouts["showVotingButtons"] && $isApproved) {
+        $isVotingEnabled = (bool)$this->options->thread_layouts["showVotingButtons"];
+        $currentUserID   = !empty($args["current_user"]->ID) ? (int)$args["current_user"]->ID : 0;
+        $currentUserIP   = isset($args["current_user_ip"]) ? (string)$args["current_user_ip"] : "";
+        $isVoteReadOnly  = $currentUserID ? $currentUserID === (int)$comment->user_id : WpdiscuzHelper::shouldDenyGuestVoteFromSameIP($comment, $currentUserIP);
+
+        /**
+         * Filters whether the voting component is rendered for a comment.
+         *
+         * The incoming value reflects the global voting setting. Global voting and
+         * comment approval remain hard gates. When self-voting is denied, the component
+         * stays visible with read-only totals while its voting buttons are hidden.
+         *
+         * @param bool       $showVote   Whether to render the voting component.
+         * @param WP_Comment $comment    The comment being rendered.
+         * @param mixed      $commentUser The comment author's user value.
+         * @param WP_User    $currentUser The current visitor's user object.
+         */
+        $showVote        = (bool)apply_filters("wpdiscuz_show_vote", $isVotingEnabled, $comment, $user["user"], $args["current_user"]);
+        $showVote        = $isVotingEnabled && $isApproved && $showVote;
+        if ($showVote) {
             if ($this->options->thread_layouts["votingButtonsStyle"]) {
                 $voteCount  = isset($commentMetas[self::META_KEY_VOTES_SEPARATE]) ? maybe_unserialize($commentMetas[self::META_KEY_VOTES_SEPARATE][0]) : ["like" => 0, "dislike" => 0];
                 $like       = !empty($voteCount["like"]) ? intval($voteCount["like"]) : 0;
@@ -329,13 +347,12 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
             $search[]  = "{VOTE_UP_ICON}";
             $search[]  = "{VOTE_RESULT}";
             $search[]  = "{VOTE_DOWN_ICON}";
-            $replace[] = "wpd-vote";
+            $replace[] = "wpd-vote" . ($isVoteReadOnly ? " wpd-vote-readonly" : "");
             $replace[] = "wpd-vote-up wpd_not_clicked" . $wpdUpClass;
             $replace[] = "wpd-vote-down wpd_not_clicked" . ($this->options->thread_layouts["enableDislikeButton"] ? "" : " wpd-dislike-hidden") . $wpdDownClass;
             $replace[] = $args["voting_icons"][0];
             $replace[] = $voteResult;
             $replace[] = $args["voting_icons"][1];
-            $showVote  = true;
         }
 
         $showReply = false;
