@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.67
+ * Version: 7.6.68
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -457,7 +457,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                     wp_send_json_error("wc_msg_input_max_length");
                 }
 
-                $website_url   = $website_url ? urldecode($website_url) : "";
+                $website_url   = $website_url ?: "";
                 $stickyComment = "";
                 $closedComment = 0;
                 if ($comment_parent === 0 && (current_user_can("moderate_comments") || ($post && isset($post->post_author) && $post->post_author == $currentUser->ID))) {
@@ -484,17 +484,12 @@ class WpdiscuzCore implements WpDiscuzConstants {
                     wp_send_json_error("wc_msg_required_fields");
                 }
                 do_action("wpdiscuz_before_wp_new_comment", $new_commentdata);
-                $new_comment_id = wp_new_comment(wp_slash($new_commentdata));
+                [$new_comment_id, $newComment] = $this->insertComment($new_commentdata);
                 if ($closedComment) {
                     add_comment_meta($new_comment_id, self::META_KEY_CLOSED, "1");
                 }
-                $newComment = get_comment($new_comment_id);
 
-                if ($newComment->comment_approved === "trash") {
-                    wp_send_json_error("wc_msg_comment_is_trash");
-                } elseif ($newComment->comment_approved === "spam") {
-                    wp_send_json_error("wc_msg_comment_is_spam");
-                }
+                $this->sendRejectedCommentResponse($newComment, $new_commentdata);
 
                 $held_moderate = 1;
                 if ($newComment->comment_approved === "1") {
@@ -558,6 +553,78 @@ class WpdiscuzCore implements WpDiscuzConstants {
         } else {
             wp_send_json_error("wc_msg_required_fields");
         }
+    }
+
+    /**
+     * insert and retrieve a comment, or end the request with a safe ajax error
+     *
+     * @param array $commentData comment data passed to WordPress
+     * @return array comment id and comment object
+     */
+    private function insertComment($commentData) {
+        $commentId = wp_new_comment(wp_slash($commentData), true);
+        if (is_wp_error($commentId)) {
+            $this->sendCommentInsertionError($commentId->get_error_message());
+        }
+        if (!is_numeric($commentId) || (int)$commentId <= 0) {
+            $this->sendCommentInsertionError();
+        }
+        $commentId = (int)$commentId;
+        $comment   = get_comment($commentId);
+        if (!($comment instanceof WP_Comment) || (int)$comment->comment_ID !== $commentId) {
+            $this->sendCommentInsertionError();
+        }
+
+        return [$commentId, $comment];
+    }
+
+    /**
+     * send a plain-text ajax error when WordPress cannot create a comment
+     */
+    private function sendCommentInsertionError($message = "") {
+        $message = trim(wp_strip_all_tags((string)$message));
+        if ($message === "") {
+            $message = wp_strip_all_tags(__("<strong>Error:</strong> The comment could not be saved. Please try again later."));
+        }
+        wp_send_json_error(["error" => esc_html($message)]);
+    }
+
+    /**
+     * send the ajax error response for a comment WordPress stored as spam or trash
+     *
+     * does nothing for any other comment status, so both the normal and the inline
+     * comment handlers can call it unconditionally right after the comment is created
+     *
+     * @param WP_Comment $comment the comment as it was stored
+     * @param array $commentData the data the comment was created from
+     */
+    private function sendRejectedCommentResponse($comment, $commentData = []) {
+        if (!($comment instanceof WP_Comment) || ($comment->comment_approved !== "trash" && $comment->comment_approved !== "spam")) {
+            return;
+        }
+        $phraseKey = $comment->comment_approved === "trash" ? "wc_msg_comment_is_trash" : "wc_msg_comment_is_spam";
+        /**
+         * Filters the ajax error payload sent when a new comment is stored as spam or trash.
+         *
+         * Return a phrase key to keep using a wpDiscuz phrase, or ["error" => "message"] to
+         * display a literal message instead. Moderation plugins that set the spam or trash
+         * status can use this to explain why the comment was rejected.
+         *
+         * The message is escaped here, so a filter passes plain text and not markup. A
+         * return value that could not be displayed falls back to the phrase key, so the
+         * commenter is never left looking at an empty message.
+         *
+         * @param string|array $response phrase key, or ["error" => "message"]
+         * @param WP_Comment $comment the comment as it was stored
+         * @param array $commentData the data the comment was created from
+         */
+        $response = apply_filters("wpdiscuz_comment_rejected_response", $phraseKey, $comment, $commentData);
+        if (is_array($response) && isset($response["error"]) && is_string($response["error"]) && trim($response["error"]) !== "") {
+            $response = ["error" => esc_html($response["error"])];
+        } else if (!is_string($response) || trim($response) === "") {
+            $response = $phraseKey;
+        }
+        wp_send_json_error($response);
     }
 
     /**
@@ -1937,7 +2004,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
             $currentUserEmail = $currentUser->user_email;
             $isUserLoggedIn   = true;
         } else if (!empty($_COOKIE["comment_author_email_" . COOKIEHASH])) {
-            $currentUserEmail = urldecode(sanitize_email($_COOKIE["comment_author_email_" . COOKIEHASH]));
+            $currentUserEmail = sanitize_email($_COOKIE["comment_author_email_" . COOKIEHASH]);
         }
         if (!$isUserLoggedIn && $this->options->thread_layouts["showVotingButtons"]) {
             $currentUserIP = (string)WpdiscuzHelper::getRealIPAddr();
@@ -2539,8 +2606,8 @@ class WpdiscuzCore implements WpDiscuzConstants {
                         $email   = $currentUser->user_email;
                     } else {
                         $user_id = 0;
-                        $name    = urldecode(trim(sanitize_text_field(wp_unslash($_POST["wpd_inline_name"]))));
-                        if (!empty($_POST["wpd_inline_email"]) && ($email = sanitize_email(trim($_POST["wpd_inline_email"])))) {
+                        $name    = trim(sanitize_text_field(wp_unslash($_POST["wpd_inline_name"])));
+                        if (!empty($_POST["wpd_inline_email"]) && ($email = sanitize_email(trim(wp_unslash($_POST["wpd_inline_email"]))))) {
                             if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
                                 wp_send_json_error("wc_error_email_text");
                             }
@@ -2548,7 +2615,6 @@ class WpdiscuzCore implements WpDiscuzConstants {
                             $email       = uniqid() . "@example.com";
                             $isAnonymous = true;
                         }
-                        $email = urldecode($email);
                     }
                     $email = apply_filters("wpdiscuz_feedback_commenter_email", $email);
 
@@ -2586,7 +2652,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                         }
 
                         $this->helper->restrictCommentingPerUser($email, 0, $inline_form->post_id);
-                        $new_comment_id = wp_new_comment(wp_slash($new_commentdata));
+                        [$new_comment_id, $newComment] = $this->insertComment($new_commentdata);
                         add_comment_meta($new_comment_id, self::META_KEY_FEEDBACK_FORM_ID, $inline_form->id);
                         $args       = [
                             "count"      => true,
@@ -2598,7 +2664,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                                 ],
                             ],
                         ];
-                        $newComment = get_comment($new_comment_id);
+                        $this->sendRejectedCommentResponse($newComment, $new_commentdata);
                         if ($newComment->comment_approved === "1" && class_exists("WooCommerce") && get_post_type($inline_form->post_id) === "product") {
                             update_post_meta($inline_form->post_id, "_wc_review_count", get_comments([
                                 "count"   => true,
@@ -2620,9 +2686,6 @@ class WpdiscuzCore implements WpDiscuzConstants {
                                     $this->helperEmail->confirmEmailSender($confirmData["id"], $confirmData["activation_key"], $inline_form->post_id, $email);
                                 }
                             }
-                        }
-                        if ($newComment->comment_approved === "spam" || $newComment->comment_approved === "trash") {
-                            wp_send_json_error();
                         }
                         $response                                      = [];
                         $commentListArgs                               = $this->getCommentListArgs($inline_form->post_id);

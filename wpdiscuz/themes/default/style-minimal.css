@@ -345,6 +345,12 @@ _:-ms-lang(x), #wpdcom .wpd-comment .wpd-comment-left{width: auto;}
 #wpdcom .wpd-comment-footer .wpd-vote-down.wpd-dislike-hidden{display:none!important;}
 #wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-readonly .wpd-vote-up,
 #wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-readonly .wpd-vote-down{display:none!important;}
+#wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-disabled .wpd-vote-up,
+#wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-disabled .wpd-vote-down,
+#wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-disabled .wpd-vote-up:hover,
+#wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-disabled .wpd-vote-down:hover{opacity:0.35; cursor:not-allowed;}
+#wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-disabled .wpd-vote-up svg,
+#wpdcom .wpd-comment-footer .wpd-vote.wpd-vote-disabled .wpd-vote-down svg{cursor:not-allowed;}
 #wpdcom .wpd-comment-footer .wpd-vote-up svg,
 #wpdcom .wpd-comment-footer .wpd-vote-down svg{ fill: #888888; cursor: pointer;}
 #wpdcom .wpd-comment-footer .wpd-vote-result{padding:0 8px; font-size: 14px; text-align: center; color: #999999;}

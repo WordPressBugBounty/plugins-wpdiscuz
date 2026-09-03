@@ -2562,7 +2562,10 @@ jQuery(document).ready(function ($) {
                             }
                             wpdiscuzAjaxObj.setCommentMessage(r.data.notification, 'success');
                         } else if (r.data) {
-                            wpdiscuzAjaxObj.setCommentMessage(wpdiscuzAjaxObj.applyFilterOnPhrase(wpdiscuzAjaxObj[r.data], r.data, clickedButton), 'error');
+                            var errMsg = typeof r.data === 'object' && r.data.error
+                                ? r.data.error
+                                : wpdiscuzAjaxObj.applyFilterOnPhrase(wpdiscuzAjaxObj[r.data], r.data, clickedButton);
+                            wpdiscuzAjaxObj.setCommentMessage(errMsg, 'error');
                         }
                     } else {
                         wpdiscuzAjaxObj.setCommentMessage(r, 'error');

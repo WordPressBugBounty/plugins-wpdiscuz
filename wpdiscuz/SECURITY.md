@@ -14,6 +14,29 @@ If you discover a security vulnerability within wpDiscuz, please send an email t
 
 ## Security Fixes
 
+### Google Client Secret Exposure (Fixed in 7.6.68)
+
+**Severity:** Medium
+**Type:** Sensitive Data Exposure
+**Affected Setting:** Comments > Settings > Social Login and Share > Google Client Secret
+**Affected Versions:** Up to and including 7.6.67. The exposure was present continuously from June 2019, when the Google Login options were added, until 7.6.68.
+
+**Description:**
+The Google Client Secret and Client ID were added to the `$jsArgs` array in `WpdiscuzOptions`, which is localized to the front end as `wpdiscuzAjaxObj`. On any site that had those settings filled in, both values were readable in the HTML source of every front-end page, by any visitor.
+
+Neither value was used by the front-end JavaScript. The Google OAuth flow runs entirely server-side in `forms/wpdFormAttr/Login/SocialLogin.php`, which reads the options directly. The Client ID is public by design and carries no risk on its own; the Client Secret is not meant to leave the server.
+
+**Fix Applied:**
+1. Removed `googleClientSecret` from the `$jsArgs` array
+2. Removed the unused `googleClientID` from the same array
+3. Stored option values are untouched, and Google Login continues to work with no reconfiguration
+
+**Recommended Action:**
+Sites that had Google Login configured on an affected version should generate a new Client Secret in the Google Cloud Console and save it under Comments > Settings > Social Login and Share. The redirect URIs registered for the Google app limit what a third party can do with the old secret, but it should no longer be treated as private.
+
+**Files Modified:**
+- `options/class.WpdiscuzOptions.php` - Removed `googleClientSecret` and `googleClientID` from `$jsArgs`
+
 ### CVE-2025-68997 - IDOR Vulnerability (Fixed in 7.6.44)
 
 **Severity:** Medium

@@ -470,8 +470,8 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             "wc_read_more"                                      => esc_html__("Read more &raquo;", "wpdiscuz"),
             "wc_anonymous"                                      => esc_html__("Anonymous", "wpdiscuz"),
             "wc_msg_required_fields"                            => esc_html__("Please fill out required fields", "wpdiscuz"),
-            "wc_msg_comment_is_trash"                           => esc_html__("This comment is not acceptable.", "wpdiscuz"),
-            "wc_msg_comment_is_spam"                            => esc_html__("This comment is not acceptable.", "wpdiscuz"),
+            "wc_msg_comment_is_trash"                           => esc_html__("Your comment was not published.", "wpdiscuz"),
+            "wc_msg_comment_is_spam"                            => esc_html__("Your comment was not published.", "wpdiscuz"),
             "wc_connect_with"                                   => esc_html__("Connect with", "wpdiscuz"),
             "wc_subscribed_to"                                  => esc_html__("You're subscribed to", "wpdiscuz"),
             "wc_form_subscription_submit"                       => esc_html__("&rsaquo;", "wpdiscuz"),
@@ -1220,8 +1220,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $jsArgs["facebookAppID"]                = $this->social["fbAppID"];
         $jsArgs["facebookUseOAuth2"]            = $this->social["fbUseOAuth2"];
         $jsArgs["enableGoogleLogin"]            = $this->social["enableGoogleLogin"];
-        $jsArgs["googleClientID"]               = $this->social["googleClientID"];
-        $jsArgs["googleClientSecret"]           = $this->social["googleClientSecret"];
         $jsArgs["cookiehash"]                   = COOKIEHASH;
         $jsArgs["isLoadOnlyParentComments"]     = $this->thread_display["isLoadOnlyParentComments"];
         $jsArgs["scrollToComment"]              = $this->thread_display["scrollToComment"];

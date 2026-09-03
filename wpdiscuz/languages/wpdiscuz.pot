@@ -1913,9 +1913,7 @@ msgid "Please fill out required fields"
 msgstr ""
 
 #: options/class.WpdiscuzOptions.php:473 options/class.WpdiscuzOptions.php:474
-#: options/phrases-layouts/phrases-error.php:124
-#: options/phrases-layouts/phrases-error.php:131
-msgid "This comment is not acceptable."
+msgid "Your comment was not published."
 msgstr ""
 
 #: options/class.WpdiscuzOptions.php:475
@@ -5788,6 +5786,14 @@ msgstr ""
 
 #: options/phrases-layouts/phrases-error.php:110
 msgid "Message if comment text not changed"
+msgstr ""
+
+#: options/phrases-layouts/phrases-error.php:124
+msgid "Message if comment was moved to trash"
+msgstr ""
+
+#: options/phrases-layouts/phrases-error.php:131
+msgid "Message if comment was marked as spam"
 msgstr ""
 
 #: options/phrases-layouts/phrases-follow.php:7

@@ -121,14 +121,14 @@ if (!defined("ABSPATH")) {
         </tr>
         <tr valign="top">
             <th scope="row"><label
-                    for="wc_msg_comment_is_trash"><?php esc_html_e("This comment is not acceptable.", "wpdiscuz"); ?></label>
+                    for="wc_msg_comment_is_trash"><?php esc_html_e("Message if comment was moved to trash", "wpdiscuz"); ?></label>
             </th>
             <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_msg_comment_is_trash"]); ?>"
                                    name="wc_msg_comment_is_trash" id="wc_msg_comment_is_trash"/></td>
         </tr>
         <tr valign="top">
             <th scope="row"><label
-                    for="wc_msg_comment_is_spam"><?php esc_html_e("This comment is not acceptable.", "wpdiscuz"); ?></label>
+                    for="wc_msg_comment_is_spam"><?php esc_html_e("Message if comment was marked as spam", "wpdiscuz"); ?></label>
             </th>
             <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_msg_comment_is_spam"]); ?>"
                                    name="wc_msg_comment_is_spam" id="wc_msg_comment_is_spam"/></td>

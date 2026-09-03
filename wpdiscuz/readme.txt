@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comments, wordpress comments, ajax comments, live comments, comment form, comment voting, disqus alternative, social comments, frontend comments, comment system
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 7.6.67
+Stable tag: 7.6.68
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -201,6 +201,18 @@ No. wpDiscuz does not remove or modify existing WordPress comments when uninstal
 **IMPORTANT!**
 
 Please remember to delete all caches and purge CDN after the update.
+
+= Comments - wpDiscuz v7.6.68 - 03.09.2026 =
+
+* Added: The `wpdiscuz_comment_rejected_response` filter lets moderation plugins provide a clear explanation when a new comment is stored as spam or trash.
+* Fixed: Main and inline comment forms now show a moderation plugin's rejection explanation while keeping the standard wpDiscuz spam or trash phrase when no plugin provides one.
+* Fixed: Inline comments stored as spam or trash no longer create subscription records or send mention notifications.
+* Fixed: Comment insertion failures, including duplicate-comment and flood checks, now return a valid AJAX error instead of terminating the request with an unusable response.
+* Fixed: Plus signs and encoded data are preserved in inline commenter names and email addresses, the comment-author email cookie, and submitted website URLs.
+* Improved: The Phrases screen now identifies the spam and trash rejection fields separately.
+* Improved: Voting buttons now stay visible in a disabled state for visitors who cannot vote on a comment, instead of being hidden. Hiding them left visitors unaware that the site has voting at all. The buttons carry a `wpd-vote-disabled` class and a tooltip with the reason, and clicking one still shows the existing message.
+* Added: The `wpdiscuz_hide_readonly_vote_buttons` filter hides those buttons again, restoring the `wpd-vote-readonly` markup used before this release.
+* Security: The Google Client Secret is no longer included in the front-end JavaScript settings.
 
 = Comments - wpDiscuz v7.6.67 - 29.08.2026 =
 

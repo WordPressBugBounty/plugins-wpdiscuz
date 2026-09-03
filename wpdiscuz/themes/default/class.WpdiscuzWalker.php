@@ -303,13 +303,28 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
         $currentUserID   = !empty($args["current_user"]->ID) ? (int)$args["current_user"]->ID : 0;
         $currentUserIP   = isset($args["current_user_ip"]) ? (string)$args["current_user_ip"] : "";
         $isVoteReadOnly  = $currentUserID ? $currentUserID === (int)$comment->user_id : WpdiscuzHelper::shouldDenyGuestVoteFromSameIP($comment, $currentUserIP);
+        $voteDenialCause = $isVoteReadOnly ? ($currentUserID ? "self_vote" : "same_ip") : "";
+
+        /**
+         * Filters whether the voting buttons are hidden from a visitor who cannot vote.
+         *
+         * The buttons stay visible in a disabled state by default, so visitors still see
+         * that the site has voting and learn why a click was refused. Returning true hides
+         * them instead. Vote totals and the server side vote checks are unaffected.
+         *
+         * @param bool       $hideVoteButtons Whether to hide the voting buttons.
+         * @param WP_Comment $comment         The comment being rendered.
+         * @param string     $voteDenialCause Why voting is denied, "self_vote" or "same_ip".
+         */
+        $hideVoteButtons = $isVoteReadOnly && (bool)apply_filters("wpdiscuz_hide_readonly_vote_buttons", false, $comment, $voteDenialCause);
 
         /**
          * Filters whether the voting component is rendered for a comment.
          *
          * The incoming value reflects the global voting setting. Global voting and
-         * comment approval remain hard gates. When self-voting is denied, the component
-         * stays visible with read-only totals while its voting buttons are hidden.
+         * comment approval remain hard gates. When voting is denied, the component stays
+         * visible with read-only totals while its voting buttons are disabled, or hidden
+         * when wpdiscuz_hide_readonly_vote_buttons returns true.
          *
          * @param bool       $showVote   Whether to render the voting component.
          * @param WP_Comment $comment    The comment being rendered.
@@ -341,13 +356,26 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
                     $wpdDownClass = " wpd-down";
                 }
             }
+            $voteWrapperClasses = "wpd-vote";
+            $voteTooltip        = "";
+            if ($isVoteReadOnly) {
+                $voteWrapperClasses .= $hideVoteButtons ? " wpd-vote-readonly" : " wpd-vote-disabled";
+                if (!$hideVoteButtons) {
+                    $voteDenialPhrase = $this->options->getPhrase($voteDenialCause === "self_vote" ? "wc_self_vote" : "wc_deny_voting_from_same_ip", ["comment" => $comment]);
+                    if ($voteDenialPhrase) {
+                        $voteTooltip = " wpd-tooltip='" . esc_attr($voteDenialPhrase) . "' wpd-tooltip-size='medium'";
+                    }
+                }
+            }
             $search[]  = "{VOTE_WRAPPER_CLASSES}";
+            $search[]  = "{VOTE_TOOLTIP}";
             $search[]  = "{VOTE_UP_CLASSES}";
             $search[]  = "{VOTE_DOWN_CLASSES}";
             $search[]  = "{VOTE_UP_ICON}";
             $search[]  = "{VOTE_RESULT}";
             $search[]  = "{VOTE_DOWN_ICON}";
-            $replace[] = "wpd-vote" . ($isVoteReadOnly ? " wpd-vote-readonly" : "");
+            $replace[] = $voteWrapperClasses;
+            $replace[] = $voteTooltip;
             $replace[] = "wpd-vote-up wpd_not_clicked" . $wpdUpClass;
             $replace[] = "wpd-vote-down wpd_not_clicked" . ($this->options->thread_layouts["enableDislikeButton"] ? "" : " wpd-dislike-hidden") . $wpdDownClass;
             $replace[] = $args["voting_icons"][0];
