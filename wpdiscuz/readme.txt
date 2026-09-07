@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: comments, wordpress comments, ajax comments, live comments, comment form, comment voting, disqus alternative, social comments, frontend comments, comment system
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 7.6.68
+Stable tag: 7.6.69
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -201,6 +201,12 @@ No. wpDiscuz does not remove or modify existing WordPress comments when uninstal
 **IMPORTANT!**
 
 Please remember to delete all caches and purge CDN after the update.
+
+= Comments - wpDiscuz v7.6.69 - 07.09.2026 =
+
+* Fixed: Logging in with X (Twitter) ended on a blank page showing "0" instead of signing the visitor in. The callback URL and the requested scopes were placed in the authorization request without being URL-encoded.
+* Fixed: The Stick and Close actions under a comment on the WordPress Comments page never completed. The requests carried no wpDiscuz nonce, so they were rejected with "Nonce is invalid." and the button spinner kept turning. Both buttons also restore their icon now when a request fails, instead of spinning forever.
+* Improved: The Google social login button now uses the official multicolor Google "G" logo.
 
 = Comments - wpDiscuz v7.6.68 - 03.09.2026 =
 

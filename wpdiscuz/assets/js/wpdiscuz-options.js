@@ -51,14 +51,18 @@ jQuery(document).ready(function ($) {
     });
     $('body').on('click', '.wpd_stick_btn', function (e) {
         var btn = $(this);
-        $('.fas', btn).removeClass('fa-thumbtack');
-        $('.fas', btn).addClass('fa-pulse fa-spinner');
+        var icon = $('.fas', btn);
+        icon.removeClass('fa-thumbtack');
+        icon.addClass('fa-pulse fa-spinner');
         var commentId = btn.data('comment');
         var postId = btn.data('post');
         var data = new FormData();
         data.append('action', 'wpdStickComment');
         data.append('commentId', commentId);
         data.append('postId', postId);
+        if (wpdiscuzObj.nonceName) {
+            data.append(wpdiscuzObj.nonceName, wpdiscuzObj.nonce);
+        }
         $.ajax({
             type: 'POST',
             url: ajaxurl,
@@ -66,9 +70,9 @@ jQuery(document).ready(function ($) {
             contentType: false,
             processData: false,
         }).done(function (r) {
+            icon.removeClass('fa-pulse fa-spinner');
+            icon.addClass('fa-thumbtack');
             if (typeof r === 'object') {
-                $('.fas', btn).removeClass('fa-pulse fa-spinner');
-                $('.fas', btn).addClass('fa-thumbtack');
                 if (r.success) {
                     $('.wpd_stick_text', btn).text(r.data);
                 } else {
@@ -78,6 +82,8 @@ jQuery(document).ready(function ($) {
                 console.log(r);
             }
         }).fail(function (jqXHR, textStatus, errorThrown) {
+            icon.removeClass('fa-pulse fa-spinner');
+            icon.addClass('fa-thumbtack');
             console.log(errorThrown);
         });
         e.preventDefault();
@@ -85,14 +91,19 @@ jQuery(document).ready(function ($) {
     });
     $('body').on('click', '.wpd_close_btn', function (e) {
         var btn = $(this);
-        $('.fas', btn).removeClass('fa-lock fa-unlock');
-        $('.fas', btn).addClass('fa-spinner fa-pulse');
+        var icon = $('.fas', btn);
+        var currentIcon = icon.hasClass('fa-lock') ? 'fa-lock' : 'fa-unlock';
+        icon.removeClass('fa-lock fa-unlock');
+        icon.addClass('fa-spinner fa-pulse');
         var commentId = btn.data('comment');
         var postId = btn.data('post');
         var data = new FormData();
         data.append('action', 'wpdCloseThread');
         data.append('commentId', commentId);
         data.append('postId', postId);
+        if (wpdiscuzObj.nonceName) {
+            data.append(wpdiscuzObj.nonceName, wpdiscuzObj.nonce);
+        }
         $.ajax({
             type: 'POST',
             url: ajaxurl,
@@ -100,19 +111,22 @@ jQuery(document).ready(function ($) {
             contentType: false,
             processData: false,
         }).done(function (r) {
+            icon.removeClass('fa-pulse fa-spinner');
             if (typeof r === 'object') {
-                $('.fas', btn).removeClass('fa-pulse fa-spinner');
                 if (r.success) {
                     $('.wpd_close_text', btn).text(r.data.data);
-                    $('.fas', btn).removeClass('fa-lock fa-unlock');
-                    $('.fas', btn).addClass(r.data.icon);
+                    icon.addClass(r.data.icon);
                 } else {
+                    icon.addClass(currentIcon);
                     console.log(r.data);
                 }
             } else {
+                icon.addClass(currentIcon);
                 console.log(r);
             }
         }).fail(function (jqXHR, textStatus, errorThrown) {
+            icon.removeClass('fa-pulse fa-spinner');
+            icon.addClass(currentIcon);
             console.log(errorThrown);
         });
         e.preventDefault();

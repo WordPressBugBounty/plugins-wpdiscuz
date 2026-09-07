@@ -142,7 +142,8 @@ _:-ms-lang(x), .wpd-social-login [wpd-tooltip]::before{top: -24px;}
 #wpdcom .wpd-social-login i:hover{opacity: 1;}
 #wpdcom .wpd-social-login .wpdsn-fb i{background-color: #4267B2;}
 #wpdcom .wpd-social-login .wpdsn-tw i{background-color:#000000;}
-#wpdcom .wpd-social-login .wpdsn-gg i{background-color:#D54C3F;}
+#wpdcom .wpd-social-login .wpdsn-gg i{background-color:#FFFFFF; border:1px solid #dadce0; box-sizing:border-box;}
+#wpdcom .wpd-social-login .wpdsn-gg i svg{width: 17px; height: 17px;}
 #wpdcom .wpd-social-login .wpdsn-telegram i{background-color:#239cd7;}
 #wpdcom .wpd-social-login .wpdsn-ds i{background-color:#2196F3;}
 #wpdcom .wpd-social-login .wpdsn-wp i{background-color:#999999;}
