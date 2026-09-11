@@ -13,14 +13,36 @@ jQuery(document).ready(function ($) {
         const btn = $(this);
         const form = btn.closest('.wpd_comm_form');
         const files = btn[0].files ? Array.from(btn[0].files) : [];
-        if (files.length) {
+        if (!files.length) {
+            return;
+        }
+        const maxCount = parseInt(wpdiscuzAjaxObj.wmuMaxFileCount, 10);
+        if (maxCount > 1 && typeof DataTransfer !== 'undefined') {
+            // Picking files replaces the input's selection, so when more than one file
+            // is allowed the new files are added to those picked before, up to the limit
+            const fileArray = wmuFileLists.get(form[0]) || [];
+            // A file picked again is skipped, it is already in the list
+            const newFiles = files.filter(function (file) {
+                return !isFileListed(fileArray, file);
+            });
+            const room = Math.max(maxCount - fileArray.filter(Boolean).length, 0);
+            if (newFiles.length > room) {
+                wpdiscuzAjaxObj.setCommentMessage(wpdiscuzAjaxObj.applyFilterOnPhrase(wpdiscuzAjaxObj.wmuPhraseMaxFileCount, 'wmuPhraseMaxFileCount', form), 'error', 3000);
+            }
+            // Deleted files stay in the list as null, so the previews already shown keep their indexes
+            const offset = fileArray.length;
+            $.each(newFiles.slice(0, room), function (index, file) {
+                fileArray.push(file);
+                renderFilePreview(form, file, offset + index);
+            });
+            wmuFileLists.set(form[0], fileArray);
+            syncFileInput(form, fileArray);
+        } else {
             wmuFileLists.set(form[0], files);
             $('.wmu-action-wrap .wmu-tabs', form).html('');
             $.each(files, function (index, file) {
                 renderFilePreview(form, file, index);
             });
-        } else {
-            return;
         }
     });
 
@@ -53,6 +75,11 @@ jQuery(document).ready(function ($) {
         if (!newFile) return;
 
         const fileArray = wmuFileLists.get(form[0]) || [];
+        // A file another preview already holds is not attached twice
+        if (isFileListed(fileArray, newFile, index)) {
+            input.val('');
+            return;
+        }
         fileArray[index] = newFile;
         wmuFileLists.set(form[0], fileArray);
 
@@ -62,6 +89,13 @@ jQuery(document).ready(function ($) {
         // Reset so the same file can be re-selected if needed
         input.val('');
     });
+
+    // The same file picked again has the same name, size and modification time
+    function isFileListed(fileArray, file, exceptIndex) {
+        return fileArray.some(function (listed, index) {
+            return listed && index !== exceptIndex && listed.name === file.name && listed.size === file.size && listed.lastModified === file.lastModified;
+        });
+    }
 
     function syncFileInput(form, fileArray) {
         if (typeof DataTransfer === 'undefined') return;
@@ -268,6 +302,8 @@ jQuery(document).ready(function ($) {
                 $('.wmu-tabs', wcForm).addClass('wmu-hide');
                 $('.wmu-preview', wcForm).remove();
                 $('.wmu-attached-data-info', wcForm).remove();
+                // The files went with the comment, the next ones start a new list
+                wmuFileLists.delete($(wcForm)[0]);
             } else {
                 console.log(r.data);
             }

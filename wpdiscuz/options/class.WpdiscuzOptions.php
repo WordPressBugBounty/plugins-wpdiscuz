@@ -1275,10 +1275,15 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         include_once WPDISCUZ_DIR_PATH . '/utils/layouts/media-preview/preview.php';
         $jsArgs["previewTemplate"] = ob_get_clean();
 
+        $jsArgs["isUserRated"] = 0;
+
         if ($currentUserId = get_current_user_id()) {
             $jsArgs["isUserRated"] = $this->dbManager->isUserRated($currentUserId, "", $post->ID);
         } else {
-            $jsArgs["isUserRated"] = $this->dbManager->isUserRated(0, md5(WpdiscuzHelper::getRealIPAddr()), $post->ID);
+            $guestIdentity = WpdiscuzHelper::getGuestIdentity(WpdiscuzHelper::getRealIPAddr());
+            if ($guestIdentity !== false) {
+                $jsArgs["isUserRated"] = $this->dbManager->isUserRated(0, $guestIdentity, $post->ID);
+            }
         }
 
         return $jsArgs;

@@ -406,14 +406,14 @@ class Form {
                 if ($this->ratingsExists) {
                     $content = $this->getRatingMetaHtml() . $content;
                 } else if ($this->getEnableRateOnPost()) {
-                    $content = $this->getPostRatingHtml() . $content;
+                    $content = $this->getPostRatingHtml(true, null, "before") . $content;
                 }
             }
             if (in_array("after", $this->wpdOptions->rating["displayRatingOnPost"])) {
                 if ($this->ratingsExists) {
                     $content .= $this->getRatingMetaHtml();
                 } else if ($this->getEnableRateOnPost()) {
-                    $content .= $this->getPostRatingHtml();
+                    $content .= $this->getPostRatingHtml(true, null, "after");
                 }
             }
         }
@@ -428,26 +428,124 @@ class Form {
                 if ($this->ratingsExists) {
                     $content = $this->getRatingMetaHtml();
                 } else if ($this->getEnableRateOnPost()) {
-                    $content = $this->getPostRatingHtml();
+                    $content = $this->getPostRatingHtml(true, null, "before_comment_form");
                 }
             }
         }
         echo $content;
     }
 
-    public function getPostRatingHtml($can_rate = true) {
-        $html     = "";
-        $wpdiscuz = wpDiscuz();
-        if ($wpdiscuz->isWpdiscuzLoaded && $this->getEnableRateOnPost() && (($this->wpdOptions->rating["ratingCssOnNoneSingular"] && !is_singular()) || is_singular())) {
-            global $post;
+    /**
+     * Decides which placement's rating carries the `wpd-post-rating` id and
+     * the rating schema when the placement itself does not say, which is what
+     * getPostRatingHtml()'s $isPageRating is for. A page is meant to describe
+     * itself with one of each, and the themes, custom CSS and links that point
+     * at the id, the rating notifications of the BuddyPress Integration addon
+     * among them, need it to be there.
+     *
+     * The settings decide it, not the order the ratings happen to be built in,
+     * because a rating can be built and thrown away: a SEO plugin running
+     * `the_content` to make a meta description builds every rating on it, and
+     * none of that reaches the page. Because this is decided without keeping
+     * anything from one rating to the next, a discarded render cannot consume
+     * the id, and every rendered rating of the chosen placement carries it.
+     *
+     * The built-in positions come first, in the order they appear on the page,
+     * so the id stays where the browser has always found it. The manual
+     * placements, the template tag and the shortcode, take it when no built-in
+     * position displays the Article Rating, which is when they are the only
+     * ones displaying it.
+     *
+     * All the manual placements share one placement, so the settings cannot
+     * choose between two of them displaying the page's own rating, and cannot
+     * know that the position they chose is never printed on the page, a page
+     * builder template that doesn't run `the_content` for instance. Both are
+     * for the placement itself to say, with getPostRatingHtml()'s
+     * $isPageRating.
+     *
+     * @return string The placement the id belongs to, "" for the manual ones.
+     */
+    private function getPostRatingIdPlacement() {
+        // Custom rating fields take the Article Rating's place at the built-in
+        // positions, they display the rating meta there instead.
+        if (!$this->getRatingsExists()) {
+            $positions = (array)$this->wpdOptions->rating["displayRatingOnPost"];
+            foreach (["before", "after", "before_comment_form"] as $placement) {
+                if (in_array($placement, $positions)) {
+                    return $placement;
+                }
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * @param bool $can_rate
+     * @param null|int|\WP_Post $post The post to display the rating of, the post
+     *                                being displayed when it is null. Naming a
+     *                                post, as the template tag and the shortcode
+     *                                do, also displays the rating on the pages
+     *                                the built-in positions do not reach, where
+     *                                the rating stylesheet is enqueued on its
+     *                                own. Only the post the page is on carries
+     *                                the rating schema.
+     * @param string $placement       The built-in position displaying this
+     *                                rating, "before", "after" or
+     *                                "before_comment_form". Empty for the
+     *                                template tag, the shortcode and every
+     *                                other manual placement. It decides which
+     *                                rating carries the `wpd-post-rating` id
+     *                                and the rating schema, see
+     *                                getPostRatingIdPlacement().
+     * @param null|bool $isPageRating Overrides that decision: true gives this
+     *                                rating the id and the schema, false keeps
+     *                                them away from it, null, the default,
+     *                                leaves the choice to the settings. Only
+     *                                the rating of the post the page is on can
+     *                                take them either way.
+     * @return string
+     */
+    public function getPostRatingHtml($can_rate = true, $post = null, $placement = "", $isPageRating = null) {
+        $html        = "";
+        $wpdiscuz    = wpDiscuz();
+        $isNamedPost = !is_null($post);
+        $post        = get_post($post);
+        // A WooCommerce product keeps its rating in WooCommerce's own meta, and
+        // is left to WooCommerce to display, wherever the rating is asked for.
+        if (empty($post->ID) || (class_exists("WooCommerce") && get_post_type($post) === "product")) {
+            return $html;
+        }
+        // Nothing is displayed without the rating styles. They come with the
+        // wpDiscuz assets, and on the pages wpDiscuz is not loaded on they come
+        // from the rating stylesheet, which the built-in positions do not use
+        // but a named post, the template tag and the shortcode, can.
+        $cssOnNoneSingular = $this->wpdOptions->rating["ratingCssOnNoneSingular"];
+        $hasRatingStyles   = $isNamedPost ? ($wpdiscuz->isWpdiscuzLoaded || $cssOnNoneSingular) : ($wpdiscuz->isWpdiscuzLoaded && (($cssOnNoneSingular && !is_singular()) || is_singular()));
+        if ($hasRatingStyles && $this->getEnableRateOnPost()) {
+            $isPagePost     = is_singular() && (int)get_queried_object_id() === (int)$post->ID;
+            // The `wpd-post-rating` id and the rating schema describe the page,
+            // so they go to the page's own rating displayed at the placement
+            // they were given to, and another post's rating never answers for
+            // the page's own however it is placed. Where the settings cannot
+            // choose, between manual placements displaying the page's own
+            // rating twice, or when the placement they chose turns out never
+            // to be printed, $isPageRating chooses.
+            $describesPage  = $isPagePost && (is_null($isPageRating) ? $placement === $this->getPostRatingIdPlacement() : (bool)$isPageRating);
             $currentUserId  = get_current_user_id();
-            $class          = "";
+            $isRateable     = false;
             $isRateEditable = empty($this->generalOptions["is_rate_editable"]) ? 0 : (int)$this->generalOptions["is_rate_editable"];
-            if ($can_rate && is_singular()) {
+            // Rating needs the script that sends it, which comes with the wpDiscuz
+            // assets. Every rating carries the post it belongs to, so any post's
+            // rating can be rated from wherever it is displayed.
+            if ($can_rate && $wpdiscuz->isWpdiscuzLoaded) {
                 if (!empty($currentUserId)) {
-                    $class = wpDiscuz()->dbManager->isUserRated($currentUserId, "", $post->ID) && !$isRateEditable ? "" : " class='wpd-not-rated'";
+                    $isRateable = !(wpDiscuz()->dbManager->isUserRated($currentUserId, "", $post->ID) && !$isRateEditable);
                 } else if ($this->getUserCanRateOnPost()) {
-                    $class = wpDiscuz()->dbManager->isUserRated(0, md5(wpDiscuz()->helper->getRealIPAddr()), $post->ID) && !$isRateEditable ? "" : " class='wpd-not-rated'";
+                    $guestIdentity = \WpdiscuzHelper::getGuestIdentity(\WpdiscuzHelper::getRealIPAddr());
+                    if ($guestIdentity !== false) {
+                        $isRateable = !(wpDiscuz()->dbManager->isUserRated(0, $guestIdentity, $post->ID) && !$isRateEditable);
+                    }
                 }
             }
             $rating      = (float)get_post_meta($post->ID, wpdFormConst::POSTMETA_POST_RATING, true);
@@ -456,7 +554,11 @@ class Form {
             $suffix      = $rating - $prefix;
             $fullStarSVG = apply_filters("wpdiscuz_full_star_svg", "<svg xmlns='https://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M0 0h24v24H0z' fill='none'/><path class='wpd-star' d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'/><path d='M0 0h24v24H0z' fill='none'/></svg>", "post", "fas fa-star");
             $halfStarSVG = apply_filters("wpdiscuz_half_star_svg", "<svg xmlns='https://www.w3.org/2000/svg' xmlns:xlink='https://www.w3.org/1999/xlink' viewBox='0 0 24 24'><defs><path id='a' d='M0 0h24v24H0V0z'/></defs><clipPath id='b'><use xlink:href='#a' overflow='visible'/></clipPath><path class='wpd-star wpd-active' clip-path='url(#b)' d='M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4V6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z'/></svg>", "post", "fas fa-star");
-            $html        .= "<div id='wpd-post-rating'{$class}>
+            $id          = $describesPage ? " id='wpd-post-rating'" : "";
+            $classes     = "wpd-post-rating" . ($isRateable ? " wpd-not-rated" : "");
+            // Rate editing belongs to the form of the rated post, which is not
+            // necessarily the form the page's own script settings come from.
+            $html        .= "<div{$id} class='" . esc_attr($classes) . "' data-post-id='" . esc_attr($post->ID) . "' data-rate-editable='" . esc_attr($isRateEditable) . "'>
             <div class='wpd-rating-wrap'>
             <div class='wpd-rating-left'></div>
             <div class='wpd-rating-data'>
@@ -483,12 +585,16 @@ class Form {
                 $html .= str_repeat($fullStarSVG, 5);
             }
             $html .= "</div>";
-            if ($class) {
+            if ($isRateable) {
                 $html .= "<div class='wpd-rate-starts'>" . str_repeat($fullStarSVG, 5) . "</div>";
             }
             $html .= "</div>
             <div class='wpd-rating-right'></div></div></div>";
-            if ($this->wpdOptions->rating["enablePostRatingSchema"] && $count) {
+            // Another post's rating is not this page's rating, so it must not be
+            // described to search engines as if it were. The schema goes to the
+            // rating that carries the id, the one the settings chose or the one
+            // that said it is the page's own.
+            if ($this->wpdOptions->rating["enablePostRatingSchema"] && $count && $describesPage) {
                 $html .= apply_filters("wpdiscuz_rating_schema", "<div style='display: none;' itemscope itemtype='https://schema.org/Product'><meta itemprop='name' content='" . esc_html($this->getPostRatingTitle()) . "'><div style='display: none;' itemprop='aggregateRating' itemscope itemtype='https://schema.org/AggregateRating'><meta itemprop='bestRating' content='5'><meta itemprop='worstRating' content='1'><meta itemprop='ratingValue' content='" . esc_html($rating) . "'><meta itemprop='ratingCount' content='" . esc_attr($count) . "'></div></div>", "post", $post->ID);
             }
         }

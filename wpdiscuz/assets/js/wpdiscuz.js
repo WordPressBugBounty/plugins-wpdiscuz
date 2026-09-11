@@ -2718,8 +2718,17 @@ jQuery(document).ready(function ($) {
 
 //========================= /INLINE COMMENTS =====================//
 //========================= POST RATING =====================//
-    $('body').on('click', '#wpd-post-rating.wpd-not-rated .wpd-rate-starts svg', function () {
-        if (parseInt(isRateEditable, 10) && !confirm(wpdiscuzAjaxObj.wc_confirm_rate_edit)) {
+    $('body').on('click', '.wpd-post-rating.wpd-not-rated .wpd-rate-starts svg', function () {
+        // A page can display the rating of more than one post, so the post and
+        // its rate editing setting come from the block that was clicked, not
+        // from the post of the page.
+        var ratingBlock = $(this).closest('.wpd-post-rating');
+        var ratedPostId = ratingBlock.data('post-id');
+        var rateEditable = ratingBlock.data('rate-editable');
+        if (typeof rateEditable === 'undefined') {
+            rateEditable = isRateEditable;
+        }
+        if (parseInt(rateEditable, 10) && !confirm(wpdiscuzAjaxObj.wc_confirm_rate_edit)) {
             return false;
         }
         var data = new FormData();
@@ -2727,6 +2736,7 @@ jQuery(document).ready(function ($) {
         if (rating >= 0 && rating < 5) {
             data.append('action', 'wpdUserRate');
             data.append('rating', rating + 1);
+            data.append('postId', ratedPostId ? ratedPostId : wpdiscuzPostId);
             getAjaxObj(isNativeAjaxEnabled, true, data)
                 .done(function (r) {
                     if (typeof r === 'object') {
@@ -2871,7 +2881,9 @@ jQuery(document).ready(function ($) {
         if (isShowTopLoading) {
             $('#wpdiscuz-loading-bar').show();
         }
-        data.append('postId', wpdiscuzPostId);
+        if (!data.has('postId')) {
+            data.append('postId', wpdiscuzPostId);
+        }
         var action = data.get('action');
         if (wpdiscuzAjaxObj.dataFilterCallbacks && wpdiscuzAjaxObj.dataFilterCallbacks[action]) {
             $.each(wpdiscuzAjaxObj.dataFilterCallbacks[action], function (i) {

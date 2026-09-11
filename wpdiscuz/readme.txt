@@ -1,184 +1,185 @@
 === Comments - wpDiscuz ===
 Contributors: gVectors Team
-Tags: comments, wordpress comments, ajax comments, live comments, comment form, comment voting, disqus alternative, social comments, frontend comments, comment system
+Tags: ajax comments, comment form, live comments, comment system, inline comments
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 7.6.69
+Stable tag: 7.6.70
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Advanced AJAX-powered WordPress comments plugin with live commenting, comment voting, inline feedback, social login, custom comment forms, and engagement features.
+WordPress comments plugin with AJAX live comments, comment voting, inline feedback, social login and custom comment forms.
 
 == Description ==
 
-wpDiscuz is an advanced AJAX-powered WordPress comments plugin that upgrades the default WordPress comment system with live commenting, comment voting, inline feedback, social login, custom comment forms, and modern engagement-focused features.
+wpDiscuz transforms the native WordPress comment system into a fast, modern, and interactive discussion experience while keeping your comments and data in your own WordPress database.
 
-Perfect as a modern Disqus alternative while keeping all comments stored securely in your own WordPress database.
+Add AJAX comments, live comments, threaded comments, comment voting and rating, inline comments, comment subscriptions, social login, custom comment forms, lazy loading, and modern engagement features without moving your community to an external commenting service.
 
-Designed to supercharge WordPress native comments, wpDiscuz delivers a fast, lightweight, and highly interactive commenting experience for blogs, news websites, magazines, communities, membership sites, and WooCommerce stores.
-
-wpDiscuz version 7 introduces a revolutionary approach to WordPress commenting with innovative engagement tools, optimized AJAX performance, lazy-loaded comments, and a modern responsive design.
+wpDiscuz is a powerful Disqus alternative for WordPress and is designed for blogs, news websites, magazines, communities, membership sites, and WooCommerce stores.
 
 * wpDiscuz Demo: [https://wpdiscuz.com/](https://wpdiscuz.com/)
+* Documentation: [https://wpdiscuz.com/docs/](https://wpdiscuz.com/docs/)
 * Support Forum: [https://wpdiscuz.com/community/](https://wpdiscuz.com/community/)
-* wpDiscuz GDPR: [https://wpdiscuz.com/gdpr/](https://wpdiscuz.com/gdpr/)
-* wpDiscuz Addons: [https://wpdiscuz.com/addons/](https://wpdiscuz.com/addons/)
-* wpDiscuz Documentation: [https://wpdiscuz.com/docs/](https://wpdiscuz.com/docs/)
-* wpDiscuz Addons Bundle: [https://gvectors.com/product/wpdiscuz-addons-bundle/](https://gvectors.com/product/wpdiscuz-addons-bundle/)
+* GDPR Information: [https://wpdiscuz.com/gdpr/](https://wpdiscuz.com/gdpr/)
+* wpDiscuz Add-ons: [https://wpdiscuz.com/addons/](https://wpdiscuz.com/addons/)
 
-= Live AJAX Comments =
+= AJAX Comments =
 
-Enable fast AJAX-powered live comments for WordPress with instant comment posting, smooth interactions, and real-time updates without page reloads.
+Enable fast AJAX-powered WordPress comments with instant comment posting, smooth interactions, and updates without unnecessary page reloads.
 
-= Inline Commenting and Feedback =
+= Live Comments =
 
-Allow users to comment directly on post content and provide inline feedback for better discussions and higher user engagement.
+Create a more dynamic discussion experience with live comment updates, live notifications, and real-time comment bubble updates.
+
+= Threaded Comments and Replies =
+
+Organize discussions with multi-level threaded comments, nested replies, and reply controls that make long conversations easier to follow.
 
 = Comment Voting and Rating =
 
-Boost community interaction with upvote/downvote comment voting, comment rating, and post rating features.
+Increase community interaction with positive and negative comment voting, comment rating, and post rating features.
 
-= Social Login and Social Comments =
+= Inline Comments and Feedback =
 
-Allow users to comment using popular social login providers like Facebook and Twitter for a faster commenting experience.
+Let visitors comment directly on post content and provide inline feedback without relying only on the main comment form.
+
+= Comment Subscriptions and Notifications =
+
+Allow users to subscribe to comments and discussion updates and receive notifications about new activity, replies, and approved comments.
 
 = Custom WordPress Comment Forms =
 
-Create custom comment forms and fields for different post types, products, pages, communities, and discussions.
+Create custom comment forms and custom fields for different post types, products, pages, communities, and discussions.
 
-= WooCommerce Comment Integration =
+= Social Login and Social Comments =
 
-Improve WooCommerce product discussions and customer engagement with modern AJAX-powered product comments and rating features.
+Allow visitors to comment using supported social login providers for a faster and more convenient commenting experience.
 
-= Fast and Lightweight WordPress Comments =
+= WooCommerce Comments and Reviews =
 
-wpDiscuz is optimized for speed with lazy-loaded comments, built-in caching, AJAX posting, and performance-focused architecture.
+Improve WooCommerce product discussions with AJAX-powered product comments, ratings, and engagement features. Advanced WooCommerce review and rating functionality is available with the [wpDiscuz - Reviews](https://gvectors.com/product/wpdiscuz-reviews/) add-on.
+
+= Performance and Lazy Loading =
+
+wpDiscuz is optimized for performance with lazy-loaded comments, built-in caching, AJAX posting, Gravatar caching, and a performance-focused architecture.
 
 = Disqus Alternative for WordPress =
 
-Replace Disqus, Jetpack Comments, and other third-party comment systems while keeping full ownership of your comments and user data.
+Replace Disqus, Jetpack Comments, and other third-party comment systems while keeping full ownership of your comments and storing them in the native WordPress comment database.
 
-= Comments - wpDiscuz Features =
+= More wpDiscuz Features =
 
 * Three modern WordPress comment layouts
-* Fast AJAX-powered WordPress comments
-* Interactive live comment form for WordPress
-* Inline commenting and inline feedback
-* Live notifications with real-time comment bubble updates
-* Social commenting with multiple social login options
-* Post rating and comment rating features
-* Responsive WordPress comment forms and comment threads
-* Modern user interface and user experience
 * Comment sorting by newest, oldest, and most voted comments
-* Anonymous WordPress comments support
-* Integration with social network login plugins
-* Multi-level nested comment threads
-* AJAX "Load More Comments" button
-* Lazy load WordPress comments on scroll
-* WordPress date format integration
 * Comment editing for logged-in users and guests
 * Automatic URL and image embedding in comments
 * Long comment collapsing with "Read More" button
-* Comment subscription and notification options
-* AJAX comment form validation and posting
-* Fully integrated with WordPress native comments
-* Secure anti-spam WordPress comment system
-* Positive and negative comment voting
-* Smart voting system with cookies and user tracking
+* WordPress date format integration
 * Quick Tags support for comments
-* Custom WordPress comment forms and custom fields
 * Highlighting new comments since last visit
-* Notifications when comments are approved
-* View replies button for nested comments
 * Comment access control by user roles
 * Option to load all comments on first page load
 * Built-in Gravatar caching
 * Sticky comments support
 * Closed comment threads support
-* User follow and subscriptions
+* User follow functionality
 * Built-in comment and author caching system
+* Responsive interface for desktop and mobile devices
 
-= Add-ons =
+= wpDiscuz Add-ons =
 
-* | [wpDiscuz - Bundle](https://gvectors.com/product/wpdiscuz-addons-bundle/)
-* | [wpDiscuz - Reviews](https://gvectors.com/product/wpdiscuz-reviews/)
-* | [wpDiscuz - Emoticons](https://gvectors.com/product/wpdiscuz-emoticons/)
-* | [wpDiscuz - User Notifications](https://gvectors.com/product/wpdiscuz-user-notifications/)
-* | [wpDiscuz - Media Uploader](https://gvectors.com/product/wpdiscuz-media-uploader/)
-* | [wpDiscuz - Embeds](https://gvectors.com/product/wpdiscuz-embeds/)
-* | [wpDiscuz - Comment Author Info](https://gvectors.com/product/wpdiscuz-comment-author-info/)
-* | [wpDiscuz - Google ReCaptcha](https://gvectors.com/product/wpdiscuz-recaptcha/)
-* | [wpDiscuz - myCRED Integration](https://gvectors.com/product/wpdiscuz-mycred/)
-* | [wpDiscuz - Widgets](https://gvectors.com/product/wpdiscuz-widgets/)
-* | [wpDiscuz - Front-end Moderation](https://gvectors.com/product/wpdiscuz-frontend-moderation/)
-* | [wpDiscuz - Subscription Manager](https://gvectors.com/product/wpdiscuz-subscribe-manager/)
-* | [wpDiscuz - Comment Search](https://gvectors.com/product/wpdiscuz-comment-search/)
-* | [wpDiscuz - Comment Report and Flagging](https://gvectors.com/product/wpdiscuz-report-flagging/)
-* | [wpDiscuz - Ads Manager](https://gvectors.com/product/wpdiscuz-ads-manager/)
-* | [wpDiscuz - User & Comment Mentioning](https://gvectors.com/product/wpdiscuz-user-comment-mentioning/)
-* | [wpDiscuz - Advanced Likers](https://gvectors.com/product/wpdiscuz-advanced-likers/)
-* | [wpDiscuz - Online Users](https://gvectors.com/product/wpdiscuz-online-users/)
-* | [wpDiscuz - Private Comments](https://gvectors.com/product/wpdiscuz-private-comments/)
-* | [wpDiscuz - Syntax Highlighter](https://gvectors.com/product/wpdiscuz-syntax-highlighter/)
-* | [Comments Censure PRO](https://gvectors.com/product/comments-censure-pro/)
+Extend wpDiscuz with optional add-ons for advanced reviews and ratings, media uploads, user notifications, front-end moderation, subscriptions, comment search, private comments, BuddyPress integration, GIPHY integration, voice commenting, and more.
 
-= Integration Add-ons =
-
-* | [wpDiscuz - BuddyPress Integration](https://gvectors.com/product/wpdiscuz-buddypress-integration/)
-* | [wpDiscuz - GIPHY Integration](https://gvectors.com/product/wpdiscuz-giphy-integration/)
-* | [wpDiscuz - Voice Commenting](https://gvectors.com/product/wpdiscuz-voice-commenting/)
+* [Browse wpDiscuz Add-ons](https://wpdiscuz.com/addons/)
+* [wpDiscuz Add-ons Bundle](https://gvectors.com/product/wpdiscuz-addons-bundle/)
 
 == Installation ==
 
-= Note =
+= Important =
 
-IMPORTANT: If you use a cache plugin or CDN, please clear all caches after updating wpDiscuz.
+If you use a cache plugin or CDN, clear all caches after installing or updating wpDiscuz so the latest plugin assets are loaded.
 
 = Installation =
 
-1. Upload the plugin folder to the '/wp-content/plugins/' directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Open the **wpDiscuz** menu item in your WordPress admin dashboard to configure your WordPress comment system settings.
+1. Upload the plugin folder to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the **Plugins** menu in WordPress.
+3. Open the **wpDiscuz** menu item in your WordPress admin dashboard to configure your comment system.
 
-= Update to wpDiscuz 7 versions =
+= Updating to wpDiscuz 7 =
 
-Please read the documentation:
+Please read the update documentation:
 [https://wpdiscuz.com/docs/wpdiscuz-7/plugin-installation/update-to-wpdiscuz-7/](https://wpdiscuz.com/docs/wpdiscuz-7/plugin-installation/update-to-wpdiscuz-7/)
 
 == Frequently Asked Questions ==
 
-= How to replace Disqus with WordPress comments? =
+= What is wpDiscuz? =
 
-wpDiscuz allows you to replace Disqus with a fully native WordPress comment system while keeping all comments stored in your own database.
-
-= How to enable AJAX comments in WordPress? =
-
-Install and activate wpDiscuz to instantly enable AJAX-powered live comments with no complicated setup.
+wpDiscuz is a WordPress comments plugin that enhances the native WordPress comment system with a modern, interactive commenting experience while keeping comments in your own database.
 
 = What is the best WordPress comments plugin? =
 
-wpDiscuz is one of the most popular WordPress comments plugins with live commenting, inline comments, comment voting, AJAX posting, and social login support.
+wpDiscuz is one of the most popular WordPress comments plugins, combining AJAX comments, live commenting, inline comments, comment voting, subscriptions, custom comment forms, social login, and other engagement tools while keeping comments in the native WordPress database.
 
-= Will wpDiscuz work with WooCommerce? =
+= How do I enable AJAX comments in WordPress? =
 
-Yes. wpDiscuz integrates with WooCommerce and improves product discussions, customer engagement, comments, ratings, and reviews on WooCommerce product pages. Advanced WooCommerce review and rating functionality is available through the powerful [wpDiscuz - Reviews](https://gvectors.com/product/wpdiscuz-reviews/) add-on.
+Install and activate wpDiscuz to add AJAX-powered comment posting and interactive comment loading without requiring visitors to reload the page after every action.
 
-= Does this plugin replace the default WordPress comment system? =
+= How do I replace Disqus with WordPress comments? =
 
-Yes. wpDiscuz upgrades and replaces the default WordPress comment system with a modern AJAX-powered commenting experience.
+wpDiscuz is a Disqus alternative that uses the native WordPress comment system, allowing you to keep comments stored in your own WordPress database rather than relying on an external commenting service.
 
-= What happens to old WordPress comments? =
+= What happens to my existing WordPress comments? =
 
-Nothing will be lost. wpDiscuz uses the native WordPress comment database and displays all existing comments automatically.
+Existing comments remain in the WordPress database and are displayed automatically by wpDiscuz. Uninstalling wpDiscuz does not remove your existing WordPress comments.
 
-= Where are comments stored? =
+= Where are wpDiscuz comments stored? =
 
-All comments are stored locally in your own WordPress database using the native WordPress comment system.
+Comments are stored locally in your own WordPress database using the native WordPress comment system.
 
-= Will comments be lost if I uninstall wpDiscuz? =
+= Does wpDiscuz support threaded comments and nested replies? =
 
-No. wpDiscuz does not remove or modify existing WordPress comments when uninstalled.
+Yes. wpDiscuz supports multi-level threaded comments and nested replies to keep long discussions organized and easier to follow.
+
+= Can users subscribe to comments and replies? =
+
+Yes. wpDiscuz includes comment subscription and notification options so users can follow discussions and receive updates about new activity.
+
+= Can I create a custom WordPress comment form? =
+
+Yes. wpDiscuz supports custom WordPress comment forms and custom fields for different post types, products, pages, communities, and discussions.
+
+= Does wpDiscuz support inline comments? =
+
+Yes. wpDiscuz supports inline commenting and inline feedback, allowing visitors to interact directly with content inside a post.
+
+= Does wpDiscuz work with WooCommerce? =
+
+Yes. wpDiscuz can improve WooCommerce product discussions with AJAX-powered comments, ratings, and engagement features. Advanced WooCommerce review and rating functionality is available through the [wpDiscuz - Reviews](https://gvectors.com/product/wpdiscuz-reviews/) add-on.
+
+= Does wpDiscuz lazy load comments? =
+
+Yes. wpDiscuz can lazy load comments on scroll and also provides AJAX-based loading options to reduce the amount of comment content loaded during the initial page request.
+
+= Is wpDiscuz GDPR compliant? =
+
+wpDiscuz provides GDPR-related tools and guidance for site owners. See the [wpDiscuz GDPR documentation](https://wpdiscuz.com/gdpr/) for configuration details and information relevant to your site.
+
+= What should I do if I use a caching plugin or CDN? =
+
+After installing or updating wpDiscuz, clear your WordPress cache and purge your CDN cache so the latest plugin assets are loaded.
+
+= How do I protect WordPress comments from spam? =
+
+wpDiscuz includes built-in anti-spam features and works with WordPress comment moderation. It can also be used alongside Akismet and compatible CAPTCHA solutions for additional protection.
+
+= Does wpDiscuz affect site performance? =
+
+wpDiscuz includes AJAX comment loading, lazy-loading options, built-in comment and author caching, Gravatar caching, and other performance-focused features. Actual performance depends on factors such as traffic, comment volume, hosting, caching configuration, and enabled features.
+
+= Does wpDiscuz work with Gutenberg and the WordPress block editor? =
+
+Yes. wpDiscuz provides a Comments block for the WordPress block editor, so you can add wpDiscuz comments to Gutenberg-based content.
 
 == Screenshots ==
 
@@ -195,12 +196,24 @@ No. wpDiscuz does not remove or modify existing WordPress comments when uninstal
 11. wpDiscuz Settings Panel | Screenshot #11
 12. Advanced Comment Settings | Screenshot #12
 
-
 == Changelog ==
 
 **IMPORTANT!**
 
 Please remember to delete all caches and purge CDN after the update.
+
+= Comments - wpDiscuz v7.6.70 - 11.09.2026 =
+
+* Fixed: Vote buttons showed guests the wrong state and tooltip when "Allow Guests to Vote for Comments" is disabled (buttons looked active, or blamed the visitor's IP address, then clicking answered "You Must Be Logged In To Vote").
+* Fixed: Guests whose IP address is removed by a privacy plugin or a `pre_comment_user_ip` filter all shared a single post-rating identity. The first such guest locked the rating for every other one, or overwrote it when "Enable rate editing" is enabled, and they were all counted as one rating in the post average and rating count. Guest rating now requires a usable IP address, the same way comment voting has since 7.6.67.
+* Fixed: The "Enable rate editing" form setting never reached the front-end script, so the confirmation before changing an existing rating was never asked. The form settings were read one line before they were loaded.
+* Added: The `wpdiscuz_post_rating()` template tag prints the standalone Article Rating anywhere in a theme or page builder template, and `wpdiscuz_get_post_rating()` returns the same HTML. Pass a post ID to display that post's rating with its own form settings, or pass false as the second argument for read-only output. WooCommerce products continue to use WooCommerce's own rating.
+* Added: The `[wpdiscuz_post_rating]` shortcode provides the same output for page builders and content editors, with `post_id`, `can_rate`, and `page_rating` attributes. Disable unneeded built-in Article Rating positions to avoid displaying the rating more than once.
+* Fixed: Pages displaying more than one Article Rating repeated the `wpd-post-rating` id and sent every rating click to the post of the page. Each rating is now a `.wpd-post-rating` element carrying its own post ID, so any eligible post can be rated wherever the wpDiscuz script is loaded. The legacy id remains on the page's own rating at the first checked built-in position, or on a manual placement when no position is checked.
+* Fixed: The Article Rating schema was repeated whenever the page's own rating appeared more than once. It now follows the rating that owns the legacy id. The template tag's third argument and the shortcode's `page_rating` attribute can explicitly give or deny a manual placement that ownership when the settings cannot determine it.
+* Fixed: "Display ratings on non-singular pages" loaded a stylesheet that did not style the Article Rating block. The standalone rating styles now cover it and use the configured star colours, allowing template-tag and shortcode ratings to display read-only on archives, listings, and other pages where the wpDiscuz script is not loaded when that option is enabled.
+* Fixed: Selecting comment attachments more than once replaced the files already selected. New selections now accumulate up to the configured limit, and duplicate files are ignored.
+
 
 = Comments - wpDiscuz v7.6.69 - 07.09.2026 =
 
@@ -251,21 +264,3 @@ Please remember to delete all caches and purge CDN after the update.
 * Removed: The Phrases settings page had fields for the VKontakte and Odnoklassniki share button titles. Those share buttons are no longer part of wpDiscuz and the two phrases behind the fields were neither defined nor saved anywhere, so the page raised an "Undefined array key" warning on every load.
 * Fixed: Visitors whose email address contains an apostrophe could not subscribe to comments. The address was checked for validity before the backslash WordPress puts in front of the apostrophe was removed, so the subscription form rejected it and reported nothing.
 * Fixed: Comment subscriptions were looked up by matching the email address as a SQL pattern instead of comparing it exactly. Since the % and _ characters are allowed in an email address, a subscriber using such an address matched the other subscribers of the same post, received their unsubscribe link, and removed their comment thread subscriptions.
-
-= Comments - wpDiscuz v7.6.64 - 07.08.2026 =
-
-* Improved: Allowed file types and thumbnail sizes are now validated against the known allowed lists when the Content settings are saved, so only values offered by the settings form itself can be stored.
-* Improved: Imported options files are now validated before being stored. File types are checked against the mime types WordPress allows to be uploaded, so an edited options file cannot introduce an executable file type. File types provided by add-ons are preserved even when the add-on is not active at the moment of the import.
-* Fixed: Searching the settings page for a term containing an apostrophe returned no results.
-* Improved: The request sanitizing helpers now return the supplied default value when a request parameter is an array or an object instead of the expected string.
-* Removed: An unused method on the add-ons page which read a request parameter without checking that it was set.
-
-= Comments - wpDiscuz v7.6.63 - 07.08.2026 =
-
-Fixed: An issue with comment editing( current_user_can('moderate_comments') ) when comments are closed
-
-= Comments - wpDiscuz v7.6.62 - 30.07.2026 =
-
-* Improved: Additional HTML tag escaping when comment editor phrases are printed into inline JavaScript.
-* Fixed: Imported phrase files were not sanitized on upload, unlike phrases saved from the Phrases settings page.
-* Fixed: The comments block editor preview could be triggered on the front-end without an editing capability check.

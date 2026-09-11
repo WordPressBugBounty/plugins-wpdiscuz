@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.69
+ * Version: 7.6.70
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -1457,14 +1457,22 @@ class WpdiscuzCore implements WpDiscuzConstants {
         wp_register_style("wpdiscuz-ratings-rtl", plugins_url(WPDISCUZ_DIR_NAME . "/assets/css/wpdiscuz-ratings-rtl$suf.css"), null, $this->version);
         if (!$this->isWpdiscuzLoaded && $this->options->rating["ratingCssOnNoneSingular"]) {
             wp_enqueue_style("wpdiscuz-ratings");
+            // The comment area styles are not on this page, so the rating stars
+            // get their colours here instead. They go with the stylesheet that
+            // is printed last, otherwise its own default colours win.
+            $ratingCssSlug = "wpdiscuz-ratings";
             if (is_rtl()) {
                 wp_enqueue_style("wpdiscuz-ratings-rtl");
+                $ratingCssSlug = "wpdiscuz-ratings-rtl";
             }
+            wp_add_inline_style($ratingCssSlug, $this->helper->getRatingColorsCss());
         }
         if ($this->isWpdiscuzLoaded) {
-            $this->form         = $this->wpdiscuzForm->getForm($post->ID);
-            $formGeneralOptions = $this->form->getGeneralOptions();
+            $this->form = $this->wpdiscuzForm->getForm($post->ID);
+            // The form meta has to be loaded before its options are read, they
+            // are empty until then.
             $this->form->initFormMeta();
+            $formGeneralOptions = $this->form->getGeneralOptions();
             $this->wpdiscuzOptionsJs                      = $this->options->getOptionsForJs();
             $this->wpdiscuzOptionsJs["version"]           = $this->version;
             $this->wpdiscuzOptionsJs["wc_post_id"]        = $post->ID;
@@ -2074,10 +2082,10 @@ class WpdiscuzCore implements WpDiscuzConstants {
             $userIdOrIp = $commentListArgs["current_user"]->ID;
         } else {
             $currentUserIP = isset($commentListArgs["current_user_ip"]) ? (string)$commentListArgs["current_user_ip"] : "";
-            $userIdOrIp    = trim($currentUserIP) !== "" ? md5($currentUserIP) : "";
+            $userIdOrIp    = WpdiscuzHelper::getGuestIdentity($currentUserIP);
         }
 
-        if ($userIdOrIp !== "") {
+        if ($userIdOrIp !== false) {
             $commentListArgs["user_votes"] = $this->dbManager->getUserVotes($commentList, $userIdOrIp);
         }
     }

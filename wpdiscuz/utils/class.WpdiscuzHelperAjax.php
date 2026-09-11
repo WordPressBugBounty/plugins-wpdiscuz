@@ -730,15 +730,15 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
         }
 
         if ($commentId && in_array($voteType, $allowedVoteTypes, true)) {
-            $userIP    = (string)WpdiscuzHelper::getRealIPAddr();
-            $userID    = get_current_user_id();
-            $hasUserIP = trim($userIP) !== "";
+            $userIP        = (string)WpdiscuzHelper::getRealIPAddr();
+            $userID        = get_current_user_id();
+            $guestIdentity = WpdiscuzHelper::getGuestIdentity($userIP);
 
             if ($userID && $userID === (int)$comment->user_id) {
                 wp_send_json_error("wc_self_vote");
             }
 
-            if (!$userID && !$hasUserIP) {
+            if (!$userID && $guestIdentity === false) {
                 wp_send_json_error("wc_login_to_vote");
             }
 
@@ -746,7 +746,7 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
                 wp_send_json_error("wc_deny_voting_from_same_ip");
             }
 
-            $userIdOrIp  = $userID ?: md5($userIP);
+            $userIdOrIp  = $userID ?: $guestIdentity;
             $isUserVoted = $this->dbManager->isUserVoted($userIdOrIp, $commentId);
             $response    = [];
             if ($isUserVoted != "") {
@@ -999,7 +999,11 @@ class WpdiscuzHelperAjax implements WpDiscuzConstants {
                     wp_send_json_error("wc_cannot_rate_again");
                 }
             } else if ($form->getUserCanRateOnPost()) {
-                $userIp = md5(WpdiscuzHelper::getRealIPAddr());
+                $userIp = WpdiscuzHelper::getGuestIdentity(WpdiscuzHelper::getRealIPAddr());
+                if ($userIp === false) {
+                    wp_send_json_error("wc_not_allowed_to_rate");
+                }
+
                 $rateId = $this->dbManager->isUserRated(0, $userIp, $post_id);
                 if (!$rateId || ($rateId && $formOptions["is_rate_editable"])) {
                     $this->dbManager->addRate($post_id, 0, $userIp, $rating, current_time("timestamp"), $rateId);

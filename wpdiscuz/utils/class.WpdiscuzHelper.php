@@ -365,6 +365,30 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         return apply_filters("pre_comment_user_ip", ($_SERVER["REMOTE_ADDR"] ?? ""));
     }
 
+    /**
+     * Returns the hashed identity used for guest votes and ratings.
+     *
+     * The IP is hashed exactly as the filter returned it; trim() decides only whether
+     * an IP is available at all, so identities stay stable for filters that have
+     * historically returned non-empty values with surrounding whitespace.
+     *
+     * Callers must check the return value with a strict === false comparison before
+     * using it, because md5("") is itself a non-empty string. This builds identity
+     * only; policy and presentation stay with the caller.
+     *
+     * @param mixed $userIP Filtered visitor IP address.
+     *
+     * @return string|false Hashed guest identity, or false when no IP is available.
+     */
+    public static function getGuestIdentity($userIP) {
+        $userIP = (string)$userIP;
+        if (trim($userIP) === "") {
+            return false;
+        }
+
+        return md5($userIP);
+    }
+
     public static function shouldDenyGuestVoteFromSameIP($comment, $userIP) {
         $userIP = (string)$userIP;
         if (trim($userIP) === "" || $comment->comment_author_IP !== $userIP) {
@@ -1805,6 +1829,25 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     }
 
     /**
+     * The Article Rating star colours. The comment area styles carry them, and so
+     * must the pages that only load the rating stylesheet, where the Article
+     * Rating can be displayed without the rest of wpDiscuz.
+     *
+     * @return string
+     */
+    public function getRatingColorsCss() {
+        $inactive = esc_html($this->options->rating["ratingInactiveColor"]);
+        $active   = esc_html($this->options->rating["ratingActiveColor"]);
+        $hover    = esc_html($this->options->rating["ratingHoverColor"]);
+
+        return ".wpd-post-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-star{fill:$inactive;}
+            .wpd-post-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-active{fill:$active;}
+            .wpd-post-rating .wpd-rating-wrap .wpd-rate-starts svg .wpd-star{fill:$inactive;}
+            .wpd-post-rating .wpd-rating-wrap .wpd-rate-starts:hover svg .wpd-star{fill:$hover;}
+            .wpd-post-rating.wpd-not-rated .wpd-rating-wrap .wpd-rate-starts svg:hover ~ svg .wpd-star{fill:$inactive;}";
+    }
+
+    /**
      * init wpdiscuz styles
      */
     public function initCustomCss() {
@@ -1897,11 +1940,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             #wpdcom .wpdiscuz-item .wpdiscuz-rating > input:checked + label:hover ~ label,
             #wpdcom .wpdiscuz-item .wpdiscuz-rating > input:checked ~ label:hover ~ label, .wpd-custom-field .wcf-active-star,
             #wpdcom .wpdiscuz-item .wpdiscuz-rating > input:checked ~ label{ color:<?php echo esc_html($this->options->rating["ratingActiveColor"]); ?>;}
-            #wpd-post-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-star{fill: <?php echo esc_html($this->options->rating["ratingInactiveColor"]); ?>;}
-            #wpd-post-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-active{fill:<?php echo esc_html($this->options->rating["ratingActiveColor"]); ?>;}
-            #wpd-post-rating .wpd-rating-wrap .wpd-rate-starts svg .wpd-star{fill:<?php echo esc_html($this->options->rating["ratingInactiveColor"]); ?>;}
-            #wpd-post-rating .wpd-rating-wrap .wpd-rate-starts:hover svg .wpd-star{fill:<?php echo esc_html($this->options->rating["ratingHoverColor"]); ?>;}
-            #wpd-post-rating.wpd-not-rated .wpd-rating-wrap .wpd-rate-starts svg:hover ~ svg .wpd-star{ fill:<?php echo esc_html($this->options->rating["ratingInactiveColor"]); ?>;}
+            <?php echo $this->getRatingColorsCss(); ?>
             .wpdiscuz-post-rating-wrap .wpd-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-star{fill:<?php echo esc_html($this->options->rating["ratingInactiveColor"]); ?>;}
             .wpdiscuz-post-rating-wrap .wpd-rating .wpd-rating-wrap .wpd-rating-stars svg .wpd-active{fill:<?php echo esc_html($this->options->rating["ratingActiveColor"]); ?>;}
             #wpdcom .wpd-comment .wpd-follow-active{color:#ff7a00;}

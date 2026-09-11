@@ -13,6 +13,7 @@ class wpDiscuzForm implements wpdFormConst {
     private $pluginVersion;
     public $wpdFormAdminOptions;
     private $form;
+    private $postForms = [];
     private $formContentTypeRel;
     private $formPostRel;
 
@@ -52,6 +53,7 @@ class wpDiscuzForm implements wpdFormConst {
         add_filter("admin_post_cloneWpdiscuzForm", [$this, "cloneForm"]);
         add_filter("the_content", [$this->form, "displayRatingMeta"], 10);
         add_shortcode("wpdrating", [$this->form, "getRatingMetaHtml"]);
+        add_shortcode("wpdiscuz_post_rating", [$this, "postRatingShortcode"]);
         add_action("wpdiscuz_comment_form_before", [$this->form, "displayRatingMetaBeforeCommentForm"], 10, 3);
         add_action("admin_notices", [$this, "formExists"]);
         add_action("wp_loaded", [$this, "initPersonalDataExporter"]);
@@ -330,21 +332,85 @@ class wpDiscuzForm implements wpdFormConst {
      * @return mixed|null|\wpdFormAttr\Form
      */
     public function getForm($postID) {
-        $formID = 0;
         if (!$this->form->getFormID()) {
-            $postType = get_post_type($postID);
-            if (isset($this->formPostRel[$postID])) {
-                $formID = $this->formPostRel[$postID];
-            } elseif (is_string($postType) && isset($this->formContentTypeRel[$postType])) {
-                $tempContentTypeRel = $this->formContentTypeRel[$postType];
-                $defaultFormID      = array_shift($tempContentTypeRel);
-                $lang               = get_user_locale();
-                $formID             = isset($this->formContentTypeRel[$postType][$lang]) && $this->formContentTypeRel[$postType][$lang] ? $this->formContentTypeRel[$postType][$lang] : $defaultFormID;
-            }
-            $this->form->setFormID($formID);
+            $this->form->setFormID($this->getPostFormID($postID));
         }
 
         return apply_filters("wpdiscuz_get_form", $this->form);
+    }
+
+    /**
+     * Returns the ID of the form a post uses, whether or not it is the post
+     * being displayed.
+     *
+     * @param $postID
+     * @return int
+     */
+    public function getPostFormID($postID) {
+        $formID   = 0;
+        $postType = get_post_type($postID);
+        if (isset($this->formPostRel[$postID])) {
+            $formID = $this->formPostRel[$postID];
+        } elseif (is_string($postType) && isset($this->formContentTypeRel[$postType])) {
+            $tempContentTypeRel = $this->formContentTypeRel[$postType];
+            $defaultFormID      = array_shift($tempContentTypeRel);
+            $lang               = get_user_locale();
+            $formID             = isset($this->formContentTypeRel[$postType][$lang]) && $this->formContentTypeRel[$postType][$lang] ? $this->formContentTypeRel[$postType][$lang] : $defaultFormID;
+        }
+
+        return (int)$formID;
+    }
+
+    /**
+     * Returns the form of any post, not only of the post being displayed.
+     *
+     * getForm() keeps the form of the first post it is asked about for the whole
+     * request, so another post's settings, "Enable Post Rating" and "Post
+     * Rating Title" among them, need the form the post itself uses.
+     *
+     * @param $postID
+     * @return null|\wpdFormAttr\Form
+     */
+    public function getPostForm($postID) {
+        $formID = $this->getPostFormID($postID);
+        if (!$formID) {
+            return null;
+        }
+        if ((int)$this->form->getFormID() === $formID) {
+            return $this->getForm($postID);
+        }
+        if (!isset($this->postForms[$formID])) {
+            $this->postForms[$formID] = new Form($this->options, $formID);
+        }
+
+        return $this->postForms[$formID];
+    }
+
+    /**
+     * The [wpdiscuz_post_rating] shortcode, for page builders and content editors
+     * that cannot call the wpdiscuz_post_rating() template tag.
+     *
+     * Attributes: post_id to display another post's rating, can_rate="0" to
+     * display a rating without the rate stars, and page_rating="1" or "0" to
+     * give this rating the `wpd-post-rating` id and the rating schema or to
+     * keep them away from it, which the settings decide when the attribute is
+     * not there. See wpdiscuz_post_rating().
+     *
+     * @param $atts
+     * @return string
+     */
+    public function postRatingShortcode($atts = []) {
+        $atts = shortcode_atts([
+            "post_id"     => 0,
+            "postid"      => 0,
+            "can_rate"    => true,
+            "page_rating" => null,
+        ], $atts, "wpdiscuz_post_rating");
+        // No attribute, and an empty one, leave the id and the schema to the
+        // settings, which is what null means further down.
+        $isPageRating = is_null($atts["page_rating"]) || $atts["page_rating"] === "" ? null : filter_var($atts["page_rating"], FILTER_VALIDATE_BOOLEAN);
+
+        return wpdiscuz_get_post_rating($atts["post_id"] ? $atts["post_id"] : $atts["postid"], filter_var($atts["can_rate"], FILTER_VALIDATE_BOOLEAN), $isPageRating);
     }
 
     public function formCustomCssMetabox() {

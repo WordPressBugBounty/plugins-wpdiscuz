@@ -302,8 +302,18 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
         $isVotingEnabled = (bool)$this->options->thread_layouts["showVotingButtons"];
         $currentUserID   = !empty($args["current_user"]->ID) ? (int)$args["current_user"]->ID : 0;
         $currentUserIP   = isset($args["current_user_ip"]) ? (string)$args["current_user_ip"] : "";
-        $isVoteReadOnly  = $currentUserID ? $currentUserID === (int)$comment->user_id : WpdiscuzHelper::shouldDenyGuestVoteFromSameIP($comment, $currentUserIP);
-        $voteDenialCause = $isVoteReadOnly ? ($currentUserID ? "self_vote" : "same_ip") : "";
+        $canUserVote     = isset($args["can_user_vote"]) ? (bool)$args["can_user_vote"] : ($currentUserID || (bool)$this->options->thread_layouts["isGuestCanVote"]);
+        // the tooltip has to name the same reason the click will get back, so the causes are
+        // resolved in the order voteOnComment() checks them. A guest without an IP address has
+        // no voting identity, so that request ends on the same "log in" answer as a denied guest
+        if ($currentUserID) {
+            $voteDenialCause = $currentUserID === (int)$comment->user_id ? "self_vote" : "";
+        } else if (!$canUserVote || trim($currentUserIP) === "") {
+            $voteDenialCause = "login_required";
+        } else {
+            $voteDenialCause = WpdiscuzHelper::shouldDenyGuestVoteFromSameIP($comment, $currentUserIP) ? "same_ip" : "";
+        }
+        $isVoteReadOnly = $voteDenialCause !== "";
 
         /**
          * Filters whether the voting buttons are hidden from a visitor who cannot vote.
@@ -314,7 +324,7 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
          *
          * @param bool       $hideVoteButtons Whether to hide the voting buttons.
          * @param WP_Comment $comment         The comment being rendered.
-         * @param string     $voteDenialCause Why voting is denied, "self_vote" or "same_ip".
+         * @param string     $voteDenialCause Why voting is denied, "self_vote", "login_required" or "same_ip".
          */
         $hideVoteButtons = $isVoteReadOnly && (bool)apply_filters("wpdiscuz_hide_readonly_vote_buttons", false, $comment, $voteDenialCause);
 
@@ -361,7 +371,8 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
             if ($isVoteReadOnly) {
                 $voteWrapperClasses .= $hideVoteButtons ? " wpd-vote-readonly" : " wpd-vote-disabled";
                 if (!$hideVoteButtons) {
-                    $voteDenialPhrase = $this->options->getPhrase($voteDenialCause === "self_vote" ? "wc_self_vote" : "wc_deny_voting_from_same_ip", ["comment" => $comment]);
+                    $voteDenialPhrases = ["self_vote" => "wc_self_vote", "login_required" => "wc_login_to_vote", "same_ip" => "wc_deny_voting_from_same_ip"];
+                    $voteDenialPhrase  = isset($voteDenialPhrases[$voteDenialCause]) ? $this->options->getPhrase($voteDenialPhrases[$voteDenialCause], ["comment" => $comment]) : "";
                     if ($voteDenialPhrase) {
                         $voteTooltip = " wpd-tooltip='" . esc_attr($voteDenialPhrase) . "' wpd-tooltip-size='medium'";
                     }
