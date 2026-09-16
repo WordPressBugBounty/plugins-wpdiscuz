@@ -106,7 +106,7 @@ class TextAreaField extends Field {
             return;
         }
         ?>
-        <div class="wpdiscuz-item <?php echo "$name-wrapper"; ?>">
+        <div class="wpdiscuz-item <?php echo esc_attr($name) . "-wrapper"; ?>">
             <?php $required = $args["required"] ? "required='required' aria-required='true'" : ""; ?>
             <textarea
                 id="<?php echo esc_attr($name) . "-" . $uniqueId; ?>" <?php echo $required; ?> class="<?php echo esc_attr($name); ?> wpd-field wpd-field-textarea"

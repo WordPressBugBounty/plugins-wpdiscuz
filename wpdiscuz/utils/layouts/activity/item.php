@@ -17,7 +17,7 @@ $commentLeftStyle = $canDeleteComment ? "" : "width:99%;border-right:none;";
         </div>
         <div class="wpd-item-link wpd-comment-item-link">
             <a class="wpd-comment-link" href="<?php echo esc_url(get_comment_link($item)); ?>" target="_blank">
-                <?php echo wp_kses_post(get_comment_excerpt($item->comment_ID)); ?>
+                <?php echo wp_kses_post(get_comment_excerpt($item->comment_ID)); // Not esc_html(): core strips the tags from excerpts, but the get_comment_excerpt filter can add markup back. ?>
             </a>
         </div>
         <div class="wpd-item-link wpd-post-item-link">

@@ -88,14 +88,20 @@ class WpdiscuzRest extends WP_REST_Controller {
         $form = $this->wpdiscuzForm->getForm($params["postId"]);
         if ($commentId > $params["lastId"]) {
             $currentUser   = WpdiscuzHelper::getCurrentUser();
+            // The email only leaves the visitor's own comments out of the new
+            // ones, and getNewCommentIds() binds it with prepare().
             $sentEmail     = !empty($_COOKIE["comment_author_email_" . COOKIEHASH]) ? trim($_COOKIE["comment_author_email_" . COOKIEHASH]) : "";
             $email         = !empty($currentUser->ID) ? $currentUser->user_email : $sentEmail;
             $newCommentIds = $this->dbManager->getNewCommentIds($args, $params["lastId"], $email, $params["visibleCommentIds"]);
             $newCommentIds = apply_filters("wpdiscuz_bubble_new_comment_ids", $newCommentIds, $params["postId"], $currentUser);
             if (!empty($newCommentIds)) {
                 $response["ids"] = $newCommentIds;
-                if ($this->options->live["bubbleShowNewCommentMessage"]) {
-                    $comment                  = get_comment($commentId);
+                // The message describes the newest of the comments the visitor
+                // is notified about. The newest comment of the post can be one
+                // that the ids leave out, the visitor's own or one already on
+                // their screen, and get_comment() gives null for a comment an
+                // addon keeps from them.
+                if ($this->options->live["bubbleShowNewCommentMessage"] && ($comment = get_comment((int)max($newCommentIds)))) {
                     $comment->comment_content = apply_filters("comment_text", $comment->comment_content, $comment, ["is_wpdiscuz_comment" => true]);
                     $comment->comment_content = strip_tags($comment->comment_content);
                     if (stripos($comment->comment_content, "[/spoiler]") === false) {

@@ -88,7 +88,7 @@ class AgreementCheckbox extends Field {
         $html           .= "</td><td>";
         $required       = $this->isValidateRequired($data) ? " wpd-required-group" : "";
         $html           .= "<div class='wpdiscuz-item" . esc_attr($required) . " wpd-field-group'>";
-        $html           .= "<input checked='checked'  id='" . esc_attr($key) . "-1_" . esc_attr($uniqueId) . "' type='checkbox' name='" . esc_attr($key) . "' value='1' class='" . esc_attr($key) . " wpd-field wpd-agreement-checkbox " . esc_attr($showAgainClass) . "' > <label class='wpd-field-label wpd-cursor-pointer' for='" . esc_attr($key) . "-1_" . esc_attr($uniqueId) . "'>" . $data["label"] . "</label>";
+        $html           .= "<input checked='checked'  id='" . esc_attr($key) . "-1_" . esc_attr($uniqueId) . "' type='checkbox' name='" . esc_attr($key) . "' value='1' class='" . esc_attr($key) . " wpd-field wpd-agreement-checkbox " . esc_attr($showAgainClass) . "' > <label class='wpd-field-label wpd-cursor-pointer' for='" . esc_attr($key) . "-1_" . esc_attr($uniqueId) . "'>" . wp_kses_post($data["label"]) . "</label>";
         $html           .= "</div>";
         $html           .= "</td></tr>";
         return $html;
@@ -109,7 +109,7 @@ class AgreementCheckbox extends Field {
                            name="<?php echo esc_attr($name); ?>" value="1"
                            class="<?php echo esc_attr($name); ?> wpd-field wpd-agreement-checkbox <?php echo esc_attr($showAagainClass); ?>" <?php echo $args["required"] ? "required" : ""; ?>>
                     <label class="wpd-field-label wpd-cursor-pointer"
-                           for="<?php echo esc_attr($name) . "-1_" . esc_attr($uniqueId); ?>"><?php echo $args["label"]; ?></label>
+                           for="<?php echo esc_attr($name) . "-1_" . esc_attr($uniqueId); ?>"><?php echo wp_kses_post($args["label"]); ?></label>
                 </div>
             </div>
             <?php if ($args["desc"]) { ?>

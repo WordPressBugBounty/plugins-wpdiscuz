@@ -52,7 +52,7 @@ class HTMLField extends Field {
     public function frontFormHtml($name, $args, $options, $currentUser, $uniqueId, $isMainForm) {
         if (!$this->isShowForUser($args, $currentUser) || !$isMainForm && !$args["is_show_sform"])
             return;
-        echo $args["value"];
+        echo wp_kses_post($args["value"]);
     }
 
     public function sanitizeFieldData($data) {

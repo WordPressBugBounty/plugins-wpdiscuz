@@ -33,7 +33,7 @@ class CookiesConsent extends Field {
                     :</label>
                 <textarea required="required" type="text" name="<?php echo esc_attr($this->fieldInputName); ?>[label]"
                           id="<?php echo esc_attr($this->fieldInputName); ?>[label]"
-                          style="height: 75px;width:100%"><?php echo $this->fieldData["label"]; ?></textarea>
+                          style="height: 75px;width:100%"><?php echo esc_textarea($this->fieldData["label"]); ?></textarea>
             </div>
             <div style="clear:both;"></div>
         </div>
@@ -51,15 +51,34 @@ class CookiesConsent extends Field {
         $hasDesc   = $args["desc"] ? true : false;
         $commenter = wp_get_current_commenter();
         $consent   = empty($commenter["comment_author_email"]) ? "" : " checked='checked'";
+        // Labels saved before v7.6.13 were stored unsanitized, so a stored label can
+        // still contain markup even though sanitizeFieldData() keeps it plain text now.
+        // Render it through a narrow inline allowlist: legacy policy links keep working,
+        // script and structural tags that are invalid inside a <label> are dropped.
+        $allowedLabelTags = [
+            "a"      => ["href" => true, "title" => true, "target" => true, "rel" => true, "class" => true, "id" => true],
+            "b"      => [],
+            "strong" => [],
+            "i"      => [],
+            "em"     => [],
+            "u"      => [],
+            "span"   => ["class" => true, "id" => true, "title" => true],
+            "br"     => []
+        ];
+        // A stored label can also hold "<" as literal text, e.g. "5 < 6 and 7 > 6".
+        // sanitizeFieldData() keeps that, because strip_tags() only starts a tag when
+        // a letter, "/", "!" or "?" follows the "<" - the same rule a browser applies.
+        // wp_kses() is stricter and would drop it, so pre-escape exactly those cases.
+        $label = preg_replace("~<(?![A-Za-z/!?])~", "&lt;", $args["label"]);
         ?>
-        <div class="wpdiscuz-item wpd-field-group wpd-field-checkbox wpd-field-cookies-consent wpd-field-single <?php echo "$name-wrapper" . ($hasDesc ? " wpd-has-desc" : ""); ?>">
+        <div class="wpdiscuz-item wpd-field-group wpd-field-checkbox wpd-field-cookies-consent wpd-field-single <?php echo esc_attr($name) . "-wrapper" . ($hasDesc ? " wpd-has-desc" : ""); ?>">
             <div class="wpd-field-group-title">
                 <div class="wpd-item">
                     <input id="<?php echo esc_attr($name) . "-1_" . esc_attr($uniqueId); ?>"
                            name="<?php echo esc_attr($name); ?>" type="checkbox" value="1" <?php echo $consent; ?>
                            class="<?php echo esc_attr($name); ?> wpd-field wpd-cookies-checkbox"/>
                     <label class="wpd-field-label wpd-cursor-pointer"
-                           for="<?php echo esc_attr($name) . "-1_" . esc_attr($uniqueId); ?>"><?php echo $args["label"]; ?></label>
+                           for="<?php echo esc_attr($name) . "-1_" . esc_attr($uniqueId); ?>"><?php echo wp_kses($label, $allowedLabelTags); ?></label>
                 </div>
             </div>
             <?php if ($args["desc"]) { ?>

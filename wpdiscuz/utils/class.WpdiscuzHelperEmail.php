@@ -57,6 +57,13 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         return $query_vars;
     }
 
+    /**
+     * Handles the /wpdiscuzsubscription/ links, most of them sent by email.
+     * A nonce cannot be sent by email, so confirming or cancelling a
+     * subscription or a follow is verified by the record ID and its activation
+     * key instead, and a delete link only opens a page whose own request
+     * checks the nonce. Do not add a nonce check here, it would break them.
+     */
     public function subscriptionRequestsActions($template) {
         global $wpDiscuzSubscriptionMessage, $wpDiscuzSubscriptionKey, $wpDiscuzSubscriptionAction;
         $allowedActions              = [
@@ -75,8 +82,8 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
             return $template;
         }
 
-        if (isset($_GET["key"]) && in_array($wpDiscuzSubscriptionAction, $allowedDeleteActions)) {
-            $wpDiscuzSubscriptionKey = sanitize_text_field(trim(wp_unslash($_GET["key"])));
+        if (isset($_GET["key"]) && in_array($wpDiscuzSubscriptionAction, $allowedDeleteActions)) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
+            $wpDiscuzSubscriptionKey = sanitize_text_field(trim(wp_unslash($_GET["key"]))); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
         }
 
 
@@ -85,11 +92,11 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
             wp_send_json_error($rateLimitResult->get_error_code());
         }
 
-        if ($wpDiscuzSubscriptionAction === "confirm" && isset($_GET["wpdiscuzConfirmID"]) && isset($_GET["wpdiscuzConfirmKey"]) && isset($_GET["wpDiscuzComfirm"])) {
-            $this->dbManager->notificationConfirm(sanitize_text_field(wp_unslash($_GET["wpdiscuzConfirmID"])), sanitize_text_field(wp_unslash($_GET["wpdiscuzConfirmKey"])));
+        if ($wpDiscuzSubscriptionAction === "confirm" && isset($_GET["wpdiscuzConfirmID"]) && isset($_GET["wpdiscuzConfirmKey"]) && isset($_GET["wpDiscuzComfirm"])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
+            $this->dbManager->notificationConfirm(sanitize_text_field(wp_unslash($_GET["wpdiscuzConfirmID"])), sanitize_text_field(wp_unslash($_GET["wpdiscuzConfirmKey"]))); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
             $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_comfirm_success_message");
-        } else if ($wpDiscuzSubscriptionAction === "unsubscribe" && isset($_GET["wpdiscuzSubscribeID"]) && isset($_GET["key"])) {
-            $this->dbManager->unsubscribe(sanitize_text_field(wp_unslash($_GET["wpdiscuzSubscribeID"])), sanitize_text_field(wp_unslash($_GET["key"])));
+        } else if ($wpDiscuzSubscriptionAction === "unsubscribe" && isset($_GET["wpdiscuzSubscribeID"]) && isset($_GET["key"])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
+            $this->dbManager->unsubscribe(sanitize_text_field(wp_unslash($_GET["wpdiscuzSubscribeID"])), sanitize_text_field(wp_unslash($_GET["key"]))); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
             $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_unsubscribe_message");
         } else if ($wpDiscuzSubscriptionAction === "deletecomments" && $wpDiscuzSubscriptionKey) {
             $wpDiscuzSubscriptionMessage = __("comments", "wpdiscuz");
@@ -98,13 +105,13 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         } else if ($wpDiscuzSubscriptionAction === "deletefollows" && $wpDiscuzSubscriptionKey) {
             $wpDiscuzSubscriptionMessage = __("follows", "wpdiscuz");
         } else if ($wpDiscuzSubscriptionAction === "follow") {
-            if (isset($_GET["wpdiscuzFollowID"]) && isset($_GET["wpdiscuzFollowKey"]) && isset($_GET["wpDiscuzComfirm"])) {
-                $wpDiscuzConfirm = (bool) sanitize_text_field(wp_unslash($_GET["wpDiscuzComfirm"]));
+            if (isset($_GET["wpdiscuzFollowID"]) && isset($_GET["wpdiscuzFollowKey"]) && isset($_GET["wpDiscuzComfirm"])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
+                $wpDiscuzConfirm = (bool) sanitize_text_field(wp_unslash($_GET["wpDiscuzComfirm"])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
                 if ($wpDiscuzConfirm) {
-                    $this->dbManager->confirmFollow(sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowID"])), sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowKey"])));
+                    $this->dbManager->confirmFollow(sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowID"])), sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowKey"]))); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
                     $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_follow_confirm_success");
                 } else {
-                    $this->dbManager->cancelFollow(sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowID"])), sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowKey"])));
+                    $this->dbManager->cancelFollow(sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowID"])), sanitize_text_field(wp_unslash($_GET["wpdiscuzFollowKey"]))); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Emailed link, verified by its key instead of a nonce.
                     $wpDiscuzSubscriptionMessage = $this->options->getPhrase("wc_follow_cancel_success");
                 }
             }
@@ -195,7 +202,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
     }
 
     private function emailDeleteLinks() {
-        $urlNonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
+        $urlNonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is the nonce; validateNonce() checks it on the next line.
         $this->helper->validateNonce($urlNonce);
         $currentUser      = WpdiscuzHelper::getCurrentUser();
         $currentUserEmail = "";
@@ -494,7 +501,7 @@ class WpdiscuzHelperEmail implements WpDiscuzConstants {
         $this->helper->validateNonce();
         $postId = (int)WpdiscuzHelper::sanitize(INPUT_POST, "postId", FILTER_SANITIZE_NUMBER_INT, 0);;
         $commentId   = (int)WpdiscuzHelper::sanitize(INPUT_POST, "comment_id", FILTER_SANITIZE_NUMBER_INT, 0);
-        $email       = isset($_POST["email"]) ? sanitize_email(trim(wp_unslash($_POST["email"]))) : "";
+        $email       = isset($_POST["email"]) ? sanitize_email(trim(wp_unslash($_POST["email"]))) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce checked by validateNonce() before this runs.
         $isParent    = WpdiscuzHelper::sanitize(INPUT_POST, "isParent", "FILTER_SANITIZE_STRING");
         $currentUser = WpdiscuzHelper::getCurrentUser();
         if ($currentUser && $currentUser->user_email) {

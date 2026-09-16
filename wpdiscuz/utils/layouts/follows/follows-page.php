@@ -2,11 +2,11 @@
 if (!defined("ABSPATH")) {
     exit();
 }
-$action      = isset($_POST["action"]) ? sanitize_text_field(wp_unslash($_POST["action"])) : "";
+$action      = isset($_POST["action"]) ? sanitize_text_field(wp_unslash($_POST["action"])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Included by getFollowsPage() after validateNonce().
 $currentUser = self::getCurrentUser();
 if ($action && $currentUser && $currentUser->ID) {
     $currentUserEmail = $currentUser->user_email;
-    $page             = isset($_POST["page"]) ? intval($_POST["page"]) : 0;
+    $page             = isset($_POST["page"]) ? intval($_POST["page"]) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Included by getFollowsPage() after validateNonce().
     $lrItemsCount     = 3;
     $perPage          = apply_filters("wpdiscuz_content_per_page", 3);
     $offset           = $page * $perPage;

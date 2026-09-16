@@ -571,6 +571,12 @@ _:-ms-lang(x), #wpdcom .wpd-comment.wpd-reply .wpd-comment-footer .wpd-vote-down
     50% {transform: scale(1.5);}
 }
 
+
+#wpdcom #bywpdiscuz{display:none}
+#wpdcom .by-wpdiscuz{text-align:right; border-top:#ddd solid 1px; padding:1px 1px 1px 1px}
+#wpdcom .by-wpdiscuz a{font-size:11px; font-weight:bold; text-align:right; color:#ccc; padding:1px; margin:0; line-height:12px; border:0; text-decoration:none}
+#wpdcom .wpdimg{border:0; padding:0; margin:0; height:12px; cursor:pointer; display:inline; clear:both}
+
 /* Tablets */
 @media screen and (max-width:1024px){
     #wpd-bubble-wrapper{left: 10px !important;}

@@ -17,7 +17,7 @@
 
         // -------------------------------------------------------
         // Auto-expand and scroll when navigated via anchor link
-        // (e.g. sidebar "Media Uploader" / "Google reCAPTCHA")
+        // (e.g. an inline teaser's sidebar link)
         // -------------------------------------------------------
         var hash = window.location.hash;
         if (hash) {

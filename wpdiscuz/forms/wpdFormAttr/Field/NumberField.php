@@ -157,7 +157,7 @@ class NumberField extends Field {
                    class="wpdlb"><?php echo esc_html__($args["name"], "wpdiscuz") . (!empty($args["required"]) ? "*" : ""); ?></label>
             <?php if ($args["desc"]) { ?>
                 <div class="wpd-field-desc"><i
-                        class="far fa-question-circle"></i><span><?php echo $args["desc"]; ?></span></div>
+                        class="far fa-question-circle"></i><span><?php echo esc_html($args["desc"]); ?></span></div>
             <?php } ?>
         </div>
         <?php

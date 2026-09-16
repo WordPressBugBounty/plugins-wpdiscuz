@@ -671,6 +671,21 @@ jQuery(document).ready(function ($) {
         wpdiscuzReset();
     });
 
+    /**
+     * Makes the current values of the anti-spam fields of a form their default values, see
+     * isAntispamField(). Resetting the form after its comment is posted then keeps the values
+     * anti-spam scripts set once the page loaded, instead of putting back the ones the page was
+     * served with and getting the next comment from the form rejected. Every other field is
+     * cleared by the reset as before.
+     */
+    function keepAntispamFieldValues(form) {
+        $('input, textarea', form).not(':checkbox, :radio, :file, :submit, :button').each(function () {
+            if (isAntispamField(this.name)) {
+                this.defaultValue = this.value;
+            }
+        });
+    }
+
     function wpdiscuzSendComment(wcForm, data, currentSubmitBtn) {
         $(document.body).trigger('wpdiscuz_before_send_comment', [wcForm, data, currentSubmitBtn]);
         getAjaxObj(isNativeAjaxEnabled, false, data)
@@ -704,6 +719,7 @@ jQuery(document).ready(function ($) {
                         } else if (!wpdCookiesConsent) {
                             $('.wpd-cookies-checkbox').prop('checked', false);
                         }
+                        keepAntispamFieldValues(wcForm);
                         wcForm.get(0).reset();
                         wpdClearDraft($('.wpdiscuz_unique_id', wcForm).val());
                         if (wpdiscuzLoadRichEditor) {
@@ -1360,7 +1376,15 @@ jQuery(document).ready(function ($) {
     }
 
     function replaceUniqueId(uniqueId) {
-        var secondaryForm = $('#wpdiscuz_hidden_secondary_form').html();
+        var secondaryFormTemplate = $('#wpdiscuz_hidden_secondary_form');
+        // Anti-spam plugins change hidden fields with JavaScript once the page loads, such as
+        // clearing a honeypot or counting a timer. html() serializes attributes, not those live
+        // values, so write them back first; otherwise every reply form is built with the values
+        // the page was served with and its comment is rejected as spam.
+        $('input', secondaryFormTemplate).not(':checkbox, :radio, :file').each(function () {
+            this.setAttribute('value', this.value);
+        });
+        var secondaryForm = secondaryFormTemplate.html();
         return secondaryForm.replace(/wpdiscuzuniqueid/g, uniqueId);
     }
 
@@ -2520,6 +2544,39 @@ jQuery(document).ready(function ($) {
             $('.wpd-last-inline-comments-wrapper').remove();
         }
     });
+
+    /**
+     * Whether a field belongs to an anti-spam plugin, told by the start of its name: the
+     * antispamFieldPrefixes list that the wpdiscuz_antispam_field_prefixes filter builds.
+     */
+    function isAntispamField(name) {
+        var prefixes = wpdiscuzAjaxObj.antispamFieldPrefixes;
+        if (!name || !Array.isArray(prefixes)) {
+            return false;
+        }
+        for (var i = 0; i < prefixes.length; i++) {
+            if (name.indexOf(prefixes[i]) === 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Anti-spam plugins print their fields into comment forms through the comment_form
+     * action and fill them in with JavaScript once the page loads. The feedback form is
+     * loaded later without them, so a feedback comment is sent with the anti-spam fields
+     * of the reply form template, which those scripts have already processed. Nothing
+     * else printed into the comment form reaches a feedback comment.
+     */
+    function appendFeedbackFormAntispamFields(form, data) {
+        $('input, textarea', '#wpdiscuz_hidden_secondary_form').not(':checkbox, :radio, :file, :submit, :button').each(function () {
+            if (isAntispamField(this.name) && !form[0].elements.namedItem(this.name)) {
+                data.append(this.name, this.value);
+            }
+        });
+    }
+
     $('body').on('click', '.wpd-inline-submit.wpd_not_clicked', function (e) {
         e.preventDefault();
         var clickedButton = $(this);
@@ -2538,6 +2595,7 @@ jQuery(document).ready(function ($) {
                     data.append($(val).attr('name'), $(val).val());
                 }
             });
+            appendFeedbackFormAntispamFields(form, data);
             getAjaxObj(isNativeAjaxEnabled, true, data)
                 .done(function (r) {
                     clickedButton.addClass('wpd_not_clicked');
@@ -2921,6 +2979,28 @@ jQuery(document).ready(function ($) {
 
         return doRequest();
     }
+
+    /* "Powered by wpDiscuz" info toggle. This was an inline onclick in
+       comment-form.php, which a Content-Security-Policy without 'unsafe-inline'
+       blocks outright and which a keyboard user could never reach. Scoped to the
+       closest .by-wpdiscuz so several comment forms on one page each toggle their
+       own. */
+    $(document).on('click keydown', '.wpd-by-toggle', function (e) {
+        if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') {
+            return;
+        }
+        e.preventDefault();
+        var $toggle = $(this);
+        var $link = $toggle.closest('.by-wpdiscuz').find('.wpd-by-link');
+        // the control hides itself, so hand focus to what it revealed instead of
+        // dropping a keyboard user back at the top of the document
+        var hadFocus = $toggle.is(document.activeElement);
+        $link.css('display', 'inline');
+        $toggle.css('display', 'none');
+        if (hadFocus && $link.length) {
+            $link[0].focus();
+        }
+    });
 
     wpdiscuzAjaxObj.getAjaxObj = getAjaxObj;
 });

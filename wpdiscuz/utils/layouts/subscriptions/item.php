@@ -12,7 +12,7 @@ if (!defined("ABSPATH")) {
         <div class="wpd-item-link wpd-comment-item-link">
             <a class="wpd-comment-link" href="<?php echo esc_url($link); ?>" target="_blank"
                title="<?php echo esc_attr($content); ?>">
-                <?php echo wp_kses_post($content); ?>
+                <?php echo wp_kses_post($content); // Not esc_html(): for a post subscription this is the raw post title, which can contain markup. ?>
             </a>
         </div>
         <div class="wpd-item-link wpd-post-item-link">

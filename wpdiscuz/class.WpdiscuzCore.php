@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.70
+ * Version: 7.6.71
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -558,12 +558,30 @@ class WpdiscuzCore implements WpDiscuzConstants {
     /**
      * insert and retrieve a comment, or end the request with a safe ajax error
      *
+     * when WordPress refuses the comment as a duplicate of one it stored as spam or
+     * trash, a commenter sending a rejected comment again for instance, the request ends
+     * with the rejected comment response instead of the duplicate error
+     *
      * @param array $commentData comment data passed to WordPress
      * @return array comment id and comment object
      */
     private function insertComment($commentData) {
-        $commentId = wp_new_comment(wp_slash($commentData), true);
+        $duplicateOfId   = 0;
+        $recordDuplicate = function ($dupeId) use (&$duplicateOfId) {
+            $duplicateOfId = is_numeric($dupeId) ? (int)$dupeId : 0;
+            return $dupeId;
+        };
+        // records which comment WordPress matched as a duplicate, without changing the result
+        add_filter("duplicate_comment_id", $recordDuplicate, PHP_INT_MAX);
+        try {
+            $commentId = wp_new_comment(wp_slash($commentData), true);
+        } finally {
+            remove_filter("duplicate_comment_id", $recordDuplicate, PHP_INT_MAX);
+        }
         if (is_wp_error($commentId)) {
+            if ($commentId->get_error_code() === "comment_duplicate" && $duplicateOfId > 0) {
+                $this->sendRejectedCommentResponse(get_comment($duplicateOfId), $commentData, true);
+            }
             $this->sendCommentInsertionError($commentId->get_error_message());
         }
         if (!is_numeric($commentId) || (int)$commentId <= 0) {
@@ -593,32 +611,42 @@ class WpdiscuzCore implements WpDiscuzConstants {
      * send the ajax error response for a comment WordPress stored as spam or trash
      *
      * does nothing for any other comment status, so both the normal and the inline
-     * comment handlers can call it unconditionally right after the comment is created
+     * comment handlers can call it unconditionally right after the comment is created,
+     * and a duplicate of a published or pending comment keeps WordPress's duplicate error
      *
-     * @param WP_Comment $comment the comment as it was stored
+     * @param WP_Comment $comment the comment as it was stored, or the earlier comment a duplicate matched
      * @param array $commentData the data the comment was created from
+     * @param bool $isDuplicateRetry whether WordPress refused the comment as a duplicate of $comment, so nothing new was stored
      */
-    private function sendRejectedCommentResponse($comment, $commentData = []) {
+    private function sendRejectedCommentResponse($comment, $commentData = [], $isDuplicateRetry = false) {
         if (!($comment instanceof WP_Comment) || ($comment->comment_approved !== "trash" && $comment->comment_approved !== "spam")) {
             return;
         }
         $phraseKey = $comment->comment_approved === "trash" ? "wc_msg_comment_is_trash" : "wc_msg_comment_is_spam";
         /**
-         * Filters the ajax error payload sent when a new comment is stored as spam or trash.
+         * Filters the ajax error payload sent when a new comment is stored as spam or trash,
+         * or refused as a duplicate of a comment stored as spam or trash.
          *
          * Return a phrase key to keep using a wpDiscuz phrase, or ["error" => "message"] to
          * display a literal message instead. Moderation plugins that set the spam or trash
          * status can use this to explain why the comment was rejected.
+         *
+         * WordPress refuses a comment identical to one it already stored, spam included, so a
+         * commenter who sends a rejected comment again reaches this filter again with
+         * $isDuplicateRetry set to true. Nothing is stored for that attempt and $comment is the
+         * earlier comment, so a reason recorded only while that comment was being rejected is
+         * not available to the retry.
          *
          * The message is escaped here, so a filter passes plain text and not markup. A
          * return value that could not be displayed falls back to the phrase key, so the
          * commenter is never left looking at an empty message.
          *
          * @param string|array $response phrase key, or ["error" => "message"]
-         * @param WP_Comment $comment the comment as it was stored
-         * @param array $commentData the data the comment was created from
+         * @param WP_Comment $comment the comment as it was stored, or the earlier comment on a duplicate retry
+         * @param array $commentData the data the comment was created from, or the data of the refused retry
+         * @param bool $isDuplicateRetry true when the comment was refused as a duplicate of $comment and nothing was stored
          */
-        $response = apply_filters("wpdiscuz_comment_rejected_response", $phraseKey, $comment, $commentData);
+        $response = apply_filters("wpdiscuz_comment_rejected_response", $phraseKey, $comment, $commentData, $isDuplicateRetry);
         if (is_array($response) && isset($response["error"]) && is_string($response["error"]) && trim($response["error"]) !== "") {
             $response = ["error" => esc_html($response["error"])];
         } else if (!is_string($response) || trim($response) === "") {

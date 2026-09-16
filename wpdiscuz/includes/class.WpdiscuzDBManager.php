@@ -183,7 +183,19 @@ class WpdiscuzDBManager implements WpDiscuzConstants {
             ), array_merge(array($sqlPart), $visibleCommentIdsArr));
         }
 
-        $sqlCommentIds = $this->db->prepare("SELECT `comment_ID` FROM `{$this->db->comments}` WHERE `comment_post_ID` = %d AND `comment_ID` > %d AND `comment_author_email` != %s" . $approved . $visible . " ORDER BY `{$wpdiscuz->options->thread_display["orderCommentsBy"]}` ASC;", $args["post_id"], $loadLastCommentId, $email);
+        $notAuthor = "";
+        $sqlArgs   = [$args["post_id"], $loadLastCommentId];
+        if ($email) {
+            // Keeps the requester's own new comments out of the result. Only
+            // for a non-empty email: guests who comment without one all share
+            // the empty string, so this would hide them from each other. An
+            // anonymous guest's own comments are left out by $visible instead,
+            // as long as they are on the screen the request comes from.
+            $notAuthor = " AND `comment_author_email` != %s";
+            $sqlArgs[] = $email;
+        }
+
+        $sqlCommentIds = $this->db->prepare("SELECT `comment_ID` FROM `{$this->db->comments}` WHERE `comment_post_ID` = %d AND `comment_ID` > %d" . $notAuthor . $approved . $visible . " ORDER BY `{$wpdiscuz->options->thread_display["orderCommentsBy"]}` ASC;", $sqlArgs);
 
         return $this->db->get_col($sqlCommentIds);
     }

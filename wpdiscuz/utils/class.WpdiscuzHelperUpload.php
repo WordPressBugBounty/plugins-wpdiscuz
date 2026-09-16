@@ -92,12 +92,20 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
 
     public function uploadButtons($html, $uniqueId) {
         if ($this->isUploadingAllowed()) {
+            // $type and $allowedExts are attribute fragments, not attribute values:
+            // the filters return bare attributes ("multiple", accept="a,b"), so esc_attr()
+            // would escape their own quotes and break the tag. Both are developer supplied
+            // and must return safe attribute markup. No unsanitized request data reaches
+            // them: $type is a literal, and $allowedExts is built from the wmuMimeTypes
+            // option, whose values come from a whitelist on save and go through
+            // sanitize_mime_type() on import. $faIcon is a plain class value, so it is
+            // escaped below.
             $type        = apply_filters("wpdiscuz_mu_upload_type", "");
             $faIcon      = apply_filters("wpdiscuz_mu_upload_icon", "far fa-image");
             $allowedExts = apply_filters("wpdiscuz_mu_allowed_extensions", "accept='image/*'");
             $html        .= "<span class='wmu-upload-wrap' wpd-tooltip='" . esc_attr($this->options->getPhrase("wmuAttachImage", ["unique_id" => $uniqueId])) . "' wpd-tooltip-position='" . (!is_rtl() ? 'left' : 'right') . "'>";
             $html        .= "<label class='wmu-add'>";
-            $html        .= "<i class='$faIcon'></i>";
+            $html        .= "<i class='" . esc_attr($faIcon) . "'></i>";
             $html        .= "<input style='display:none;' class='wmu-add-files' type='file' name='" . self::INPUT_NAME . "' $type $allowedExts/>";
             $html        .= "</label>";
             $html        .= "</span>";
@@ -113,7 +121,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
             $html .= "<div class='wmu-tabs wmu-" . self::KEY_FILES . "-tab wmu-hide'></div>";
             $html .= apply_filters("wpdiscuz_mu_tabs", "");
             $html .= "</div>";
-            echo $html;
+            echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Fixed markup plus the wpdiscuz_mu_tabs filter; no request data.
         }
     }
 
@@ -299,7 +307,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
 
 
     private function getFilteredFiles() {
-        $files = $this->combineArray($_FILES[self::INPUT_NAME]);
+        $files = $this->combineArray($_FILES[self::INPUT_NAME]); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only called after validateNonce(); file fields are validated before use.
 
         foreach ($files as $key => $file) {
             if (empty($file["tmp_name"]) || empty($file["size"])) {
@@ -317,7 +325,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
             wp_send_json_error("msgPostIdNotExists");
         }
 
-        if (empty($_FILES[self::INPUT_NAME]) || !is_array($_FILES[self::INPUT_NAME])) {
+        if (empty($_FILES[self::INPUT_NAME]) || !is_array($_FILES[self::INPUT_NAME])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce checked by validateNonce() before this runs.
             return;
         }
 
@@ -362,7 +370,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
      */
     public function uploadFiles($newComment, $currentUser) {
 
-        if (empty($_FILES[self::INPUT_NAME]) || !is_array($_FILES[self::INPUT_NAME])) {
+        if (empty($_FILES[self::INPUT_NAME]) || !is_array($_FILES[self::INPUT_NAME])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce checked by validateNonce() before this runs.
             return;
         }
 
@@ -482,7 +490,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
     public function deleteAttachment() {
         $this->helper->validateNonce();
         $response     = ["errorCode" => "", "error" => ""];
-        $attachmentId = isset($_POST["attachmentId"]) ? trim(sanitize_text_field(wp_unslash($_POST["attachmentId"]))) : 0;
+        $attachmentId = isset($_POST["attachmentId"]) ? trim(sanitize_text_field(wp_unslash($_POST["attachmentId"]))) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce checked by validateNonce() before this runs.
         $attachmentId = self::decrypt($attachmentId);
         $attachment   = get_post($attachmentId);
 
@@ -767,6 +775,7 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
 
     private function getAttachmentReplaceHtml($attachmentId) {
         $label       = esc_attr__("Replace", "wpdiscuz");
+        // See uploadButtons(): $allowedExts is a full attribute fragment, not a value.
         $allowedExts = apply_filters("wpdiscuz_mu_allowed_extensions", "accept='image/*'");
         $replaceHtml = "<label class='wmu-attachment-replace' title='" . $label . "' data-wmu-attachment='" . esc_attr($attachmentId) . "'>";
         $replaceHtml .= "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'><path d='M500.7 138.7L512 149.4L512 96C512 78.3 526.3 64 544 64C561.7 64 576 78.3 576 96L576 224C576 241.7 561.7 256 544 256L416 256C398.3 256 384 241.7 384 224C384 206.3 398.3 192 416 192L463.9 192L456.3 184.8C456.1 184.6 455.9 184.4 455.7 184.2C380.7 109.2 259.2 109.2 184.2 184.2C109.2 259.2 109.2 380.7 184.2 455.7C259.2 530.7 380.7 530.7 455.7 455.7C463.9 447.5 471.2 438.8 477.6 429.6C487.7 415.1 507.7 411.6 522.2 421.7C536.7 431.8 540.2 451.8 530.1 466.3C521.6 478.5 511.9 490.1 501 501C401 601 238.9 601 139 501C39.1 401 39 239 139 139C238.9 39.1 400.7 39 500.7 138.7z'/></svg>";

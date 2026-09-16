@@ -945,6 +945,29 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         return false;
     }
 
+    /**
+     * Returns the antibot key fields of All In One Security for a comment form.
+     *
+     * When its "Detect spambots posting comments" option is on, All In One Security rejects
+     * every guest comment that arrives without these keys, marking it as spam or discarding
+     * it depending on its settings. It adds them through the comment_form_submit_field filter,
+     * which only comment_form() applies, so wpDiscuz forms have to print them themselves.
+     *
+     * @return string hidden fields markup, or an empty string when there is nothing to add
+     */
+    public static function getAiosAntibotFields() {
+        global $aio_wp_security;
+        if (is_user_logged_in() || !is_callable(["AIOWPSecurity_Comment", "insert_antibot_keys_in_comment_form"]) || empty($aio_wp_security->configs) || !is_callable([$aio_wp_security->configs, "get_value"]) || (string)$aio_wp_security->configs->get_value("aiowps_enable_spambot_detecting") !== "1") {
+            return "";
+        }
+        $fields = wp_kses(AIOWPSecurity_Comment::insert_antibot_keys_in_comment_form(), [
+            "p"     => ["class" => true],
+            "input" => ["type" => true, "name" => true, "value" => true, "id" => true],
+        ]);
+
+        return "<div style='display:none;'>" . $fields . "</div>";
+    }
+
     public static function fixEmailFrom($domain) {
         $domain = strtolower($domain);
         if (substr($domain, 0, 4) === "www.") {

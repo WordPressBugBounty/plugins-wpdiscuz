@@ -1239,6 +1239,27 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $jsArgs["firstLoadWithAjax"]            = $this->thread_display["firstLoadWithAjax"];
         $jsArgs["wc_copied_to_clipboard"]       = esc_html($this->phrases["wc_copied_to_clipboard"]);
         $jsArgs["inlineFeedbackAttractionType"] = $this->inline["inlineFeedbackAttractionType"];
+        /**
+         * Filters the name prefixes of the fields anti-spam plugins add to comment forms.
+         *
+         * Anti-spam plugins print their fields into comment forms through the comment_form action
+         * and fill them in with JavaScript once the page loads. The inline feedback form is loaded
+         * later, after those scripts have run, so its submission carries these fields from the reply
+         * form already on the page. A comment form also keeps their values when it is cleared after
+         * a comment is posted, since resetting them would put back the values the page was served with.
+         *
+         * Each entry is the start of a field name. Inputs and textareas count, but not checkboxes,
+         * radio buttons, file inputs, buttons or selects, and nothing else printed into the comment
+         * form reaches a feedback comment or keeps its value when the form is cleared.
+         *
+         * @param string[] $fieldPrefixes field name prefixes
+         */
+        $jsArgs["antispamFieldPrefixes"] = [];
+        foreach ((array)apply_filters("wpdiscuz_antispam_field_prefixes", ["ak_", "akismet_comment_nonce", "la_sentinelle_"]) as $fieldPrefix) {
+            if (is_scalar($fieldPrefix) && (string)$fieldPrefix !== "") {
+                $jsArgs["antispamFieldPrefixes"][] = (string)$fieldPrefix;
+            }
+        }
         $jsArgs["loadRichEditor"]               = intval($this->form["richEditor"] === "both" || (!wp_is_mobile() && $this->form["richEditor"] === "desktop"));
         //**reCaptcha**//
         $jsArgs["wpDiscuzReCaptchaSK"]           = apply_filters("wpdiscuz_recaptcha_site_key", $this->recaptcha["siteKey"]);

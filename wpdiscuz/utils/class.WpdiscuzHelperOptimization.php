@@ -348,7 +348,7 @@ class WpdiscuzHelperOptimization implements WpDiscuzConstants {
         if (!wp_doing_ajax()) {
             return false;
         }
-        $action = isset($_REQUEST["action"]) ? sanitize_text_field(wp_unslash($_REQUEST["action"])) : "";
+        $action = isset($_REQUEST["action"]) ? sanitize_text_field(wp_unslash($_REQUEST["action"])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only compares the action name; the wpdLoadMoreComments handler checks the nonce.
         if ($action !== "wpdLoadMoreComments") {
             return false;
         }
@@ -371,10 +371,24 @@ class WpdiscuzHelperOptimization implements WpDiscuzConstants {
 
 
     private function addWpDiscuzParams($query) {
-        $query->query_vars["wpdiscuz"] = wp_array_slice_assoc($_REQUEST, $this->getWpDiscuzSpecificArgs());
-    }
+        // These values reach nothing but the md5() cache key WP_Comment_Query builds
+        // from query_var_defaults, never SQL and never output. They go through the very
+        // sanitization loadMoreComments() applies to them, so that two requests share a
+        // key only when they would produce the same comment list. Casting the raw values
+        // instead would not do: FILTER_SANITIZE_NUMBER_INT strips the decimal point, so
+        // "5.9" is cursor 59 to the handler but 5 to an (int) cast, and the two requests
+        // would collide on one key.
+        $lastParentId = (int) WpdiscuzHelper::sanitize(INPUT_POST, "lastParentId", FILTER_SANITIZE_NUMBER_INT, 0);
+        $isFirstLoad  = WpdiscuzHelper::sanitize(INPUT_POST, "isFirstLoad", FILTER_SANITIZE_NUMBER_INT, 0);
+        $offset       = (int) WpdiscuzHelper::sanitize(INPUT_POST, "offset", FILTER_SANITIZE_NUMBER_INT, 0);
+        $sorting      = WpdiscuzHelper::sanitize(INPUT_POST, "sorting", "FILTER_SANITIZE_STRING");
 
-    private function getWpDiscuzSpecificArgs() {
-        return ["lastParentId", "isFirstLoad", "offset", "sorting"];
+        $query->query_vars["wpdiscuz"] = [
+            "lastParentId" => $lastParentId,
+            // The handler only ever tests this one for truthiness.
+            "isFirstLoad"  => $isFirstLoad ? 1 : 0,
+            "offset"       => $offset,
+            "sorting"      => in_array($sorting, ["newest", "oldest", "by_vote"], true) ? $sorting : "",
+        ];
     }
 }

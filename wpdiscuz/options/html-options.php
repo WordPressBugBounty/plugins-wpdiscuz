@@ -747,13 +747,13 @@ $settings      = $this->settingsArray();
                                 <a href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"
                                    title="<?php esc_attr_e("Open Settings", "wpdiscuz") ?>">
                                     <img src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/dashboard/" . $setting["icon"])); ?>"
-                                         style="height: <?php echo $setting["icon-height"] ?>;"/>
+                                         style="height: <?php echo esc_attr($setting["icon-height"]); ?>;"/>
                                 </a>
                             </div>
                             <div class="wpd-box-foot">
                                 <div class="wpd-box-title">
                                     <a href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&wpd_tab=" . $tab_key)); ?>"
-                                       title="<?php esc_attr_e("Open Settings", "wpdiscuz") ?>"><?php echo $setting["title"] ?></a>
+                                       title="<?php esc_attr_e("Open Settings", "wpdiscuz") ?>"><?php echo esc_html($setting["title"]); ?></a>
                                 </div>
                                 <div class="wpd-box-arrow">
                                     <a href="<?php echo esc_url(admin_url("admin.php?page=" . WpdiscuzCore::PAGE_SETTINGS . "&&wpd_tab=" . $tab_key)); ?>"

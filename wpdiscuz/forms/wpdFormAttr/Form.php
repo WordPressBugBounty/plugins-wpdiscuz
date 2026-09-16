@@ -440,8 +440,7 @@ class Form {
      * the rating schema when the placement itself does not say, which is what
      * getPostRatingHtml()'s $isPageRating is for. A page is meant to describe
      * itself with one of each, and the themes, custom CSS and links that point
-     * at the id, the rating notifications of the BuddyPress Integration addon
-     * among them, need it to be there.
+     * at the id, addon rating notifications among them, need it to be there.
      *
      * The settings decide it, not the order the ratings happen to be built in,
      * because a rating can be built and thrown away: a SEO plugin running
@@ -1031,6 +1030,7 @@ class Form {
                     if ($this->wpdOptions->isGoodbyeCaptchaActive) {
                         echo $this->wpdOptions->goodbyeCaptchaTocken;
                     }
+                    echo \WpdiscuzHelper::getAiosAntibotFields(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- filtered with wp_kses() inside getAiosAntibotFields()
                     ?>
                     <input type="hidden" class="wpdiscuz_unique_id" value="<?php echo esc_attr($uniqueId); ?>"
                            name="wpdiscuz_unique_id">
@@ -1084,7 +1084,10 @@ class Form {
             </div>
             <div class="wpd-editor-buttons-right">
                 <?php
-                echo apply_filters("wpdiscuz_editor_buttons_html", "", $uniqueId);
+                // Same addon extension point as in renderTextEditorButtons() below, and
+                // raw for the same reason: addons return whole button markup that
+                // wp_kses() would strip. No request data reaches the filter.
+                echo apply_filters("wpdiscuz_editor_buttons_html", "", $uniqueId); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Developer supplied button markup; see the note in renderTextEditorButtons().
                 ?>
             </div>
             <?php
@@ -1192,6 +1195,20 @@ class Form {
                 "svg"   => "[+]"
             ];
         }
+        // Both filters below are addon extension points for the editor toolbar and
+        // their output is echoed raw. Addons return inline SVG icons in the "svg" key
+        // through wpdiscuz_editor_buttons, and whole button markup (<span>, <label>, a
+        // file <input>) through wpdiscuz_editor_buttons_html.
+        // wp_kses() cannot be applied to either: the default allowlists drop <svg> and
+        // its children outright, and a hand-written SVG allowlist would silently strip
+        // any element or presentation attribute a newer addon ships. Everything echoed
+        // is developer supplied -- the hardcoded strings above plus filter output --
+        // and no request data reaches the filters, because $uniqueId is always a
+        // literal ("0_0", "wpdiscuzuniqueid", or "edit_" plus the comment ID and parent
+        // ID read from the database). Button titles arrive already translated by
+        // whoever supplies them -- core with __() above, addons in their own text
+        // domain -- so they are only escaped on output, never passed back through
+        // esc_attr_e(), which would translate a translation against the wrong domain.
         $editorButtons     = apply_filters("wpdiscuz_editor_buttons", $editorButtons, $uniqueId);
         $editorButtonsHtml = apply_filters("wpdiscuz_editor_buttons_html", "", $uniqueId);
         ?>
@@ -1201,14 +1218,16 @@ class Form {
                 $value    = $editorButton["value"] ? "value='" . esc_attr($editorButton["value"]) . "'" : "";
                 $dataName = $editorButton["name"] ? "data-wpde_button_name='" . esc_attr($editorButton["name"]) . "'" : "";
                 ?>
-                <button title="<?php esc_attr_e($editorButton["title"], "wpdiscuz"); ?>"
-                        class="<?php echo esc_attr($editorButton["class"]); ?>" <?php echo $value; ?> <?php echo $dataName; ?>><?php echo $editorButton["svg"]; ?></button>
+                <button title="<?php echo esc_attr($editorButton["title"]); ?>"
+                        class="<?php echo esc_attr($editorButton["class"]); ?>" <?php echo $value; ?> <?php echo $dataName; ?>><?php
+                            echo $editorButton["svg"]; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Inline SVG icon from the wpdiscuz_editor_buttons filter; see the note above.
+                        ?></button>
                 <?php
             }
             ?>
             <div class="wpd-editor-buttons-right">
                 <?php
-                echo $editorButtonsHtml;
+                echo $editorButtonsHtml; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Button markup from the wpdiscuz_editor_buttons_html filter; see the note above.
                 ?>
             </div>
         </div>

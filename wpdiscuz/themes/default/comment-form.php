@@ -408,13 +408,13 @@ if (!post_password_required($post->ID) && $load) {
             if ($wpdiscuz->options->general["showPluginPoweredByLink"]) {
                 ?>
                 <div class="by-wpdiscuz">
-                    <span id="awpdiscuz"
-                          onclick='document.getElementById("bywpdiscuz").style.display = "inline"; document.getElementById("awpdiscuz").style.display = "none";'>
+                    <span id="awpdiscuz" class="wpd-by-toggle" role="button" tabindex="0"
+                          aria-label="<?php esc_attr_e("Show wpDiscuz link", "wpdiscuz"); ?>">
                         <img alt="wpdiscuz"
                              src="<?php echo esc_url(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/plugin-icon/icon_info.png")); ?>"
                              align="absmiddle" class="wpdimg"/>
                     </span>&nbsp;
-                    <a href="https://wpdiscuz.com/" target="_blank" rel='noreferrer' id="bywpdiscuz"
+                    <a href="https://wpdiscuz.com/" target="_blank" rel='noreferrer' id="bywpdiscuz" class="wpd-by-link"
                        title="wpDiscuz v<?php echo esc_attr(get_option(WpdiscuzCore::OPTION_SLUG_VERSION)); ?> - Supercharged native comments">wpDiscuz</a>
                 </div>
                 <?php
