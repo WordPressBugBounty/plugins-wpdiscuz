@@ -741,9 +741,10 @@ jQuery(document).ready(function ($) {
                         runCallbacks(r, wcForm);
                         $(document.body).trigger('wpdiscuz_comment_post_success', [wcForm, data, currentSubmitBtn, r.data]);
                     } else if (r.data) {
+                        var errCode = typeof r.data === 'object' && r.data.errorCode ? r.data.errorCode : r.data;
                         var errMsg = typeof r.data === 'object' && r.data.error
                             ? r.data.error
-                            : wpdiscuzAjaxObj.applyFilterOnPhrase(wpdiscuzAjaxObj[r.data], r.data, wcForm);
+                            : wpdiscuzAjaxObj.applyFilterOnPhrase(wpdiscuzAjaxObj[errCode], errCode, wcForm);
                         wpdiscuzAjaxObj.setCommentMessage(errMsg, 'error');
                         runCallbacks(r, wcForm);
                         $(document.body).trigger('wpdiscuz_comment_post_error', [wcForm, data, currentSubmitBtn, r.data]);

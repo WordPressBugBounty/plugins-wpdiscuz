@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.71
+ * Version: 7.6.72
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -559,8 +559,10 @@ class WpdiscuzCore implements WpDiscuzConstants {
      * insert and retrieve a comment, or end the request with a safe ajax error
      *
      * when WordPress refuses the comment as a duplicate of one it stored as spam or
-     * trash, a commenter sending a rejected comment again for instance, the request ends
-     * with the rejected comment response instead of the duplicate error
+     * trash, a commenter sending a spam comment again for instance, the request ends
+     * with the rejected comment response instead of the duplicate error. WordPress's own
+     * duplicate check skips trashed comments, so a trash match can only come from another
+     * duplicate_comment_id callback
      *
      * @param array $commentData comment data passed to WordPress
      * @return array comment id and comment object
@@ -632,10 +634,12 @@ class WpdiscuzCore implements WpDiscuzConstants {
          * status can use this to explain why the comment was rejected.
          *
          * WordPress refuses a comment identical to one it already stored, spam included, so a
-         * commenter who sends a rejected comment again reaches this filter again with
+         * commenter who sends a spam comment again reaches this filter again with
          * $isDuplicateRetry set to true. Nothing is stored for that attempt and $comment is the
          * earlier comment, so a reason recorded only while that comment was being rejected is
-         * not available to the retry.
+         * not available to the retry. WordPress's own duplicate check skips trashed comments, so
+         * a trashed comment sent again is stored again as a new comment, and reaches this filter
+         * as one when it is caught again.
          *
          * The message is escaped here, so a filter passes plain text and not markup. A
          * return value that could not be displayed falls back to the phrase key, so the

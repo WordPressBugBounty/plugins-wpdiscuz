@@ -357,9 +357,14 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
 
         foreach ($files as $file) {
             $extension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
-            if (!$this->isAllowedFileType($this->getMimeType($file, $extension), $extension)) {
+            $mimeType  = $this->getMimeType($file, $extension);
+            if (!$this->isAllowedFileType($mimeType, $extension)) {
                 wp_send_json_error(["error" => sprintf(__(".%s files are not allowed", "wpdiscuz"), $extension)]);
             }
+            // Fired before the comment is inserted, so a listener that refuses a file with a JSON error
+            // refuses the comment too, instead of leaving it saved behind the error.
+            $file["type"] = $this->isImage($file) ?: $mimeType;
+            do_action("wpdiscuz_mu_preupload", $file);
         }
     }
 
@@ -408,8 +413,6 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
             } else {
                 $error = true;
             }
-
-            do_action("wpdiscuz_mu_preupload", $file);
 
             if (!$error) {
                 $attachmentData = $this->uploadSingleFile($file);
