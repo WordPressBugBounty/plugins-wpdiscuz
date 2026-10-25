@@ -179,7 +179,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $this->social["enableFbShare"] = isset($options[self::TAB_SOCIAL]["enableFbShare"]) ? $options[self::TAB_SOCIAL]["enableFbShare"] : $defaultOptions[self::TAB_SOCIAL]["enableFbShare"];
         $this->social["fbAppID"]       = isset($options[self::TAB_SOCIAL]["fbAppID"]) ? $options[self::TAB_SOCIAL]["fbAppID"] : $defaultOptions[self::TAB_SOCIAL]["fbAppID"];
         $this->social["fbAppSecret"]   = isset($options[self::TAB_SOCIAL]["fbAppSecret"]) ? $options[self::TAB_SOCIAL]["fbAppSecret"] : $defaultOptions[self::TAB_SOCIAL]["fbAppSecret"];
-        $this->social["fbUseOAuth2"]   = isset($options[self::TAB_SOCIAL]["fbUseOAuth2"]) ? $options[self::TAB_SOCIAL]["fbUseOAuth2"] : $defaultOptions[self::TAB_SOCIAL]["fbUseOAuth2"];
         // twitter
         $this->social["enableTwitterLogin"] = isset($options[self::TAB_SOCIAL]["enableTwitterLogin"]) ? $options[self::TAB_SOCIAL]["enableTwitterLogin"] : $defaultOptions[self::TAB_SOCIAL]["enableTwitterLogin"];
         $this->social["enableTwitterShare"] = isset($options[self::TAB_SOCIAL]["enableTwitterShare"]) ? $options[self::TAB_SOCIAL]["enableTwitterShare"] : $defaultOptions[self::TAB_SOCIAL]["enableTwitterShare"];
@@ -659,7 +658,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 "enableFbShare"                => $this->social["enableFbShare"],
                 "fbAppID"                      => $this->social["fbAppID"],
                 "fbAppSecret"                  => $this->social["fbAppSecret"],
-                "fbUseOAuth2"                  => $this->social["fbUseOAuth2"],
                 // twitter
                 "enableTwitterLogin"           => $this->social["enableTwitterLogin"],
                 "enableTwitterShare"           => $this->social["enableTwitterShare"],
@@ -928,7 +926,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 "rememberLoggedinUser"         => 1,
                 "enableFbLogin"                => 0,
                 "enableFbShare"                => 0,
-                "fbUseOAuth2"                  => 0,
                 "fbAppID"                      => "",
                 "fbAppSecret"                  => "",
                 "enableTwitterLogin"           => 0,
@@ -1215,10 +1212,8 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         }
         $jsArgs["socialLoginAgreementCheckbox"] = $this->social["socialLoginAgreementCheckbox"];
         $jsArgs["enableFbLogin"]                = $this->social["enableFbLogin"];
-        $jsArgs["fbUseOAuth2"]                  = $this->social["fbUseOAuth2"];
         $jsArgs["enableFbShare"]                = $this->social["enableFbShare"];
         $jsArgs["facebookAppID"]                = $this->social["fbAppID"];
-        $jsArgs["facebookUseOAuth2"]            = $this->social["fbUseOAuth2"];
         $jsArgs["enableGoogleLogin"]            = $this->social["enableGoogleLogin"];
         $jsArgs["cookiehash"]                   = COOKIEHASH;
         $jsArgs["isLoadOnlyParentComments"]     = $this->thread_display["isLoadOnlyParentComments"];
@@ -1455,7 +1450,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 $this->social["enableFbShare"] = isset($_POST[self::TAB_SOCIAL]["enableFbShare"]) ? absint($_POST[self::TAB_SOCIAL]["enableFbShare"]) : 0;
                 $this->social["fbAppID"]       = isset($_POST[self::TAB_SOCIAL]["fbAppID"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["fbAppID"])) : "";
                 $this->social["fbAppSecret"]   = isset($_POST[self::TAB_SOCIAL]["fbAppSecret"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["fbAppSecret"])) : "";
-                $this->social["fbUseOAuth2"]   = isset($_POST[self::TAB_SOCIAL]["fbUseOAuth2"]) ? absint($_POST[self::TAB_SOCIAL]["fbUseOAuth2"]) : 0;
                 // twitter
                 $this->social["enableTwitterLogin"] = isset($_POST[self::TAB_SOCIAL]["enableTwitterLogin"]) ? absint($_POST[self::TAB_SOCIAL]["enableTwitterLogin"]) : 0;
                 $this->social["enableTwitterShare"] = isset($_POST[self::TAB_SOCIAL]["enableTwitterShare"]) ? absint($_POST[self::TAB_SOCIAL]["enableTwitterShare"]) : 0;
@@ -2437,11 +2431,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         } else if (isset($oldOptions[self::TAB_SOCIAL]["fbAppSecret"])) {
             $newOptions[self::TAB_SOCIAL]["fbAppSecret"] = $oldOptions[self::TAB_SOCIAL]["fbAppSecret"];
         }
-        if (isset($oldOptions["fbUseOAuth2"])) {
-            $newOptions[self::TAB_SOCIAL]["fbUseOAuth2"] = $oldOptions["fbUseOAuth2"];
-        } else if (isset($oldOptions[self::TAB_SOCIAL]["fbUseOAuth2"])) {
-            $newOptions[self::TAB_SOCIAL]["fbUseOAuth2"] = $oldOptions[self::TAB_SOCIAL]["fbUseOAuth2"];
-        }
         if (isset($oldOptions["enableTwitterLogin"])) {
             $newOptions[self::TAB_SOCIAL]["enableTwitterLogin"] = $oldOptions["enableTwitterLogin"];
         } else if (isset($oldOptions[self::TAB_SOCIAL]["enableTwitterLogin"])) {
@@ -3025,13 +3014,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => "Facebook Login Button",
                             "description"          => "",
                             "description_original" => "",
-                            "docurl"               => "",
-                        ],
-                        "fbUseOAuth2"                  => [
-                            "label"                => esc_html__("Use Facebook OAuth2", "wpdiscuz"),
-                            "label_original"       => "Use Facebook OAuth2",
-                            "description"          => esc_html__("If you enable this option, please make sure you've inserted the Valid OAuth Redirect URI in according field when you create Facebook Login App. Your website OAuth Redirect URI is displayed above.", "wpdiscuz"),
-                            "description_original" => "If you enable this option, please make sure you've inserted the Valid OAuth Redirect URI in according field when you create Facebook Login App. Your website OAuth Redirect URI is displayed above.",
                             "docurl"               => "",
                         ],
                         "enableFbShare"                => [

@@ -46,11 +46,7 @@ class SocialLogin {
         $userID   = Sanitizer::sanitize(INPUT_POST, "userID", FILTER_SANITIZE_NUMBER_INT);
         $response = ["code" => "error", "message" => esc_html__("Authentication failed.", "wpdiscuz"), "url" => ""];
         if ($provider === "facebook") {
-            if ($this->generalOptions->social["fbUseOAuth2"]) {
-                $response = $this->facebookLoginPHP($postID, $response);
-            } else {
-                $response = $this->facebookLogin($token, $userID, $response);
-            }
+            $response = $this->facebookLoginPHP($postID, $response);
         } else if ($provider === "instagram") {
             $response = $this->instagramLogin($postID, $response);
         } else if ($provider === "google") {
@@ -126,45 +122,6 @@ class SocialLogin {
             $url = get_permalink($postID);
         }
         return esc_url_raw($url);
-    }
-
-    // https://developers.facebook.com/docs/apps/register
-    public function facebookLogin($token, $userID, $response) {
-        if (!$token || !$userID) {
-            $response["message"] = esc_html__("Facebook access token or user ID invalid.", "wpdiscuz");
-            return $response;
-        }
-        if (!$this->generalOptions->social["fbAppSecret"]) {
-            $response["message"] = esc_html__("Facebook App Secret is required.", "wpdiscuz");
-            return $response;
-        }
-        $appsecret_proof = hash_hmac("sha256", $token, trim($this->generalOptions->social["fbAppSecret"]));
-        $url             = add_query_arg(["fields" => "id,first_name,last_name,picture,email", "access_token" => $token, "appsecret_proof" => $appsecret_proof], "https://graph.facebook.com/v2.8/" . $userID);
-        $fb_response     = wp_remote_get(esc_url_raw($url), ["timeout" => 30]);
-
-        if (is_wp_error($fb_response)) {
-            $response["message"] = $fb_response->get_error_message();
-            return $response;
-        }
-
-        $fb_user = json_decode(wp_remote_retrieve_body($fb_response), true);
-
-        if (isset($fb_user["error"])) {
-            $response["message"] = "Error code: " . $fb_user["error"]["code"] . " - " . $fb_user["error"]["message"];
-            return $response;
-        }
-        if (empty($fb_user["email"]) && $fb_user["id"]) {
-            $fb_user["email"] = $fb_user["id"] . "@facebook.com";
-        }
-        $this->setCurrentUser(Utils::addUser($fb_user, "facebook"));
-        $uID = Utils::addUser($fb_user, "facebook");
-        if (is_wp_error($uID)) {
-            $response["message"] = $uID->get_error_message();
-        } else {
-            $response = ["code" => 200];
-        }
-        $this->setCurrentUser($uID);
-        return $response;
     }
 
     public function facebookLoginPHP($postID, $response) {

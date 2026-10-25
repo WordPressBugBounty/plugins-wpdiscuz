@@ -39,7 +39,7 @@ class Utils {
             $userData = self::sanitizeBaiduUser($socialUser);
         }
         if ($userData) {
-            if ($userID = email_exists($userData["user_email"])) {
+            if ($userID = self::findExistingUser($userData)) {
                 $userData["ID"]     = $userID;
                 $userData["status"] = "update";
             } else {
@@ -54,11 +54,52 @@ class Utils {
         return $userID;
     }
 
+    /**
+     * Resolve the WP user for an incoming social profile.
+     *
+     * The provider-verified user ID (stored in user meta) is the primary and most
+     * reliable key: it is bound to the access token owner by the server-side OAuth2
+     * flow. Email is used only as a fallback, mainly to link social logins to
+     * accounts registered earlier with the same verified address and to migrate
+     * accounts created before the social user ID meta was stored.
+     *
+     * @param array $userData Sanitized social user data (provider, social_user_id, user_email).
+     * @return int Existing user ID, or 0 if none found.
+     */
+    private static function findExistingUser($userData) {
+        if (!empty($userData["social_user_id"]) && !empty($userData["provider"])) {
+            $users = get_users([
+                "number"     => 1,
+                "fields"     => "ID",
+                "meta_query" => [
+                    "relation" => "AND",
+                    [
+                        "key"   => wpdFormConst::WPDISCUZ_SOCIAL_USER_ID_KEY,
+                        "value" => $userData["social_user_id"],
+                    ],
+                    [
+                        "key"   => wpdFormConst::WPDISCUZ_SOCIAL_PROVIDER_KEY,
+                        "value" => $userData["provider"],
+                    ],
+                ],
+            ]);
+            if (!empty($users)) {
+                return (int) $users[0];
+            }
+        }
+        if (!empty($userData["user_email"])) {
+            return (int) email_exists($userData["user_email"]);
+        }
+        return 0;
+    }
+
     private static function updateUserData($userData) {
         $userProvider = get_user_meta($userData["ID"], wpdFormConst::WPDISCUZ_SOCIAL_PROVIDER_KEY, true);
         if ($userProvider !== $userData["provider"]) {
             wp_update_user(["ID" => $userData["ID"], "user_url" => $userData["user_url"]]);
             update_user_meta($userData["ID"], wpdFormConst::WPDISCUZ_SOCIAL_PROVIDER_KEY, $userData["provider"]);
+        }
+        if (!empty($userData["social_user_id"])) {
             update_user_meta($userData["ID"], wpdFormConst::WPDISCUZ_SOCIAL_USER_ID_KEY, $userData["social_user_id"]);
         }
     }

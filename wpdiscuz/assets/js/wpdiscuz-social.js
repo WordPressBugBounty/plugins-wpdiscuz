@@ -1,5 +1,5 @@
 //============================== FACEBOOK API INIT  ========================== //
-if (((!Number.parseInt(wpdiscuzAjaxObj.fbUseOAuth2) && Number.parseInt(wpdiscuzAjaxObj.enableFbLogin)) || Number.parseInt(wpdiscuzAjaxObj.enableFbShare)) && wpdiscuzAjaxObj.facebookAppID) {
+if (Number.parseInt(wpdiscuzAjaxObj.enableFbShare) && wpdiscuzAjaxObj.facebookAppID) {
     (function (d, s, id) {
         let js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) {
@@ -83,28 +83,10 @@ jQuery(document).ready(function ($) {
 
 
     function wpdCallSocialLogin(provider, container) {
-        let token, userID = '';
+        let token = '', userID = '';
         wpdSocialLoginLoadingBar(container, 1);
         Cookies.set('wpdiscuz_scroll_to_comments', 1, {path: '/'});
-        if (provider === 'facebook' && wpdiscuzAjaxObj.facebookUseOAuth2 == 0) {
-            FB.getLoginStatus(function (response) {
-                if (response.status === 'connected') {
-                    token = response.authResponse.accessToken;
-                    userID = response.authResponse.userID;
-                    wpdSendRequest(provider, token, userID, container);
-                } else {
-                    FB.login(function (response) {
-                        if (response.status === 'connected') {
-                            token = response.authResponse.accessToken;
-                            userID = response.authResponse.userID;
-                            wpdSendRequest(provider, token, userID, container);
-                        }
-                    }, {scope: 'public_profile,email'});
-                }
-            });
-        } else {
-            wpdSendRequest(provider, token, userID, container);
-        }
+        wpdSendRequest(provider, token, userID, container);
     }
 
     function wpdSendRequest(provider, token, userID, container) {

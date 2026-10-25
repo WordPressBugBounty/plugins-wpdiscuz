@@ -1,3 +1,8 @@
+= Comments - wpDiscuz v7.6.73 - 25.10.2026 =
+
+* Fixed: The Facebook login button signed a visitor in through a client-side flow that trusted a Facebook user ID sent with the request, which was not tied to the access token it arrived with. Because an account's Facebook ID doubles as its user name and the account's email address was derived from that ID when Facebook returned none, this could sign a request in as another visitor's account. Facebook login now always uses the server-side OAuth2 flow, which reads the account from the token's own owner, and social accounts are matched by their verified provider user ID rather than by an email address built from it. The legacy flow and the "Use Facebook OAuth2" setting have been removed. Sites that used the legacy flow must add their site's OAuth redirect URI, wp-admin/admin-ajax.php?action=wpd_login_callback&provider=facebook, to the Valid OAuth Redirect URIs of their Facebook app for the button to keep working.
+* Improved: On the settings page, the preview of an addon that isn't installed described its rating structured data and one shortcode attribute as they used to work. It now matches the current addon.
+
 = Comments - wpDiscuz v7.6.72 - 07.10.2026 =
 
 * Fixed: A comment whose image was refused for its width or height was saved anyway, and the error message was empty. The `wpdiscuz_mu_preupload` action now fires before the comment is saved, so a file it refuses stops the comment.

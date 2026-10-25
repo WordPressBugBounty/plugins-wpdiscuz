@@ -161,26 +161,6 @@ if (!defined("ABSPATH")) {
 </div>
 <!-- Option end -->
 
-<?php if (is_ssl()) { ?>
-    <!-- Option start -->
-    <div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="fbUseOAuth2">
-        <div class="wpd-opt-name">
-            <label for="fbUseOAuth2"><?php echo esc_html($setting["options"]["fbUseOAuth2"]["label"]) ?></label>
-            <p class="wpd-desc"><?php echo esc_html($setting["options"]["fbUseOAuth2"]["description"]) ?></p>
-        </div>
-        <div class="wpd-opt-input">
-            <div class="wpd-switcher">
-                <input type="checkbox" <?php checked($this->social["fbUseOAuth2"] == 1); ?> value="1"
-                       name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[fbUseOAuth2]" id="fbUseOAuth2">
-                <label for="fbUseOAuth2"></label>
-            </div>
-        </div>
-        <div class="wpd-opt-doc">
-            <?php $this->printDocLink($setting["options"]["fbUseOAuth2"]["docurl"]) ?>
-        </div>
-    </div>
-    <!-- Option end -->
-<?php } ?>
 
 <!-- Option start -->
 <div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="enableFbShare">

@@ -3,7 +3,7 @@
  * Plugin Name: wpDiscuz
  * Plugin URI: https://wpdiscuz.com/
  * Description: #1 WordPress Comment Plugin. Innovative, modern and feature-rich comment system to supercharge your website comment section.
- * Version: 7.6.72
+ * Version: 7.6.73
  * Author: gVectors Team
  * Author URI: https://gvectors.com/
  * Text Domain: wpdiscuz
@@ -910,7 +910,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
     public function loadMoreComments() {
         $this->helper->validateNonce();
         $postId       = WpdiscuzHelper::sanitize(INPUT_POST, "postId", FILTER_SANITIZE_NUMBER_INT, 0);
-        $lastParentId = (int) WpdiscuzHelper::sanitize(INPUT_POST, "lastParentId", FILTER_SANITIZE_NUMBER_INT, 0);
+        $lastParentId = (int)WpdiscuzHelper::sanitize(INPUT_POST, "lastParentId", FILTER_SANITIZE_NUMBER_INT, 0);
         if ($lastParentId >= 0 && $postId) {
             $post = get_post($postId);
             WpdiscuzHelper::validatePostAccess($post);
@@ -1004,8 +1004,8 @@ class WpdiscuzCore implements WpDiscuzConstants {
         // the "wpdiscuz_filter_args" filter) and before the cache lookup below,
         // so a poisoned value can neither be stored under a tainted cache key
         // nor reach commentsClauses().
-        $this->commentsArgs["last_parent_id"] = (int) $this->commentsArgs["last_parent_id"];
-        $commentListArgs    = $this->getCommentListArgs($postId);
+        $this->commentsArgs["last_parent_id"] = (int)$this->commentsArgs["last_parent_id"];
+        $commentListArgs                      = $this->getCommentListArgs($postId);
         do_action("wpdiscuz_before_getcomments", $this->commentsArgs, $commentListArgs["current_user"], $args);
         $commentData = [];
 
@@ -1269,7 +1269,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 // Defensive cast, then bind via %d, so the cursor can never
                 // carry a SQL comment token into the WHERE clause. The operator
                 // is a fixed literal chosen by the ternary, not user input.
-                $lastParentId  = (int) $this->commentsArgs["last_parent_id"];
+                $lastParentId  = (int)$this->commentsArgs["last_parent_id"];
                 $operator      = $this->commentsArgs["order"] === 'desc' ? "<" : ">";
                 $args["where"] = $wpdb->prepare($wpdb->comments . ".`comment_ID` {$operator} %d", $lastParentId) . ($args["where"] ? " AND " : "") . $args["where"];
             }
@@ -1504,10 +1504,10 @@ class WpdiscuzCore implements WpDiscuzConstants {
             // The form meta has to be loaded before its options are read, they
             // are empty until then.
             $this->form->initFormMeta();
-            $formGeneralOptions = $this->form->getGeneralOptions();
-            $this->wpdiscuzOptionsJs                      = $this->options->getOptionsForJs();
-            $this->wpdiscuzOptionsJs["version"]           = $this->version;
-            $this->wpdiscuzOptionsJs["wc_post_id"]        = $post->ID;
+            $formGeneralOptions                    = $this->form->getGeneralOptions();
+            $this->wpdiscuzOptionsJs               = $this->options->getOptionsForJs();
+            $this->wpdiscuzOptionsJs["version"]    = $this->version;
+            $this->wpdiscuzOptionsJs["wc_post_id"] = $post->ID;
             // Sites of a subdirectory network share an origin, so anything the
             // browser stores per post has to be told them apart by blog id.
             $this->wpdiscuzOptionsJs["wc_blog_id"]        = get_current_blog_id();
@@ -2172,7 +2172,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                 wp_send_json_error(esc_html__("Invalid comment", "wpdiscuz"));
             }
 
-            $post    = get_post($comment->comment_post_ID);
+            $post = get_post($comment->comment_post_ID);
             WpdiscuzHelper::validatePostAccess($post);
             $this->isWpdiscuzLoaded = true;
             $this->commentsArgs     = $this->getDefaultCommentsArgs($postId);
@@ -2694,7 +2694,7 @@ class WpdiscuzCore implements WpDiscuzConstants {
                         $this->helper->restrictCommentingPerUser($email, 0, $inline_form->post_id);
                         [$new_comment_id, $newComment] = $this->insertComment($new_commentdata);
                         add_comment_meta($new_comment_id, self::META_KEY_FEEDBACK_FORM_ID, $inline_form->id);
-                        $args       = [
+                        $args = [
                             "count"      => true,
                             "meta_query" => [
                                 [

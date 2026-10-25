@@ -66,7 +66,7 @@ $defaultExcludedTaxonomies = [
                                     <br>
                                     <div><?php esc_html_e("Available attributes are:", "wpdiscuz"); ?></div>
                                     <ul class="wr-shortcode-attr-list">
-                                        <li><code style="color:#07B290;"><strong>post_id</strong></code> <?php esc_html_e("Post ID to load reviews from (integer). Omit to query all posts; defaults to the current post when used inside a post template.", "wpdiscuz"); ?></li>
+                                        <li><code style="color:#07B290;"><strong>post_id</strong></code> <?php esc_html_e("Post ID to load reviews from (integer). Omit to query all posts.", "wpdiscuz"); ?></li>
                                         <li><code style="color:#07B290;"><strong>number</strong></code> <span class="wr-shortcode-pill">default: 10</span> <?php esc_html_e("Number of reviews to display (integer)", "wpdiscuz"); ?></li>
                                         <li><code style="color:#07B290;"><strong>author__in</strong></code> <?php esc_html_e("Comma-separated user IDs to filter reviews by author. Omit to include all authors.", "wpdiscuz"); ?></li>
                                         <li><code style="color:#07B290;"><strong>orderby</strong></code> <span class="wr-shortcode-pill">default: rating</span> <?php esc_html_e("Field to sort reviews by. Available options: rating, comment_date, comment_ID.", "wpdiscuz"); ?></li>
@@ -843,25 +843,25 @@ $defaultExcludedTaxonomies = [
                 <div class="wr-accordion-content">
 
                     <datalist id="wr-jsonld-schema-types">
-                        <option value="Article">
-                        <option value="WebPage">
                         <option value="Product">
-                        <option value="LocalBusiness">
+                        <option value="Recipe">
                         <option value="Event">
                         <option value="Course">
-                        <option value="Recipe">
                         <option value="SoftwareApplication">
-                        <option value="FAQPage">
                         <option value="HowTo">
-                        <option value="NewsArticle">
+                        <option value="LocalBusiness">
+                        <option value="Article">
                         <option value="BlogPosting">
+                        <option value="NewsArticle">
+                        <option value="WebPage">
+                        <option value="FAQPage">
                     </datalist>
 
                     <!-- Option start: jsonLdEnabled -->
                     <div class="wpd-opt-row" data-wpd-opt="jsonLdEnabled">
                         <div class="wpd-opt-name">
                             <label><?php esc_html_e("Enable JSON-LD", "wpdiscuz"); ?></label>
-                            <p class="wpd-desc"><?php esc_html_e("Output AggregateRating structured data in the page head on singular posts that have reviews.", "wpdiscuz"); ?></p>
+                            <p class="wpd-desc"><?php esc_html_e("Add the average rating to the page's structured data wherever the average is shown. With Yoast SEO 18.7+ or Rank Math, it goes into their schema; with neither active, the add-on outputs its own block. Older Yoast versions get no rating markup from this add-on.", "wpdiscuz"); ?></p>
                         </div>
                         <div class="wpd-opt-input">
                             <div class="wpd-switcher">
@@ -877,7 +877,7 @@ $defaultExcludedTaxonomies = [
                     <div class="wpd-opt-row" data-wpd-opt="jsonLdPostTypes">
                         <div class="wpd-opt-name">
                             <?php esc_html_e("Schema type per post type", "wpdiscuz"); ?>
-                            <p class="wpd-desc"><?php esc_html_e("When Yoast SEO or Rank Math is active, AggregateRating is injected into their existing schema — no configuration needed. The table below is used only as a fallback when neither plugin is present. Leave a field blank to skip JSON-LD for that post type.", "wpdiscuz"); ?></p>
+                            <p class="wpd-desc"><?php esc_html_e("Used only when neither Yoast SEO nor Rank Math is active. Google can show rating stars for some types, such as Product, Recipe, Event, Course and SoftwareApplication, but not for Article or WebPage, and not for reviews a business collects about itself. Leave a field blank to skip that post type.", "wpdiscuz"); ?></p>
                         </div>
                         <div class="wpd-opt-input">
                             <table class="wr-jsonld-posttypes-table">
