@@ -4,14 +4,43 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 7.6.73  | :white_check_mark: |
-| < 7.6.73| :x:                |
+| 7.6.74  | :white_check_mark: |
+| < 7.6.74| :x:                |
 
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability within wpDiscuz, please send an email to info@gvectors.com. All security vulnerabilities will be promptly addressed.
 
 ## Security Fixes
+
+### Stored Cross-Site Scripting via Template Placeholders in the Comment Author Name (Fixed in 7.6.74)
+
+**Severity:** High (CVSS 7.1)
+**Type:** Stored Cross-Site Scripting (XSS)
+**Affected Component:** Front-end comment rendering (`themes/default/class.WpdiscuzWalker.php`) and the guest Name field
+**Affected Versions:** Up to and including 7.6.73.
+
+**Description:**
+The comment renderer collected all template placeholders (`{AVATAR}`, `{AUTHOR}`, `{TEXT}`, ...) and their values into two arrays and resolved them with a single array `str_replace()`. PHP applies such replacements one pair after another over the whole string, so a placeholder that appeared inside an already inserted value was expanded again. The avatar markup, whose `alt` attribute holds the escaped author name, was inserted before the comment body. An author name containing the literal text `{TEXT}` therefore had the raw comment HTML expanded into the `alt` attribute after escaping had already run. A body consisting of a straight quote and event-handler text inside a `<code>` element passes `wp_kses` and is not touched by `wptexturize`, so the quote closed the attribute and `onerror`/`onload` became live attributes on the avatar `<img>`.
+
+The name could be supplied by an unauthenticated guest through the Name field, or by any registered user through the display name of their profile. The script ran without interaction for moderators and administrators viewing the comment while it was pending, and for every visitor once it was approved.
+
+**Fix Applied:**
+1. The renderer now resolves placeholders with `strtr()` and a single map, which performs one pass and never rescans inserted values. The comment templates themselves are unchanged, so custom layouts in child themes keep working.
+2. Added `WpdiscuzHelper::neutralizeTemplateBraces()`, which encodes `{` and `}` as HTML entities. The guest Name field passes through it before the name is stored.
+3. The name shown in the "last edited by" note, the only user value concatenated into the template before the final pass, goes through the same helper.
+4. The parent author name in the "Reply to" block is now escaped with `esc_html()`, matching the author name in the comment header.
+
+**Recommended Action:**
+Update to 7.6.74. No settings change or data migration is needed: comments whose author name already contains braces are rendered safely by the new renderer. Sites that were on an affected version may want to review pending and approved comments whose author name contains `{` or `}`.
+
+**Files Modified:**
+- `themes/default/class.WpdiscuzWalker.php` - Single-pass placeholder substitution; escaped the parent author name and the "last edited by" name
+- `utils/class.WpdiscuzHelper.php` - Added `neutralizeTemplateBraces()`
+- `forms/wpdFormAttr/Field/DefaultField/Name.php` - Braces in the guest name are encoded before the name is stored
+
+**Credit:**
+Reported through Patchstack.
 
 ### Facebook Login Authentication Bypass (Fixed in 7.6.73)
 

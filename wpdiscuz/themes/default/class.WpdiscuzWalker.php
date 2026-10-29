@@ -160,7 +160,7 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
             $replace[]             = "<i class='far fa-comments'></i>";
             $replace[]             = esc_html($this->options->getPhrase("wc_reply_to", ["comment" => $comment])) . "&nbsp;";
             $replace[]             = esc_url_raw($parentCommentLink);
-            $replace[]             = apply_filters("wpdiscuz_comment_author", $parentCommentUserName, $parentComment);
+            $replace[]             = esc_html(apply_filters("wpdiscuz_comment_author", $parentCommentUserName, $parentComment));
             $showReplyTo           = true;
         }
 
@@ -461,7 +461,7 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
         $lastEdited = "";
         if ($this->options->moderation["displayEditingInfo"] && isset($commentMetas[self::META_KEY_LAST_EDITED_AT]) && isset($commentMetas[self::META_KEY_LAST_EDITED_BY])) {
             $lastEditUser   = get_user_by(is_numeric($commentMetas[self::META_KEY_LAST_EDITED_BY][0]) ? "id" : "email", $commentMetas[self::META_KEY_LAST_EDITED_BY][0]);
-            $username       = $lastEditUser ? $lastEditUser->display_name : $comment->comment_author;
+            $username       = WpdiscuzHelper::neutralizeTemplateBraces($lastEditUser ? $lastEditUser->display_name : $comment->comment_author);
             $lastEditedInfo = esc_html(sprintf($this->options->getPhrase("wc_last_edited", ["comment" => $comment, "default" => ""]), $this->helper->dateDiff($commentMetas[self::META_KEY_LAST_EDITED_AT][0]), $username));
             // an icon on its own tells nobody who edited the comment or when
             if ($lastEditedInfo) {
@@ -496,7 +496,7 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
             $footerComponent  = $showVote || $showReply || $afterReplyButton || $showTools || $showToggle ? str_replace(["{VOTE}", "{REPLY}", "{TOOLS}", "{TOGGLE}"], [$showVote ? $args["components"]["vote.html"] : "", ($showReply ? $args["components"]["reply.html"] : "") . $afterReplyButton, $showTools ? $args["components"]["tools.html"] : "", $showToggle ? $args["components"]["toggle.html"] : ""], $args["components"]["footer.html"]) : "";
             $rightComponent   = str_replace(["{HEADER}", "{REPLY_TO}", "{TEXT}", "{FOOTER}"], [$headerComponent, $showReplyTo ? $args["components"]["reply_to.html"] : "", $args["components"]["text.html"] . $lastEdited, $footerComponent], $args["components"]["right.html"]);
             $wrapperComponent = str_replace(["{LEFT}", "{RIGHT}"], [$leftComponent, $rightComponent], $args["components"]["wrapper.html"]);
-            $commentOutput    .= str_replace($search, $replace, $wrapperComponent);
+            $commentOutput    .= strtr($wrapperComponent, array_combine($search, $replace));
         } else if ($args["layout"] == 2) {
             $search[]  = "{WRAPPER_CLASSES}";
             $search[]  = "{HEADER_WRAPPER_CLASSES}";
@@ -529,7 +529,7 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
             $footerComponent         = $showVote || $showReply || $afterReplyButton || $showTools || $showToggle ? str_replace(["{VOTE}", "{REPLY}", "{TOOLS}", "{TOGGLE}"], [$showVote ? $args["components"]["vote.html"] : "", ($showReply ? $args["components"]["reply.html"] : "") . $afterReplyButton, $showTools ? $args["components"]["tools.html"] : "", $showToggle ? $args["components"]["toggle.html"] : ""], $args["components"]["footer.html"]) : "";
             $rightComponent          = str_replace(["{HEADER}", "{TEXT}", "{FOOTER}"], [$headerComponent, $args["components"]["text.html"] . $lastEdited, $footerComponent], $args["components"]["right.html"]);
             $wrapperComponent        = str_replace(["{RIGHT}"], [$rightComponent], $args["components"]["wrapper.html"]);
-            $commentOutput           .= str_replace($search, $replace, $wrapperComponent);
+            $commentOutput           .= strtr($wrapperComponent, array_combine($search, $replace));
         } else if ($args["layout"] == 3) {
             $search[]  = "{WRAPPER_CLASSES}";
             $search[]  = "{HEADER_WRAPPER_CLASSES}";
@@ -563,7 +563,7 @@ class WpdiscuzWalker extends Walker_Comment implements WpDiscuzConstants {
             $footerComponent    = $showVote || $showReply || $afterReplyButton || $toolsWrapComponent ? str_replace(["{VOTE}", "{REPLY}", "{TOOLS_WRAP}"], [$showVote ? $args["components"]["vote.html"] : "", ($showReply ? $args["components"]["reply.html"] : "") . $afterReplyButton, $toolsWrapComponent], $args["components"]["footer.html"]) : "";
             $rightComponent     = str_replace(["{HEADER}", "{SUBHEADER}", "{REPLY_TO}", "{TEXT}", "{FOOTER}"], [$headerComponent, $subheaderComponent, $showReplyTo ? $replyToComponent : "", $args["components"]["text.html"] . $lastEdited, $footerComponent], $args["components"]["right.html"]);
             $wrapperComponent   = str_replace(["{LEFT}", "{RIGHT}"], [$leftComponent, $rightComponent], $args["components"]["wrapper.html"]);
-            $commentOutput      .= str_replace($search, $replace, $wrapperComponent);
+            $commentOutput      .= strtr($wrapperComponent, array_combine($search, $replace));
         }
         $commentOutput .= "<div id='wpdiscuz_form_anchor-" . esc_attr($uniqueId) . "'></div>";
         $output        .= apply_filters("wpdiscuz_comment_end", $commentOutput, $comment, $depth, $args);

@@ -97,7 +97,10 @@ class Name extends Field {
     }
 
     public function validateFieldData($fieldName, $args, $options, $currentUser) {
-        $name = isset($_POST[$fieldName]) ? trim(urlencode(sanitize_text_field(wp_unslash($_POST[$fieldName])))) : "";
+        $name = isset($_POST[$fieldName]) ? sanitize_text_field(wp_unslash($_POST[$fieldName])) : "";
+        // a brace pair in a name would form a walker placeholder such as {TEXT}, which the
+        // comment template would then expand into attacker controlled comment HTML
+        $name = trim(urlencode(\WpdiscuzHelper::neutralizeTemplateBraces($name)));
         if ($args["required"] && !$name) {
             wp_send_json_error("wc_invalid_field");
         }

@@ -2049,6 +2049,19 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     }
 
     /**
+     * Encodes the braces of user supplied text so it can never form a comment
+     * template placeholder such as {TEXT} or {AVATAR}. The entities survive
+     * esc_html(), esc_attr() and the core comment filters, which do not
+     * double-encode, and render as plain braces in the browser.
+     *
+     * @param mixed $text
+     * @return string
+     */
+    public static function neutralizeTemplateBraces($text) {
+        return str_replace(["{", "}"], ["&#123;", "&#125;"], (string)$text);
+    }
+
+    /**
      * Reads one request variable and sanitizes it.
      *
      * The returned value is still slashed, exactly as WordPress stored it in

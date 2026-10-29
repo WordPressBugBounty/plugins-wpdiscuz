@@ -3,7 +3,7 @@ Contributors: gVectors Team
 Tags: ajax comments, comment form, live comments, comment system, inline comments
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 7.6.73
+Stable tag: 7.6.74
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -202,9 +202,8 @@ Yes. wpDiscuz provides a Comments block for the WordPress block editor, so you c
 
 Please remember to delete all caches and purge CDN after the update.
 
-= Comments - wpDiscuz v7.6.73 - 25.10.2026 =
+= Comments - wpDiscuz v7.6.74 - 29.10.2026 =
 
-* Fixed: The Facebook login button signed a visitor in through a client-side flow that trusted a Facebook user ID sent with the request, which was not tied to the access token it arrived with. Because an account's Facebook ID doubles as its user name and the account's email address was derived from that ID when Facebook returned none, this could sign a request in as another visitor's account. Facebook login now always uses the server-side OAuth2 flow, which reads the account from the token's own owner, and social accounts are matched by their verified provider user ID rather than by an email address built from it. The legacy flow and the "Use Facebook OAuth2" setting have been removed. Sites that used the legacy flow must add their site's OAuth redirect URI, wp-admin/admin-ajax.php?action=wpd_login_callback&provider=facebook, to the Valid OAuth Redirect URIs of their Facebook app for the button to keep working.
-* Improved: On the settings page, the preview of an addon that isn't installed described its rating structured data and one shortcode attribute as they used to work. It now matches the current addon.
+* Fixed: Security. A commenter whose name contained a placeholder such as {TEXT} could make their comment run JavaScript for moderators viewing it while pending, and for every visitor once it was approved. Names with braces are now shown as plain text. Reported by Patchstack.
 
 [See the changelog for all versions](https://plugins.svn.wordpress.org/wpdiscuz/trunk/changelog.txt)
